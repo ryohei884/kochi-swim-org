@@ -1,18 +1,22 @@
 {
   "name": "swim-kochi-org",
   "version": "0.1.0",
-  "private": false,
+  "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
     "postinstall": "prisma generate --no-engine",
-    "lint": "next lint --fix --dir src"
+    "lint": "eslint --fix src",
+    "format": "npx prettier --write src"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
+    "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^6.16.1",
     "@prisma/extension-accelerate": "^2.0.2",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.3",
     "@types/node": "^24.4.0",
     "class-variance-authority": "^0.7.1",
@@ -22,14 +26,19 @@
     "next-auth": "^5.0.0-beta.29",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "tailwind-merge": "^3.3.1"
+    "react-hook-form": "^7.62.0",
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.1.8"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@next/eslint-plugin-next": "^15.5.3",
     "@tailwindcss/postcss": "^4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9.35.0",
+    "eslint-config-next": "^15.5.3",
+    "eslint-config-prettier": "^10.1.8",
     "prisma": "^6.16.1",
     "tailwindcss": "^4",
     "tsx": "^4.20.5",
