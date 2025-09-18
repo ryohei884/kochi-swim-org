@@ -62,6 +62,19 @@ CREATE TABLE "public"."Authenticator" (
     CONSTRAINT "Authenticator_pkey" PRIMARY KEY ("userId","credentialID")
 );
 
+-- CreateTable
+CREATE TABLE "public"."Category" (
+    "categoryId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "link" TEXT NOT NULL,
+    "order" INTEGER NOT NULL,
+    "permission" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Category_pkey" PRIMARY KEY ("categoryId")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "public"."User"("email");
 
