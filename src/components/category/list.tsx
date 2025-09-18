@@ -1,11 +1,13 @@
 "use client";
 
 import { getCategoryList, deleteCategory } from "@/lib/actions";
+import CreateForm from "@/components/category/create-form";
+import UpdateForm from "@/components/category/update-form";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import Link from "next/link";
-import { SettingsIcon, Trash2Icon, PlusIcon } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 import { categoryPermission } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,7 +33,7 @@ import { toast } from "sonner";
 
 export default function CategoryList() {
   const [data, setData] = useState<dataType[]>([]);
-  const fetchData = async () => {
+  const fetchListData = async () => {
     const res = await getCategoryList();
     if (res !== null) {
       setData(res);
@@ -42,7 +44,7 @@ export default function CategoryList() {
   const handleClick = async (id: string) => {
     const res = await deleteCategory(id);
     if (res !== null) {
-      fetchData();
+      fetchListData();
       console.log(res);
       toast("You delete the following values", {
         description: <div>{JSON.stringify(res, null, 2)}</div>,
@@ -55,19 +57,13 @@ export default function CategoryList() {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchListData();
   }, []);
 
   return (
     <>
-      {" "}
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight p-2 flex justify-between">
-        カテゴリー{" "}
-        <Link href="./create">
-          <Button variant="outline" size="sm">
-            <PlusIcon /> カテゴリーを追加
-          </Button>
-        </Link>
+        カテゴリー <CreateForm fetchListData={fetchListData} />
       </h4>
       <hr />
       <Table>
@@ -108,11 +104,17 @@ export default function CategoryList() {
                 {format(value.updatedAt, "PPP", { locale: ja })}
               </TableCell>
               <TableCell className="flex-auto text-center">
-                <Button className="p-3" variant="ghost">
+                {/* <Button className="p-3" variant="ghost">
                   <Link href={`./update/${value.categoryId}`}>
                     <SettingsIcon className="opacity-50" />
                   </Link>
-                </Button>
+                </Button> */}
+                {/* <UpdateSideForm key={value.categoryId} id={value.categoryId} /> */}
+                <UpdateForm
+                  key={value.categoryId}
+                  id={value.categoryId}
+                  fetchListData={fetchListData}
+                />
               </TableCell>
               <TableCell className="flex-auto text-center">
                 <Button

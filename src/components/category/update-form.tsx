@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 import { z } from "zod";
@@ -8,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -33,7 +33,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { redirect, RedirectType } from "next/navigation";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+  SheetFooter,
+} from "@/components/ui/sheet";
+import { SettingsIcon } from "lucide-react";
 
 export const formSchema = z.object({
   categoryId: z.string().nonoptional(),
@@ -82,10 +92,12 @@ const defaultValues: formSchemaType = {
 
 interface Props {
   id: string;
+  fetchListData: () => Promise<void>;
 }
 
 export default function CategoryUpdateForm(props: Props) {
-  const { id } = props;
+  const { id, fetchListData } = props;
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
@@ -100,9 +112,10 @@ export default function CategoryUpdateForm(props: Props) {
   };
 
   useEffect(() => {
-    fetchData(id);
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    dialogOpen && fetchData(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<formSchemaType> = async (
     data: omitCategoryUpdateFormSchemaType,
@@ -118,7 +131,8 @@ export default function CategoryUpdateForm(props: Props) {
         onClick: () => console.log("Undo"),
       },
     });
-    redirect("../list", RedirectType.push);
+    fetchListData();
+    setDialogOpen(false);
   };
 
   const onError: SubmitErrorHandler<formSchemaType> = (errors) => {
@@ -132,189 +146,200 @@ export default function CategoryUpdateForm(props: Props) {
   };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit, onError)}
-        className="space-y-8"
-      >
-        <FormField
-          control={form.control}
-          name="categoryId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>カテゴリID</FormLabel>
-              <FormControl hidden={!form.formState.isReady}>
-                <Input type="text" {...field} disabled />
-              </FormControl>
-              <Skeleton
-                hidden={form.formState.isReady}
-                className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-              />
-              <FormDescription>カテゴリを特定する連番です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>カテゴリ名</FormLabel>
-              <FormControl hidden={!form.formState.isReady}>
-                <Input type="text" {...field} />
-              </FormControl>
-              <Skeleton
-                hidden={form.formState.isReady}
-                className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-              />
-              <FormDescription>カテゴリ名です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="link"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>リンク文字列</FormLabel>
-              <FormControl hidden={!form.formState.isReady}>
-                <Input type="text" {...field} />
-              </FormControl>
-              <Skeleton
-                hidden={form.formState.isReady}
-                className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-              />
-              <FormDescription>
-                リンクURLに用いられる文字列です。
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="order"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>表示順</FormLabel>
-              <FormControl hidden={!form.formState.isReady}>
-                <Input type="number" {...field} />
-              </FormControl>
-              <Skeleton
-                hidden={form.formState.isReady}
-                className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-              />
-              <FormDescription>カテゴリを表示する順番です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="permission"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>表示設定</FormLabel>
-              <div hidden={!form.formState.isReady}>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={String(field.value)}
+    <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
+      <SheetTrigger className="align-middle" asChild>
+        <Button variant="ghost" size="sm">
+          <SettingsIcon />
+        </Button>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>カテゴリー編集</SheetTitle>
+          <SheetDescription className="sr-only">
+            カテゴリー編集画面
+          </SheetDescription>
+        </SheetHeader>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit, onError)}
+            className="space-y-8 p-4"
+          >
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>カテゴリID</FormLabel>
+                  <FormControl hidden={!form.formState.isReady}>
+                    <Input type="text" {...field} disabled />
+                  </FormControl>
+                  <Skeleton
+                    hidden={form.formState.isReady}
+                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>カテゴリ名</FormLabel>
+                  <FormControl hidden={!form.formState.isReady}>
+                    <Input type="text" {...field} />
+                  </FormControl>
+                  <Skeleton
+                    hidden={form.formState.isReady}
+                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="link"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>リンク文字列</FormLabel>
+                  <FormControl hidden={!form.formState.isReady}>
+                    <Input type="text" {...field} />
+                  </FormControl>
+                  <Skeleton
+                    hidden={form.formState.isReady}
+                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="order"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>表示順</FormLabel>
+                  <FormControl hidden={!form.formState.isReady}>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <Skeleton
+                    hidden={form.formState.isReady}
+                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="permission"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>表示設定</FormLabel>
+                  <div hidden={!form.formState.isReady}>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={String(field.value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categoryPermission.map((value, index) => (
+                            <SelectItem key={index} value={String(value.range)}>
+                              {value.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <Skeleton
+                    className="flex h-9 items-center justify-end border border-input px-3 py-2 [&amp;&gt;span]:line-clamp-1 w-full"
+                    hidden={form.formState.isReady}
                   >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categoryPermission.map((value, index) => (
-                        <SelectItem key={index} value={String(value.range)}>
-                          {value.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-              </div>
-              <Skeleton
-                className="flex h-9 items-center justify-end border border-input px-3 py-2 [&amp;&gt;span]:line-clamp-1 w-full"
-                hidden={form.formState.isReady}
-              >
-                <ChevronDownIcon className="size-4 opacity-50" />
-              </Skeleton>
-              <FormDescription>表示対象者の設定です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="createdAt"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>作成日</FormLabel>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[240px] pl-3 text-left font-normal",
-                  !field.value && "text-muted-foreground",
-                )}
-                disabled
-                hidden={!form.formState.isReady}
-              >
-                {field.value ? (
-                  format(field.value, "PPP", { locale: ja })
-                ) : (
-                  <span>作成されていません。</span>
-                )}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-              </Button>
-              <Skeleton
-                hidden={form.formState.isReady}
-                className="w-[240px] pl-3 text-left font-normal flex h-9 border border-input px-3 py-2 file:border-0 max-w-full"
-              >
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-              </Skeleton>
-              <FormDescription>作成日です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="updatedAt"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>最終更新日</FormLabel>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[240px] pl-3 text-left font-normal",
-                  !field.value && "text-muted-foreground",
-                )}
-                disabled
-                hidden={!form.formState.isReady}
-              >
-                {field.value ? (
-                  format(field.value, "PPP", { locale: ja })
-                ) : (
-                  <span>作成されていません。</span>
-                )}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-              </Button>
-              <Skeleton
-                hidden={form.formState.isReady}
-                className="w-[240px] pl-3 text-left font-normal flex h-9 border border-input px-3 py-2 file:border-0 max-w-full"
-              >
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-              </Skeleton>
-              <FormDescription>最終更新日です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">更新</Button>
-      </form>
-    </Form>
+                    <ChevronDownIcon className="size-4 opacity-50" />
+                  </Skeleton>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="createdAt"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>作成日</FormLabel>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-[240px] pl-3 text-left font-normal",
+                      !field.value && "text-muted-foreground",
+                    )}
+                    disabled
+                    hidden={!form.formState.isReady}
+                  >
+                    {field.value ? (
+                      format(field.value, "PPP", { locale: ja })
+                    ) : (
+                      <span>作成されていません。</span>
+                    )}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                  <Skeleton
+                    hidden={form.formState.isReady}
+                    className="w-[240px] pl-3 text-left font-normal flex h-9 border border-input px-3 py-2 file:border-0 max-w-full"
+                  >
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Skeleton>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="updatedAt"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>最終更新日</FormLabel>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-[240px] pl-3 text-left font-normal",
+                      !field.value && "text-muted-foreground",
+                    )}
+                    disabled
+                    hidden={!form.formState.isReady}
+                  >
+                    {field.value ? (
+                      format(field.value, "PPP", { locale: ja })
+                    ) : (
+                      <span>作成されていません。</span>
+                    )}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                  <Skeleton
+                    hidden={form.formState.isReady}
+                    className="w-[240px] pl-3 text-left font-normal flex h-9 border border-input px-3 py-2 file:border-0 max-w-full"
+                  >
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Skeleton>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <SheetFooter className="p-0">
+              <Button type="submit">更新</Button>
+              <SheetClose asChild>
+                <Button variant="outline">キャンセル</Button>
+              </SheetClose>
+            </SheetFooter>
+          </form>
+        </Form>
+      </SheetContent>
+    </Sheet>
   );
 }

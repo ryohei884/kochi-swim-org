@@ -1,14 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,7 +25,18 @@ import { toast } from "sonner";
 import { createCategory } from "@/lib/actions";
 import { categoryPermission } from "@/lib/permissions";
 
-import { redirect, RedirectType } from "next/navigation";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+  SheetFooter,
+} from "@/components/ui/sheet";
+import { PlusIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const formSchema = z.object({
   name: z
@@ -52,7 +62,13 @@ export const formSchema = z.object({
 
 export type formSchemaType = z.infer<typeof formSchema>;
 
-export default function CategoryCreateForm() {
+interface Props {
+  fetchListData: () => Promise<void>;
+}
+
+export default function CategoryCreateForm(props: Props) {
+  const { fetchListData } = props;
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -77,8 +93,8 @@ export default function CategoryCreateForm() {
         onClick: () => console.log("Undo"),
       },
     });
-
-    redirect("./list", RedirectType.push);
+    fetchListData();
+    setDialogOpen(false);
   };
 
   const onError: SubmitErrorHandler<formSchemaType> = (errors) => {
@@ -92,82 +108,96 @@ export default function CategoryCreateForm() {
   };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit, onError)}
-        className="space-y-8"
-      >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>カテゴリ名</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="カテゴリ名" {...field} />
-              </FormControl>
-              <FormDescription>カテゴリ名です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="link"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>リンク文字列</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="リンク文字列" {...field} />
-              </FormControl>
-              <FormDescription>
-                リンクURLに用いられる文字列です。
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="order"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>表示順</FormLabel>
-              <FormControl>
-                <Input type="number" placeholder="表示順" {...field} />
-              </FormControl>
-              <FormDescription>カテゴリを表示する順番です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="permission"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>表示設定</FormLabel>
-              <FormControl>
-                <Select onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="表示設定" {...field} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categoryPermission.map((value, index) => (
-                      <SelectItem key={index} value={String(value.range)}>
-                        {value.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormDescription>表示対象者の設定です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">作成</Button>
-      </form>
-    </Form>
+    <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
+      <SheetTrigger className="align-middle" asChild>
+        <Button variant="outline" size="sm">
+          <PlusIcon /> カテゴリー作成
+        </Button>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>カテゴリー作成</SheetTitle>
+          <SheetDescription className="sr-only">
+            カテゴリー作成画面
+          </SheetDescription>
+        </SheetHeader>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit, onError)}
+            className="space-y-8 p-4"
+          >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>カテゴリ名</FormLabel>
+                  <FormControl>
+                    <Input type="text" placeholder="カテゴリ名" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="link"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>リンク文字列</FormLabel>
+                  <FormControl>
+                    <Input type="text" placeholder="リンク文字列" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="order"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>表示順</FormLabel>
+                  <FormControl>
+                    <Input type="number" placeholder="表示順" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="permission"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>表示設定</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="表示設定" {...field} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categoryPermission.map((value, index) => (
+                          <SelectItem key={index} value={String(value.range)}>
+                            {value.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <SheetFooter className="p-0">
+              <Button type="submit">作成</Button>
+              <SheetClose asChild>
+                <Button variant="outline">キャンセル</Button>
+              </SheetClose>
+            </SheetFooter>
+          </form>
+        </Form>
+      </SheetContent>
+    </Sheet>
   );
 }
