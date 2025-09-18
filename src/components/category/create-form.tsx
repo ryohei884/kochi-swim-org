@@ -24,7 +24,6 @@ import {
 import { toast } from "sonner";
 import { createCategory } from "@/lib/actions";
 import { categoryPermission } from "@/lib/permissions";
-
 import {
   Sheet,
   SheetContent,
@@ -61,9 +60,18 @@ export const formSchema = z.object({
 });
 
 export type formSchemaType = z.infer<typeof formSchema>;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const extendCategoryUpdateFormSchema = formSchema.extend({
+  categoryId: z.string().nonoptional(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+export type extendCategoryUpdateFormSchemaType = z.infer<
+  typeof extendCategoryUpdateFormSchema
+>;
 
 interface Props {
-  fetchListData: () => Promise<void>;
+  fetchListData: (data: extendCategoryUpdateFormSchemaType) => Promise<void>;
 }
 
 export default function CategoryCreateForm(props: Props) {
@@ -82,9 +90,7 @@ export default function CategoryCreateForm(props: Props) {
   const onSubmit: SubmitHandler<formSchemaType> = async (
     data: formSchemaType,
   ) => {
-    console.log(data);
-
-    await createCategory(data);
+    const res = await createCategory(data);
 
     toast("You submitted the following values", {
       description: <div>{JSON.stringify(data, null, 2)}</div>,
@@ -93,7 +99,7 @@ export default function CategoryCreateForm(props: Props) {
         onClick: () => console.log("Undo"),
       },
     });
-    fetchListData();
+    fetchListData(res);
     setDialogOpen(false);
   };
 

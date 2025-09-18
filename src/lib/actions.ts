@@ -14,7 +14,7 @@ export async function getCategoryById(id: string) {
 }
 
 export async function createCategory(data: categoryCreateFormSchema) {
-  await prisma.category.create({
+  const res = await prisma.category.create({
     data: {
       name: data.name,
       link: data.link,
@@ -22,10 +22,11 @@ export async function createCategory(data: categoryCreateFormSchema) {
       permission: data.permission,
     },
   });
+  return res;
 }
 
 export async function updateCategory(data: omitCategoryUpdateFormSchemaType) {
-  await prisma.category.update({
+  const res = await prisma.category.update({
     where: {
       categoryId: data.categoryId,
     },
@@ -37,6 +38,7 @@ export async function updateCategory(data: omitCategoryUpdateFormSchemaType) {
       permission: data.permission,
     },
   });
+  return res;
 }
 
 export async function getCategoryList() {

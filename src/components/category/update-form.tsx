@@ -92,12 +92,13 @@ const defaultValues: formSchemaType = {
 
 interface Props {
   id: string;
-  fetchListData: () => Promise<void>;
+  fetchListData: (data: formSchemaType) => Promise<void>;
 }
 
 export default function CategoryUpdateForm(props: Props) {
   const { id, fetchListData } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
@@ -107,7 +108,7 @@ export default function CategoryUpdateForm(props: Props) {
     const res = await getCategoryById(id);
     if (res !== null) {
       form.reset(res);
-      console.log(res);
+      setIsReady(true);
     }
   };
 
@@ -120,9 +121,7 @@ export default function CategoryUpdateForm(props: Props) {
   const onSubmit: SubmitHandler<formSchemaType> = async (
     data: omitCategoryUpdateFormSchemaType,
   ) => {
-    console.log(data);
-
-    await updateCategory(data);
+    const res = await updateCategory(data);
 
     toast("You submitted the following values", {
       description: <div>{JSON.stringify(data, null, 2)}</div>,
@@ -131,7 +130,7 @@ export default function CategoryUpdateForm(props: Props) {
         onClick: () => console.log("Undo"),
       },
     });
-    fetchListData();
+    fetchListData(res);
     setDialogOpen(false);
   };
 
@@ -170,11 +169,11 @@ export default function CategoryUpdateForm(props: Props) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>カテゴリID</FormLabel>
-                  <FormControl hidden={!form.formState.isReady}>
+                  <FormControl hidden={!isReady}>
                     <Input type="text" {...field} disabled />
                   </FormControl>
                   <Skeleton
-                    hidden={form.formState.isReady}
+                    hidden={isReady}
                     className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
                   />
                   <FormMessage />
@@ -187,11 +186,11 @@ export default function CategoryUpdateForm(props: Props) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>カテゴリ名</FormLabel>
-                  <FormControl hidden={!form.formState.isReady}>
+                  <FormControl hidden={!isReady}>
                     <Input type="text" {...field} />
                   </FormControl>
                   <Skeleton
-                    hidden={form.formState.isReady}
+                    hidden={isReady}
                     className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
                   />
                   <FormMessage />
@@ -204,11 +203,11 @@ export default function CategoryUpdateForm(props: Props) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>リンク文字列</FormLabel>
-                  <FormControl hidden={!form.formState.isReady}>
+                  <FormControl hidden={!isReady}>
                     <Input type="text" {...field} />
                   </FormControl>
                   <Skeleton
-                    hidden={form.formState.isReady}
+                    hidden={isReady}
                     className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
                   />
                   <FormMessage />
@@ -221,11 +220,11 @@ export default function CategoryUpdateForm(props: Props) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>表示順</FormLabel>
-                  <FormControl hidden={!form.formState.isReady}>
+                  <FormControl hidden={!isReady}>
                     <Input type="number" {...field} />
                   </FormControl>
                   <Skeleton
-                    hidden={form.formState.isReady}
+                    hidden={isReady}
                     className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
                   />
                   <FormMessage />
@@ -238,7 +237,7 @@ export default function CategoryUpdateForm(props: Props) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>表示設定</FormLabel>
-                  <div hidden={!form.formState.isReady}>
+                  <div hidden={!isReady}>
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
@@ -259,7 +258,7 @@ export default function CategoryUpdateForm(props: Props) {
                   </div>
                   <Skeleton
                     className="flex h-9 items-center justify-end border border-input px-3 py-2 [&amp;&gt;span]:line-clamp-1 w-full"
-                    hidden={form.formState.isReady}
+                    hidden={isReady}
                   >
                     <ChevronDownIcon className="size-4 opacity-50" />
                   </Skeleton>
@@ -280,7 +279,7 @@ export default function CategoryUpdateForm(props: Props) {
                       !field.value && "text-muted-foreground",
                     )}
                     disabled
-                    hidden={!form.formState.isReady}
+                    hidden={!isReady}
                   >
                     {field.value ? (
                       format(field.value, "PPP", { locale: ja })
@@ -290,7 +289,7 @@ export default function CategoryUpdateForm(props: Props) {
                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                   </Button>
                   <Skeleton
-                    hidden={form.formState.isReady}
+                    hidden={isReady}
                     className="w-[240px] pl-3 text-left font-normal flex h-9 border border-input px-3 py-2 file:border-0 max-w-full"
                   >
                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -312,7 +311,7 @@ export default function CategoryUpdateForm(props: Props) {
                       !field.value && "text-muted-foreground",
                     )}
                     disabled
-                    hidden={!form.formState.isReady}
+                    hidden={!isReady}
                   >
                     {field.value ? (
                       format(field.value, "PPP", { locale: ja })
@@ -322,7 +321,7 @@ export default function CategoryUpdateForm(props: Props) {
                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                   </Button>
                   <Skeleton
-                    hidden={form.formState.isReady}
+                    hidden={isReady}
                     className="w-[240px] pl-3 text-left font-normal flex h-9 border border-input px-3 py-2 file:border-0 max-w-full"
                   >
                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
