@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/prisma";
+import { auth } from "@/auth";
 
 import { formSchemaType as categoryCreateFormSchema } from "@/components/category/create-form";
 import { omitCategoryUpdateFormSchemaType } from "@/components/category/update-form";
@@ -14,31 +15,61 @@ export async function getCategoryById(id: string) {
 }
 
 export async function createCategory(data: categoryCreateFormSchema) {
-  const res = await prisma.category.create({
-    data: {
-      name: data.name,
-      link: data.link,
-      order: data.order,
-      permission: data.permission,
-    },
-  });
-  return res;
+  const session = await auth();
+  if (!session?.user?.id) {
+    return {
+      name: "ERROR",
+      link: "ERROR",
+      order: 0,
+      permission: 0,
+      categoryId: "ERROR",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      createdUserId: "ERROR",
+    };
+  } else {
+    const res = await prisma.category.create({
+      data: {
+        name: data.name,
+        link: data.link,
+        order: data.order,
+        permission: data.permission,
+        createdUserId: session?.user?.id,
+      },
+    });
+    return res;
+  }
 }
 
 export async function updateCategory(data: omitCategoryUpdateFormSchemaType) {
-  const res = await prisma.category.update({
-    where: {
-      categoryId: data.categoryId,
-    },
-    data: {
-      categoryId: data.categoryId,
-      name: data.name,
-      link: data.link,
-      order: data.order,
-      permission: data.permission,
-    },
-  });
-  return res;
+  const session = await auth();
+  if (!session?.user?.id) {
+    return {
+      name: "ERROR",
+      link: "ERROR",
+      order: 0,
+      permission: 0,
+      categoryId: "ERROR",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      createdUserId: "ERROR",
+    };
+  } else {
+    const res = await prisma.category.update({
+      where: {
+        categoryId: data.categoryId,
+      },
+      data: {
+        categoryId: data.categoryId,
+        name: data.name,
+        link: data.link,
+        order: data.order,
+        permission: data.permission,
+        createdUserId: session?.user?.id,
+      },
+    });
+    return res;
+  }
 }
 
 export async function getCategoryList() {

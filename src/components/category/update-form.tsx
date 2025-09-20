@@ -68,6 +68,7 @@ export const formSchema = z.object({
   permission: z.transform(Number).pipe(z.number().positive()),
   createdAt: z.date(),
   updatedAt: z.date(),
+  createdUserId: z.string(),
 });
 
 export type formSchemaType = z.infer<typeof formSchema>;
@@ -75,6 +76,7 @@ export type formSchemaType = z.infer<typeof formSchema>;
 const omitCategoryUpdateFormSchema = formSchema.omit({
   createdAt: true,
   updatedAt: true,
+  createdUserId: true,
 });
 export type omitCategoryUpdateFormSchemaType = z.infer<
   typeof omitCategoryUpdateFormSchema
@@ -88,6 +90,7 @@ const defaultValues: formSchemaType = {
   permission: 0,
   createdAt: new Date(),
   updatedAt: new Date(),
+  createdUserId: "",
 };
 
 interface Props {
@@ -262,6 +265,23 @@ export default function CategoryUpdateForm(props: Props) {
                   >
                     <ChevronDownIcon className="size-4 opacity-50" />
                   </Skeleton>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="createdUserId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>作成者</FormLabel>
+                  <FormControl hidden={!isReady}>
+                    <Input type="text" {...field} disabled />
+                  </FormControl>
+                  <Skeleton
+                    hidden={isReady}
+                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                  />
                   <FormMessage />
                 </FormItem>
               )}

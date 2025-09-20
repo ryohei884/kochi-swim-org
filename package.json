@@ -8,7 +8,7 @@
     "start": "next start",
     "postinstall": "prisma generate --no-engine",
     "lint": "eslint --fix src",
-    "format": "npx prettier --write src"
+    "format": "npx prettier --write src && npx prisma format"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",

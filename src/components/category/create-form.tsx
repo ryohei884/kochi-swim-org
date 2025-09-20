@@ -65,6 +65,7 @@ const extendCategoryUpdateFormSchema = formSchema.extend({
   categoryId: z.string().nonoptional(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  createdUserId: z.string(),
 });
 export type extendCategoryUpdateFormSchemaType = z.infer<
   typeof extendCategoryUpdateFormSchema
@@ -76,6 +77,7 @@ interface Props {
 
 export default function CategoryCreateForm(props: Props) {
   const { fetchListData } = props;
+
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),

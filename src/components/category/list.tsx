@@ -27,6 +27,7 @@ export type dataType = {
   permission: number;
   createdAt: Date;
   updatedAt: Date;
+  createdUserId: string;
 };
 
 import { toast } from "sonner";
@@ -82,6 +83,7 @@ export default function CategoryList() {
             <TableHead>表示対象者</TableHead>
             <TableHead>作成日</TableHead>
             <TableHead>最終更新日</TableHead>
+            <TableHead>作成者ID</TableHead>
             <TableHead className="flex-none text-center w-12">変更</TableHead>
             <TableHead className="flex-none text-center w-12">削除</TableHead>
           </TableRow>
@@ -93,6 +95,9 @@ export default function CategoryList() {
                 for (let i = 0; i < dataNum; i++) {
                   rows.push(
                     <TableRow key={i}>
+                      <TableCell>
+                        <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                      </TableCell>
                       <TableCell>
                         <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                       </TableCell>
@@ -156,6 +161,7 @@ export default function CategoryList() {
                     <TableCell>
                       {format(value.updatedAt, "PPP", { locale: ja })}
                     </TableCell>
+                    <TableCell>{value.createdUserId}</TableCell>
                     <TableCell className="flex-none text-center w-12">
                       <UpdateForm
                         key={value.categoryId}
