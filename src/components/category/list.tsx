@@ -1,13 +1,15 @@
 "use client";
 
-import { getCategoryList, deleteCategory } from "@/lib/actions";
+import { getList } from "@/lib/category/actions";
+import { categoryWithUserSchemaType } from "@/lib/category/verification";
 import CreateForm from "@/components/category/create-form";
 import UpdateForm from "@/components/category/update-form";
+import ExcludeForm from "@/components/category/exclude-form";
+import ReOrder from "@/components/category/reorder";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import Link from "next/link";
-import { Trash2Icon } from "lucide-react";
 import { categoryPermission } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,49 +20,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-export type dataType = {
-  categoryId: string;
-  name: string;
-  link: string;
-  order: number;
-  permission: number;
-  createdAt: Date;
-  updatedAt: Date;
-  createdUserId: string;
-};
-
-import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CategoryList() {
-  const [data, setData] = useState<dataType[]>([]);
-  const [callbackData, setCallbackData] = useState<dataType | undefined>(
-    undefined,
-  );
+  const [data, setData] = useState<categoryWithUserSchemaType[]>([]);
+  const [callbackData, setCallbackData] = useState<
+    categoryWithUserSchemaType | undefined
+  >(undefined);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(3);
-  const fetchListData = async (data?: dataType) => {
-    setCallbackData(data);
-    const res = await getCategoryList();
+  const [maxOrder, setMaxOrder] = useState<number>(0);
+
+  const fetchListData = async (data?: categoryWithUserSchemaType) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    data && setCallbackData(data);
+    const res = await getList();
     if (res !== null) {
       setData(res);
       setDataNum(res.length);
+      const orders = res.map((value) => value.order);
+      setMaxOrder(Math.max(...orders) + 1);
       setIsReady(true);
-    }
-  };
-
-  const handleClick = async (id: string) => {
-    const res = await deleteCategory(id);
-    if (res !== null) {
-      fetchListData();
-      toast("You delete the following values", {
-        description: <div>{JSON.stringify(res, null, 2)}</div>,
-        action: {
-          label: "Undo",
-          onClick: () => console.log("Undo"),
-        },
-      });
     }
   };
 
@@ -71,7 +51,8 @@ export default function CategoryList() {
   return (
     <>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight p-2 flex justify-between">
-        カテゴリー <CreateForm fetchListData={fetchListData} />
+        カテゴリー{" "}
+        <CreateForm fetchListData={fetchListData} maxOrder={maxOrder} />
       </h4>
       <hr />
       <Table>
@@ -83,7 +64,8 @@ export default function CategoryList() {
             <TableHead>表示対象者</TableHead>
             <TableHead>作成日</TableHead>
             <TableHead>最終更新日</TableHead>
-            <TableHead>作成者ID</TableHead>
+            <TableHead>作成者</TableHead>
+            <TableHead>更新者</TableHead>
             <TableHead className="flex-none text-center w-12">変更</TableHead>
             <TableHead className="flex-none text-center w-12">削除</TableHead>
           </TableRow>
@@ -95,6 +77,9 @@ export default function CategoryList() {
                 for (let i = 0; i < dataNum; i++) {
                   rows.push(
                     <TableRow key={i}>
+                      <TableCell>
+                        <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                      </TableCell>
                       <TableCell>
                         <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                       </TableCell>
@@ -161,22 +146,21 @@ export default function CategoryList() {
                     <TableCell>
                       {format(value.updatedAt, "PPP", { locale: ja })}
                     </TableCell>
-                    <TableCell>{value.createdUserId}</TableCell>
+                    <TableCell>{value.createdUser.name}</TableCell>
+                    <TableCell>{value.updatedUser?.name}</TableCell>
                     <TableCell className="flex-none text-center w-12">
                       <UpdateForm
                         key={value.categoryId}
-                        id={value.categoryId}
+                        categoryId={value.categoryId}
                         fetchListData={fetchListData}
                       />
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      <Button
-                        onClick={() => handleClick(value.categoryId)}
-                        variant="ghost"
-                        size="sm"
-                      >
-                        <Trash2Icon />
-                      </Button>
+                      <ExcludeForm
+                        key={value.categoryId}
+                        categoryId={value.categoryId}
+                        fetchListData={fetchListData}
+                      />
                     </TableCell>
                   </TableRow>
                 );
@@ -184,6 +168,7 @@ export default function CategoryList() {
         </TableBody>
       </Table>
       <hr />
+      <ReOrder fetchListData={fetchListData} />
     </>
   );
 }

@@ -15,13 +15,14 @@ model User {
   email         String          @unique
   emailVerified DateTime?
   image         String?
-  role          String?
+  role          String          @default("user")
   accounts      Account[]
   sessions      Session[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
-  Category Category[]
+  categoryCreated Category[] @relation(name: "createdUserId")
+  categoryUpdated Category[] @relation(name: "updatedUserId")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -91,6 +92,7 @@ model Category {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   createdUserId String
-
-  user User @relation(fields: [createdUserId], references: [id])
+  updatedUserId String?
+  createdUser   User     @relation(name: "createdUserId", fields: [createdUserId], references: [id])
+  updatedUser   User?    @relation(name: "updatedUserId", fields: [updatedUserId], references: [id])
 }

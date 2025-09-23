@@ -5,7 +5,7 @@ import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  categoryUpdateSchemaType,
+  categoryExcludeSchemaType,
   categoryWithUserSchema,
   categoryWithUserSchemaType,
   categoryWithUserSchemaDV,
@@ -21,21 +21,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { getById, update } from "@/lib/category/actions";
+import { getById, exclude } from "@/lib/category/actions";
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { CalendarIcon, ChevronDownIcon } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -46,14 +38,14 @@ import {
   SheetClose,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { SettingsIcon } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 
 interface Props {
   categoryId: string;
-  fetchListData: (data: categoryWithUserSchemaType) => Promise<void>;
+  fetchListData: () => Promise<void>;
 }
 
-export default function CategoryUpdateForm(props: Props) {
+export default function CategoryExcludeForm(props: Props) {
   const { categoryId, fetchListData } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -77,17 +69,17 @@ export default function CategoryUpdateForm(props: Props) {
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<categoryWithUserSchemaType> = async (
-    data: categoryUpdateSchemaType,
+    data: categoryExcludeSchemaType,
   ) => {
-    const res = await update(data);
+    await exclude(data);
 
-    toast("更新しました。", {
+    toast("削除しました。", {
       action: {
         label: "Undo",
         onClick: () => console.log("Undo"),
       },
     });
-    fetchListData(res);
+    fetchListData();
     setDialogOpen(false);
   };
 
@@ -105,14 +97,14 @@ export default function CategoryUpdateForm(props: Props) {
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
         <Button variant="ghost" size="sm">
-          <SettingsIcon />
+          <Trash2Icon />
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>カテゴリー編集</SheetTitle>
+          <SheetTitle>カテゴリー削除</SheetTitle>
           <SheetDescription className="sr-only">
-            カテゴリー編集画面
+            カテゴリー削除画面
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
@@ -146,7 +138,9 @@ export default function CategoryUpdateForm(props: Props) {
                 <FormItem>
                   <FormLabel>カテゴリ名</FormLabel>
                   <FormControl hidden={!isReady}>
-                    <Input type="text" {...field} />
+                    <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                      {field.value}
+                    </div>
                   </FormControl>
                   <Skeleton
                     hidden={isReady}
@@ -163,7 +157,9 @@ export default function CategoryUpdateForm(props: Props) {
                 <FormItem>
                   <FormLabel>リンク文字列</FormLabel>
                   <FormControl hidden={!isReady}>
-                    <Input type="text" {...field} />
+                    <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                      {field.value}
+                    </div>
                   </FormControl>
                   <Skeleton
                     hidden={isReady}
@@ -180,7 +176,9 @@ export default function CategoryUpdateForm(props: Props) {
                 <FormItem>
                   <FormLabel>表示順</FormLabel>
                   <FormControl hidden={!isReady}>
-                    <Input type="number" {...field} />
+                    <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                      {field.value}
+                    </div>
                   </FormControl>
                   <Skeleton
                     hidden={isReady}
@@ -198,21 +196,13 @@ export default function CategoryUpdateForm(props: Props) {
                   <FormLabel>表示設定</FormLabel>
                   <div hidden={!isReady}>
                     <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={String(field.value)}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categoryPermission.map((value, index) => (
-                            <SelectItem key={index} value={String(value.range)}>
-                              {value.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                        {
+                          categoryPermission.find(
+                            (v) => v.range === field.value,
+                          )?.label
+                        }
+                      </div>
                     </FormControl>
                   </div>
                   <Skeleton
@@ -324,7 +314,7 @@ export default function CategoryUpdateForm(props: Props) {
               )}
             />
             <SheetFooter className="p-0">
-              <Button type="submit">更新</Button>
+              <Button type="submit">削除</Button>
               <SheetClose asChild>
                 <Button variant="outline">キャンセル</Button>
               </SheetClose>

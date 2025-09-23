@@ -1,9 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useEffect } from "react";
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
-import { z } from "zod";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { create } from "@/lib/category/actions";
+import { categoryPermission } from "@/lib/permissions";
+import {
+  categoryWithUserSchemaType,
+  categoryCreateSchemaType,
+  categoryCreateSchema,
+  categoryCreateSchemaDV,
+} from "@/lib/category/verification";
 
 import {
   Form,
@@ -22,8 +30,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { createCategory } from "@/lib/actions";
-import { categoryPermission } from "@/lib/permissions";
 import {
   Sheet,
   SheetContent,
@@ -34,68 +40,34 @@ import {
   SheetClose,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-export const formSchema = z.object({
-  name: z
-    .string()
-    .min(1, {
-      message: "カテゴリー名は1文字以上で入力してください。",
-    })
-    .max(128, {
-      message: "カテゴリー名は128文字以下で入力してください。",
-    }),
-  link: z
-    .string()
-    .min(1, {
-      message: "URLは1文字以上で入力してください。",
-    })
-    .max(16, {
-      message: "URLは16文字以下で入力してください。",
-    })
-    .regex(/^\w*$/, { message: "半角英数字のみ使えます。" }),
-  order: z.transform(Number).pipe(z.number().positive()),
-  permission: z.transform(Number).pipe(z.number().positive()),
-});
-
-export type formSchemaType = z.infer<typeof formSchema>;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const extendCategoryUpdateFormSchema = formSchema.extend({
-  categoryId: z.string().nonoptional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  createdUserId: z.string(),
-});
-export type extendCategoryUpdateFormSchemaType = z.infer<
-  typeof extendCategoryUpdateFormSchema
->;
+import { PlusIcon } from "lucide-react";
 
 interface Props {
-  fetchListData: (data: extendCategoryUpdateFormSchemaType) => Promise<void>;
+  fetchListData: (data: categoryWithUserSchemaType) => Promise<void>;
+  maxOrder: number;
 }
 
 export default function CategoryCreateForm(props: Props) {
-  const { fetchListData } = props;
-
+  const { fetchListData, maxOrder } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const form = useForm<formSchemaType>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      link: "",
-      order: 1,
-      permission: 0,
-    },
+  const form = useForm<categoryCreateSchemaType>({
+    resolver: zodResolver(categoryCreateSchema),
+    defaultValues: categoryCreateSchemaDV,
   });
 
-  const onSubmit: SubmitHandler<formSchemaType> = async (
-    data: formSchemaType,
-  ) => {
-    const res = await createCategory(data);
+  useEffect(() => {
+    form.setValue("order", maxOrder);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maxOrder]);
 
-    toast("You submitted the following values", {
-      description: <div>{JSON.stringify(data, null, 2)}</div>,
+  const onSubmit: SubmitHandler<categoryCreateSchemaType> = async (
+    data: categoryCreateSchemaType,
+  ) => {
+    const res = await create(data);
+
+    toast("作成しました。", {
+      // description: <div>{JSON.stringify(data, null, 2)}</div>,
       action: {
         label: "Undo",
         onClick: () => console.log("Undo"),
@@ -103,10 +75,11 @@ export default function CategoryCreateForm(props: Props) {
     });
     fetchListData(res);
     setDialogOpen(false);
+    form.reset();
   };
 
-  const onError: SubmitErrorHandler<formSchemaType> = (errors) => {
-    toast("ERROR!!!", {
+  const onError: SubmitErrorHandler<categoryCreateSchemaType> = (errors) => {
+    toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
         label: "Undo",
