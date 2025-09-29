@@ -27,7 +27,7 @@ export const userSchemaDV: userSchemaType = {
 
 // categorySchema
 export const categorySchema = z.object({
-  categoryId: z.string().nonoptional("作成者IDを入力してください。"),
+  id: z.string().nonoptional("作成者IDを入力してください。"),
   name: z
     .string()
     .min(1, {
@@ -53,7 +53,7 @@ export const categorySchema = z.object({
         .int("整数を入力してください。")
         .positive("自然数を入力してください。"),
     ),
-  permission: z
+  role: z
     .transform(Number)
     .pipe(
       z
@@ -70,11 +70,11 @@ export const categorySchema = z.object({
 export type categorySchemaType = z.infer<typeof categorySchema>;
 
 export const categorySchemaDV: categorySchemaType = {
-  categoryId: "",
+  id: "",
   name: "",
   link: "",
   order: 0,
-  permission: 0,
+  role: 0,
   createdAt: new Date(),
   updatedAt: new Date(),
   createdUserId: "",
@@ -97,7 +97,7 @@ export const categoryWithUserSchemaDV: categoryWithUserSchemaType = {
 
 // categoryCreateSchema
 export const categoryCreateSchema = categorySchema.omit({
-  categoryId: true,
+  id: true,
   createdAt: true,
   updatedAt: true,
   createdUserId: true,
@@ -110,7 +110,7 @@ export const categoryCreateSchemaDV: categoryCreateSchemaType = {
   name: categorySchemaDV.name,
   link: categorySchemaDV.name,
   order: categorySchemaDV.order,
-  permission: categorySchemaDV.permission,
+  role: categorySchemaDV.role,
 };
 
 // categoryUpdateSchema
@@ -125,11 +125,11 @@ export const categoryUpdateSchema = categorySchema.omit({
 export type categoryUpdateSchemaType = z.infer<typeof categoryUpdateSchema>;
 
 export const categoryUpdateSchemaDV: categoryUpdateSchemaType = {
-  categoryId: categorySchemaDV.categoryId,
+  id: categorySchemaDV.id,
   name: categorySchemaDV.name,
   link: categorySchemaDV.name,
   order: categorySchemaDV.order,
-  permission: categorySchemaDV.permission,
+  role: categorySchemaDV.role,
   createdUserId: categorySchemaDV.createdUserId,
 };
 
@@ -138,7 +138,7 @@ export const categoryGetByIdSchema = categorySchema.omit({
   name: true,
   link: true,
   order: true,
-  permission: true,
+  role: true,
   createdAt: true,
   updatedAt: true,
   createdUserId: true,
@@ -150,7 +150,7 @@ export const categoryGetByIdSchema = categorySchema.omit({
 export type categoryGetByIdSchemaType = z.infer<typeof categoryGetByIdSchema>;
 
 export const categoryGetByIdSchemaDV: categoryGetByIdSchemaType = {
-  categoryId: categorySchemaDV.categoryId,
+  id: categorySchemaDV.id,
 };
 
 // categoryExcludeSchema
@@ -158,7 +158,7 @@ export const categoryExcludeSchema = categorySchema.omit({
   name: true,
   link: true,
   order: true,
-  permission: true,
+  role: true,
   createdAt: true,
   updatedAt: true,
   createdUserId: true,
@@ -170,5 +170,5 @@ export const categoryExcludeSchema = categorySchema.omit({
 export type categoryExcludeSchemaType = z.infer<typeof categoryExcludeSchema>;
 
 export const categoryExcludeSchemaDV: categoryExcludeSchemaType = {
-  categoryId: categorySchemaDV.categoryId,
+  id: categorySchemaDV.id,
 };

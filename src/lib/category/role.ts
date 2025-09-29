@@ -1,9 +1,9 @@
-type categoryPermissionType = {
+type categoryDisplayType = {
   range: number;
   label: string;
 };
 
-export const categoryPermission: categoryPermissionType[] = [
+export const categoryDisplay: categoryDisplayType[] = [
   { range: 0, label: "未設定" },
   { range: 1, label: "誰にも表示しない" },
   { range: 2, label: "管理者にのみに表示する" },

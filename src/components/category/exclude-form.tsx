@@ -10,7 +10,7 @@ import {
   categoryWithUserSchemaType,
   categoryWithUserSchemaDV,
 } from "@/lib/category/verification";
-import { categoryPermission } from "@/lib/permissions";
+import { categoryDisplay } from "@/lib/category/role";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +27,7 @@ import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { CalendarIcon, ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -41,12 +41,12 @@ import {
 import { Trash2Icon } from "lucide-react";
 
 interface Props {
-  categoryId: string;
+  id: string;
   fetchListData: () => Promise<void>;
 }
 
 export default function CategoryExcludeForm(props: Props) {
-  const { categoryId, fetchListData } = props;
+  const { id, fetchListData } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
   const form = useForm<categoryWithUserSchemaType>({
@@ -54,8 +54,9 @@ export default function CategoryExcludeForm(props: Props) {
     defaultValues: categoryWithUserSchemaDV,
   });
 
-  const fetchData = async (categoryId: string) => {
-    const res = await getById({ categoryId: categoryId });
+  const fetchData = async (id: string) => {
+    setIsReady(false);
+    const res = await getById({ id: id });
     if (res !== null) {
       form.reset(res);
       setIsReady(true);
@@ -64,7 +65,7 @@ export default function CategoryExcludeForm(props: Props) {
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    dialogOpen && fetchData(categoryId);
+    dialogOpen && fetchData(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
 
@@ -102,7 +103,7 @@ export default function CategoryExcludeForm(props: Props) {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>カテゴリー削除</SheetTitle>
+          <SheetTitle>カテゴリーー削除</SheetTitle>
           <SheetDescription className="sr-only">
             カテゴリー削除画面
           </SheetDescription>
@@ -114,10 +115,10 @@ export default function CategoryExcludeForm(props: Props) {
           >
             <FormField
               control={form.control}
-              name="categoryId"
+              name="id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>カテゴリID</FormLabel>
+                  <FormLabel>カテゴリーID</FormLabel>
                   <FormControl hidden={!isReady}>
                     <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                       {field.value}
@@ -136,7 +137,7 @@ export default function CategoryExcludeForm(props: Props) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>カテゴリ名</FormLabel>
+                  <FormLabel>カテゴリー名</FormLabel>
                   <FormControl hidden={!isReady}>
                     <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                       {field.value}
@@ -190,7 +191,7 @@ export default function CategoryExcludeForm(props: Props) {
             />
             <FormField
               control={form.control}
-              name="permission"
+              name="role"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>表示設定</FormLabel>
@@ -198,9 +199,8 @@ export default function CategoryExcludeForm(props: Props) {
                     <FormControl>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {
-                          categoryPermission.find(
-                            (v) => v.range === field.value,
-                          )?.label
+                          categoryDisplay.find((v) => v.range === field.value)
+                            ?.label
                         }
                       </div>
                     </FormControl>
@@ -273,7 +273,10 @@ export default function CategoryExcludeForm(props: Props) {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>作成日</FormLabel>
-                  <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                  <div
+                    hidden={!isReady}
+                    className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"
+                  >
                     {field.value ? (
                       format(field.value, "PPP", { locale: ja })
                     ) : (
@@ -282,10 +285,8 @@ export default function CategoryExcludeForm(props: Props) {
                   </div>
                   <Skeleton
                     hidden={isReady}
-                    className="w-[240px] pl-3 text-left font-normal flex h-9 border border-input px-3 py-2 file:border-0 max-w-full"
-                  >
-                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                  </Skeleton>
+                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -296,7 +297,10 @@ export default function CategoryExcludeForm(props: Props) {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>最終更新日</FormLabel>
-                  <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                  <div
+                    hidden={!isReady}
+                    className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"
+                  >
                     {field.value ? (
                       format(field.value, "PPP", { locale: ja })
                     ) : (
@@ -305,16 +309,16 @@ export default function CategoryExcludeForm(props: Props) {
                   </div>
                   <Skeleton
                     hidden={isReady}
-                    className="w-[240px] pl-3 text-left font-normal flex h-9 border border-input px-3 py-2 file:border-0 max-w-full"
-                  >
-                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                  </Skeleton>
+                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                  />
                   <FormMessage />
                 </FormItem>
               )}
             />
             <SheetFooter className="p-0">
-              <Button type="submit">削除</Button>
+              <Button type="submit" disabled={!isReady}>
+                削除
+              </Button>
               <SheetClose asChild>
                 <Button variant="outline">キャンセル</Button>
               </SheetClose>

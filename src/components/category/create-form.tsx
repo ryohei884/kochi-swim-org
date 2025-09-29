@@ -5,7 +5,7 @@ import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { create } from "@/lib/category/actions";
-import { categoryPermission } from "@/lib/permissions";
+import { categoryDisplay } from "@/lib/category/role";
 import {
   categoryWithUserSchemaType,
   categoryCreateSchemaType,
@@ -99,7 +99,7 @@ export default function CategoryCreateForm(props: Props) {
         <SheetHeader>
           <SheetTitle>カテゴリー作成</SheetTitle>
           <SheetDescription className="sr-only">
-            カテゴリー作成画面
+            カテゴリーー作成画面
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
@@ -112,9 +112,9 @@ export default function CategoryCreateForm(props: Props) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>カテゴリ名</FormLabel>
+                  <FormLabel>カテゴリー名</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="カテゴリ名" {...field} />
+                    <Input type="text" placeholder="カテゴリー名" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -148,7 +148,7 @@ export default function CategoryCreateForm(props: Props) {
             />
             <FormField
               control={form.control}
-              name="permission"
+              name="role"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>表示設定</FormLabel>
@@ -158,7 +158,7 @@ export default function CategoryCreateForm(props: Props) {
                         <SelectValue placeholder="表示設定" {...field} />
                       </SelectTrigger>
                       <SelectContent>
-                        {categoryPermission.map((value, index) => (
+                        {categoryDisplay.map((value, index) => (
                           <SelectItem key={index} value={String(value.range)}>
                             {value.label}
                           </SelectItem>

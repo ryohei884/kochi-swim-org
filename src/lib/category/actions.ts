@@ -9,11 +9,11 @@ import {
 } from "@/lib/category/verification";
 
 export async function getById(prop: categoryGetByIdSchemaType) {
-  const { categoryId } = prop;
+  const { id } = prop;
 
   const res = await prisma.category.findFirst({
     where: {
-      categoryId: categoryId,
+      id: id,
     },
     include: { createdUser: true, updatedUser: true },
   });
@@ -41,7 +41,7 @@ export async function reOrder() {
     for (let i = 0; i < list.length; i++) {
       await prisma.category.update({
         where: {
-          categoryId: list[i].categoryId,
+          id: list[i].id,
         },
         data: {
           order: i + 1,
@@ -52,7 +52,7 @@ export async function reOrder() {
 }
 
 export async function create(prop: categoryCreateSchemaType) {
-  const { name, link, order, permission } = prop;
+  const { name, link, order, role } = prop;
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
@@ -63,7 +63,7 @@ export async function create(prop: categoryCreateSchemaType) {
         name: name,
         link: link,
         order: order,
-        permission: permission,
+        role: role,
         createdUserId: session?.user?.id,
         updatedUserId: null,
       },
@@ -73,13 +73,13 @@ export async function create(prop: categoryCreateSchemaType) {
 }
 
 export async function update(prop: categoryUpdateSchemaType) {
-  const { categoryId, name, link, order, permission, createdUserId } = prop;
+  const { id, name, link, order, role, createdUserId } = prop;
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
   } else {
     const contest = await prisma.category.findFirst({
-      where: { categoryId: categoryId },
+      where: { id: id },
       include: {
         createdUser: true,
         updatedUser: true,
@@ -91,14 +91,14 @@ export async function update(prop: categoryUpdateSchemaType) {
     } else {
       const res = await prisma.category.update({
         where: {
-          categoryId: categoryId,
+          id: id,
         },
         data: {
-          categoryId: categoryId,
+          id: id,
           name: name,
           link: link,
           order: order,
-          permission: permission,
+          role: role,
           createdUserId: createdUserId,
           updatedUserId: session?.user?.id,
         },
@@ -130,13 +130,13 @@ export async function getList() {
 }
 
 export async function exclude(prop: categoryExcludeSchemaType) {
-  const { categoryId } = prop;
+  const { id } = prop;
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
   } else {
     const contest = await prisma.category.findFirst({
-      where: { categoryId: categoryId },
+      where: { id: id },
       include: {
         createdUser: true,
         updatedUser: true,
@@ -146,13 +146,11 @@ export async function exclude(prop: categoryExcludeSchemaType) {
     if (!contest) {
       throw new Error("Category ID does not exist.");
     } else {
-      const res = await prisma.category.delete({
+      await prisma.category.delete({
         where: {
-          categoryId: categoryId,
+          id: id,
         },
       });
-
-      return res;
     }
   }
 }

@@ -5,12 +5,11 @@ import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  categoryUpdateSchemaType,
-  categoryWithUserSchema,
-  categoryWithUserSchemaType,
-  categoryWithUserSchemaDV,
-} from "@/lib/category/verification";
-import { categoryDisplay } from "@/lib/category/role";
+  groupUpdateSchemaType,
+  groupWithUserSchema,
+  groupWithUserSchemaType,
+  groupWithUserSchemaDV,
+} from "@/lib/group/verification";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -23,19 +22,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { getById, update } from "@/lib/category/actions";
+import { getById, update } from "@/lib/group/actions";
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { ChevronDownIcon } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -50,16 +41,16 @@ import { SettingsIcon } from "lucide-react";
 
 interface Props {
   id: string;
-  fetchListData: (data: categoryWithUserSchemaType) => Promise<void>;
+  fetchListData: (data: groupWithUserSchemaType) => Promise<void>;
 }
 
-export default function CategoryUpdateForm(props: Props) {
+export default function GroupUpdateForm(props: Props) {
   const { id, fetchListData } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const form = useForm<categoryWithUserSchemaType>({
-    resolver: zodResolver(categoryWithUserSchema),
-    defaultValues: categoryWithUserSchemaDV,
+  const form = useForm<groupWithUserSchemaType>({
+    resolver: zodResolver(groupWithUserSchema),
+    defaultValues: groupWithUserSchemaDV,
   });
 
   const fetchData = async (id: string) => {
@@ -77,8 +68,8 @@ export default function CategoryUpdateForm(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
 
-  const onSubmit: SubmitHandler<categoryWithUserSchemaType> = async (
-    data: categoryUpdateSchemaType,
+  const onSubmit: SubmitHandler<groupWithUserSchemaType> = async (
+    data: groupUpdateSchemaType,
   ) => {
     const res = await update(data);
 
@@ -92,7 +83,7 @@ export default function CategoryUpdateForm(props: Props) {
     setDialogOpen(false);
   };
 
-  const onError: SubmitErrorHandler<categoryWithUserSchemaType> = (errors) => {
+  const onError: SubmitErrorHandler<groupWithUserSchemaType> = (errors) => {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
@@ -111,9 +102,9 @@ export default function CategoryUpdateForm(props: Props) {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>カテゴリーー編集</SheetTitle>
+          <SheetTitle>グループ編集</SheetTitle>
           <SheetDescription className="sr-only">
-            カテゴリー編集画面
+            グループ編集画面
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
@@ -126,7 +117,7 @@ export default function CategoryUpdateForm(props: Props) {
               name="id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>カテゴリーID</FormLabel>
+                  <FormLabel>グループID</FormLabel>
                   <FormControl hidden={!isReady}>
                     <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                       {field.value}
@@ -145,7 +136,7 @@ export default function CategoryUpdateForm(props: Props) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>カテゴリー名</FormLabel>
+                  <FormLabel>グループ名</FormLabel>
                   <FormControl hidden={!isReady}>
                     <Input type="text" {...field} />
                   </FormControl>
@@ -153,75 +144,6 @@ export default function CategoryUpdateForm(props: Props) {
                     hidden={isReady}
                     className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
                   />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="link"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>リンク文字列</FormLabel>
-                  <FormControl hidden={!isReady}>
-                    <Input type="text" {...field} />
-                  </FormControl>
-                  <Skeleton
-                    hidden={isReady}
-                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="order"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>表示順</FormLabel>
-                  <FormControl hidden={!isReady}>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <Skeleton
-                    hidden={isReady}
-                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>表示設定</FormLabel>
-                  <div hidden={!isReady}>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={String(field.value)}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categoryDisplay.map((value, index) => (
-                            <SelectItem key={index} value={String(value.range)}>
-                              {value.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </div>
-                  <Skeleton
-                    className="flex h-9 items-center justify-end border border-input px-3 py-2 [&amp;&gt;span]:line-clamp-1 w-full"
-                    hidden={isReady}
-                  >
-                    <ChevronDownIcon className="size-4 opacity-50" />
-                  </Skeleton>
                   <FormMessage />
                 </FormItem>
               )}

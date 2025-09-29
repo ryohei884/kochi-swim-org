@@ -21,11 +21,22 @@ model User {
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
-  categoryCreated Category[] @relation(name: "createdUserId")
-  categoryUpdated Category[] @relation(name: "updatedUserId")
+  categoryCreated Category[] @relation(name: "Category.createdUserId")
+  categoryUpdated Category[] @relation(name: "Category.updatedUserId")
+
+  groupCreated Group[] @relation(name: "Group.createdUserId")
+  groupUpdated Group[] @relation(name: "Group.updatedUserId")
+
+  permissionCreated Permission[] @relation(name: "Permission.createdUserId")
+  permissionUpdated Permission[] @relation(name: "Permission.updatedUserId")
+
+  groupMemberCreated GroupMember[] @relation(name: "GroupMember.createdUserId")
+  groupMemberUpdated GroupMember[] @relation(name: "GroupMember.updatedUserId")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  groupMember GroupMember[] @relation(name: "GroupMember.userId")
 }
 
 model Account {
@@ -84,15 +95,68 @@ model Authenticator {
 }
 
 model Category {
-  categoryId    String   @id @default(cuid())
+  id            String   @id @default(cuid())
   name          String
   link          String
   order         Int
-  permission    Int
+  role          Int
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   createdUserId String
   updatedUserId String?
-  createdUser   User     @relation(name: "createdUserId", fields: [createdUserId], references: [id])
-  updatedUser   User?    @relation(name: "updatedUserId", fields: [updatedUserId], references: [id])
+  createdUser   User     @relation(name: "Category.createdUserId", fields: [createdUserId], references: [id])
+  updatedUser   User?    @relation(name: "Category.updatedUserId", fields: [updatedUserId], references: [id])
+
+  permission Permission[] @relation(name: "Permission.categoryId")
+}
+
+model Group {
+  id            String   @id @default(cuid())
+  name          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdUserId String
+  updatedUserId String?
+  createdUser   User     @relation(name: "Group.createdUserId", fields: [createdUserId], references: [id])
+  updatedUser   User?    @relation(name: "Group.updatedUserId", fields: [updatedUserId], references: [id])
+
+  permission  Permission[]  @relation(name: "Permission.groupId")
+  groupMember GroupMember[] @relation(name: "GroupMember.groupId")
+}
+
+model Permission {
+  groupId       String
+  categoryId    String
+  view          Boolean  @default(false)
+  submit        Boolean  @default(false)
+  revise        Boolean  @default(false)
+  exclude       Boolean  @default(false)
+  approve       Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdUserId String
+  updatedUserId String?
+  createdUser   User     @relation(name: "Permission.createdUserId", fields: [createdUserId], references: [id])
+  updatedUser   User?    @relation(name: "Permission.updatedUserId", fields: [updatedUserId], references: [id])
+
+  group    Group    @relation(name: "Permission.groupId", fields: [groupId], references: [id], onDelete: Cascade)
+  category Category @relation(name: "Permission.categoryId", fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([groupId, categoryId])
+}
+
+model GroupMember {
+  groupId       String
+  userId        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdUserId String
+  updatedUserId String?
+  createdUser   User     @relation(name: "GroupMember.createdUserId", fields: [createdUserId], references: [id])
+  updatedUser   User?    @relation(name: "GroupMember.updatedUserId", fields: [updatedUserId], references: [id])
+
+  group Group @relation(name: "GroupMember.groupId", fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(name: "GroupMember.userId", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([groupId, userId])
 }
