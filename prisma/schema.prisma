@@ -33,6 +33,10 @@ model User {
   groupMemberCreated GroupMember[] @relation(name: "GroupMember.createdUserId")
   groupMemberUpdated GroupMember[] @relation(name: "GroupMember.updatedUserId")
 
+  newsCreated   News[] @relation(name: "News.createdUserId")
+  newsRevised   News[] @relation(name: "News.revisedUserId")
+  newsAppproved News[] @relation(name: "News.approvedUserId")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -159,4 +163,24 @@ model GroupMember {
   user  User  @relation(name: "GroupMember.userId", fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([groupId, userId])
+}
+
+model News {
+  id             String    @id @default(cuid())
+  title          String
+  detail         String
+  image          String?
+  fromDate       DateTime  @default(now())
+  toDate         DateTime?
+  link           String?
+  createdUserId  String
+  revisedUserId  String?
+  approvedUserId String?
+  approved       Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  revisedAt      DateTime  @updatedAt
+  approvedAt     DateTime?
+  createdUser    User      @relation(name: "News.createdUserId", fields: [createdUserId], references: [id])
+  revisedUser    User?     @relation(name: "News.revisedUserId", fields: [revisedUserId], references: [id])
+  approvedUser   User?     @relation(name: "News.approvedUserId", fields: [approvedUserId], references: [id])
 }

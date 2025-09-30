@@ -119,6 +119,26 @@ CREATE TABLE "public"."GroupMember" (
     CONSTRAINT "GroupMember_pkey" PRIMARY KEY ("groupId","userId")
 );
 
+-- CreateTable
+CREATE TABLE "public"."News" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "detail" TEXT NOT NULL,
+    "image" TEXT,
+    "fromDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "toDate" TIMESTAMP(3),
+    "link" TEXT,
+    "createdUserId" TEXT NOT NULL,
+    "revisedUserId" TEXT,
+    "approvedUserId" TEXT,
+    "approved" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "revisedAt" TIMESTAMP(3) NOT NULL,
+    "approvedAt" TIMESTAMP(3),
+
+    CONSTRAINT "News_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "public"."User"("email");
 
@@ -172,3 +192,12 @@ ALTER TABLE "public"."GroupMember" ADD CONSTRAINT "GroupMember_groupId_fkey" FOR
 
 -- AddForeignKey
 ALTER TABLE "public"."GroupMember" ADD CONSTRAINT "GroupMember_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."News" ADD CONSTRAINT "News_createdUserId_fkey" FOREIGN KEY ("createdUserId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."News" ADD CONSTRAINT "News_revisedUserId_fkey" FOREIGN KEY ("revisedUserId") REFERENCES "public"."User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."News" ADD CONSTRAINT "News_approvedUserId_fkey" FOREIGN KEY ("approvedUserId") REFERENCES "public"."User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

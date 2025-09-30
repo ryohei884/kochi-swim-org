@@ -1,14 +1,18 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+
 "use client";
+import { useState } from "react";
+// import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
+import { create } from "@/lib/news/actions";
+import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,419 +34,340 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 
-import { Switch } from "@/components/ui/switch";
-
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+  SheetFooter,
+} from "@/components/ui/sheet";
 
-const formSchema = z.object({
-  newsId: z.number().int().nonnegative(),
-  posterId: z.number().int().nonnegative(),
-  title: z
-    .string()
-    .min(2, {
-      message: "題名は2文字以上で入力してください。",
-    })
-    .max(128, {
-      message: "題名は128文字以下で入力してください。",
-    }),
+import {
+  newsCreateOnSubmitSchema,
+  newsCreateOnSubmitSchemaType,
+  newsCreateOnSubmitSchemaDV,
+  newsWithUserSchemaType,
+} from "@/lib/news/verification";
 
-  detail: z
-    .string()
-    .min(2, {
-      message: "本文は2文字以上で入力してください。",
-    })
-    .max(32768, {
-      message: "本文は32768文字以下で入力してください。",
-    }),
-  image: z
-    .file()
-    .min(10_000)
-    .max(1_000_000)
-    .mime(["image/png", "image/jpeg"])
-    .optional(),
-  fromDate: z.date().nonoptional({
-    error: "掲載開始日は必須項目です。",
-  }),
-  toDate: z.date().optional(),
-  link: z.url().optional(),
-  editorId: z.number().int().nonnegative().array(),
-  approverId: z.number().int().nonnegative(),
-  approved: z.boolean(),
-  approvedAt: z.date().optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
+import { PlusIcon } from "lucide-react";
 
-export default function NewsCreateForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      newsId: 0,
-      posterId: 1,
-      title: "",
-      detail: "",
-      image: undefined,
-      fromDate: new Date(),
-      toDate: new Date(),
-      link: undefined,
-      editorId: [0],
-      approverId: 0,
-      approved: false,
-      approvedAt: undefined,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
+import type { PutBlobResult } from "@vercel/blob";
+import { Skeleton } from "../ui/skeleton";
+import { init } from "@paralleldrive/cuid2";
+
+interface Props {
+  fetchListData: (data: newsWithUserSchemaType) => Promise<void>;
+}
+
+export default function NewsCreateForm(props: Props) {
+  const { fetchListData } = props;
+  const [blob, setBlob] = useState<PutBlobResult | null>(null);
+  const [preview, setPreview] = useState("");
+
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [openFromDate, setOpenFromDate] = useState(false);
+  const [openToDate, setOpenToDate] = useState(false);
+
+  const form = useForm<newsCreateOnSubmitSchemaType>({
+    // @ts-expect-error React-Hook-Formのエラーだから無視
+    resolver: zodResolver(newsCreateOnSubmitSchema),
+    defaultValues: newsCreateOnSubmitSchemaDV,
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast("You submitted the following values", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      ),
+  const onSubmit: SubmitHandler<newsCreateOnSubmitSchemaType> = async (
+    data: newsCreateOnSubmitSchemaType,
+  ) => {
+    let newBlob;
+    if (data.image) {
+      newBlob = await uploadImage(data.image);
+    }
+    const res = await create({ ...data, image: newBlob?.url ?? null });
+
+    toast("作成しました。", {
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
     });
+    fetchListData(res);
+    setPreview("");
+    setDialogOpen(false);
+    form.reset();
+  };
+
+  const onError: SubmitErrorHandler<newsCreateOnSubmitSchemaType> = (
+    errors,
+  ) => {
+    toast("エラーが発生しました。", {
+      description: <div>{JSON.stringify(errors, null, 2)}</div>,
+      action: {
+        label: "Undo",
+        onClick: () => console.log(errors),
+      },
+    });
+  };
+
+  const uploadImage = async (file: File) => {
+    if (!file) {
+      throw new Error("No file selected");
+    }
+
+    const filename = init({ length: 8 });
+    const extension = file.name.slice(file.name.lastIndexOf(".") + 1);
+
+    const response = await fetch(
+      `/api/news/image/upload?filename=${filename()}.${extension}`,
+      {
+        method: "POST",
+        body: file,
+      },
+    );
+
+    const newBlob = (await response.json()) as PutBlobResult;
+    setBlob(newBlob);
+
+    return newBlob;
+  };
+
+  function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
+    const dataTransfer = new DataTransfer();
+
+    Array.from(event.target.files!).forEach((image) =>
+      dataTransfer.items.add(image),
+    );
+
+    const files = dataTransfer.files;
+    const displayUrl = URL.createObjectURL(event.target.files![0]);
+
+    return { files, displayUrl };
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="newsId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>ニュースID</FormLabel>
-              <FormControl>
-                <Input type="number" placeholder="ニュースID" {...field} />
-              </FormControl>
-              <FormDescription>記事を特定する連番です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="newsId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>投稿者ID</FormLabel>
-              <FormControl>
-                <Select>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="投稿者ID" {...field} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">林 良平</SelectItem>
-                    <SelectItem value="1">堤 知之</SelectItem>
-                    <SelectItem value="2">三浦 光夫</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormDescription>投稿者のIDです。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>題名</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="題名" {...field} />
-              </FormControl>
-              <FormDescription>
-                ニュース一覧に表示される題名です。
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="detail"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>本文</FormLabel>
-              <FormControl>
-                <Textarea {...field} />
-              </FormControl>
-              <FormDescription>ニュース本文です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="image"
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>イメージ画像</FormLabel>
-              <FormControl>
-                <Input id="picture" type="file" />
-              </FormControl>
-              <FormDescription>イメージ画像です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="fromDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>掲載開始日</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
+    <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
+      <SheetTrigger className="align-middle" asChild>
+        <Button variant="outline" size="sm">
+          <PlusIcon /> ニュース作成
+        </Button>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>ニュース作成</SheetTitle>
+          <SheetDescription className="sr-only">
+            ニュース作成画面
+          </SheetDescription>
+        </SheetHeader>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit, onError)}
+            className="space-y-8 p-4"
+          >
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>題名</FormLabel>
                   <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground",
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP", { locale: ja })
-                      ) : (
-                        <span>日付を選択してください。</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
+                    <Input type="text" placeholder="題名" {...field} />
                   </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    // disabled={(date) => date <= new Date()}
-                    captionLayout="dropdown"
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormDescription>掲載開始日以降に掲載されます。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="toDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>掲載終了日</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="detail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>本文</FormLabel>
                   <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground",
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP", { locale: ja })
-                      ) : (
-                        <span>日付を選択してください。</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
+                    <Textarea {...field} />
                   </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    // disabled={(date) => date <= new Date()}
-                    captionLayout="dropdown"
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormDescription>
-                掲載終了日以降に掲載が取り下げられます。
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="link"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>リンク先</FormLabel>
-              <FormControl>
-                <Select>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="リンク先" {...field} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">ニュース</SelectItem>
-                    <SelectItem value="1">大会情報</SelectItem>
-                    <SelectItem value="2">委員会情報</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormDescription>リンク先です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="editorId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>投稿者ID</FormLabel>
-              <FormControl>
-                <Select>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="編集者ID" {...field} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">林 良平</SelectItem>
-                    <SelectItem value="1">堤 知之</SelectItem>
-                    <SelectItem value="2">三浦 光夫</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormDescription>編集者のIDです。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="approverId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>承認者ID</FormLabel>
-              <FormControl>
-                <Select>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="承認者ID" {...field} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">林 良平</SelectItem>
-                    <SelectItem value="1">堤 知之</SelectItem>
-                    <SelectItem value="2">三浦 光夫</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormDescription>承認者のIDです。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="approved"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-              <div className="space-y-0.5">
-                <FormLabel>承認状態</FormLabel>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="image"
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              render={({ field: { onChange, value, ...rest } }) => (
+                <FormItem>
+                  <FormLabel>イメージ画像</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="image"
+                      type="file"
+                      accept="image/*"
+                      {...rest}
+                      onChange={(event) => {
+                        const { files, displayUrl } = getImageData(event);
+                        setPreview(displayUrl);
+                        onChange(files);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="aspect-video max-w-[560px]">
+              {preview ? (
+                <Image
+                  src={preview}
+                  alt=""
+                  height={100}
+                  width={100}
+                  className="w-full h-full object-contain object-center"
                 />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="approvedAt"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>承認日</FormLabel>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[240px] pl-3 text-left font-normal",
-                  !field.value && "text-muted-foreground",
-                )}
-                disabled
-              >
-                {field.value ? (
-                  format(field.value, "PPP", { locale: ja })
-                ) : (
-                  <span>承認されていません。</span>
-                )}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-              </Button>
-              <FormDescription>承認日です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="createdAt"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>投稿日</FormLabel>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[240px] pl-3 text-left font-normal",
-                  !field.value && "text-muted-foreground",
-                )}
-                disabled
-              >
-                {field.value ? (
-                  format(field.value, "PPP", { locale: ja })
-                ) : (
-                  <span>投稿されていません。</span>
-                )}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-              </Button>
-              <FormDescription>投稿日です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="updatedAt"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>最終更新日</FormLabel>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[240px] pl-3 text-left font-normal",
-                  !field.value && "text-muted-foreground",
-                )}
-                disabled
-              >
-                {field.value ? (
-                  format(field.value, "PPP", { locale: ja })
-                ) : (
-                  <span>投稿されていません。</span>
-                )}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-              </Button>
-              <FormDescription>最終更新日です。</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">投稿</Button>
-      </form>
-    </Form>
+              ) : (
+                <Skeleton className="w-full h-full bg-accent rounded-lg border flex justify-center items-center" />
+              )}
+            </div>
+            <FormField
+              control={form.control}
+              name="fromDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>掲載開始日</FormLabel>
+                  <Popover open={openFromDate}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground",
+                          )}
+                          onClick={(date) => {
+                            field.onChange(date);
+                            setOpenFromDate(true);
+                          }}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP", { locale: ja })
+                          ) : (
+                            <span>日付を選択してください。</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setOpenFromDate(false);
+                        }}
+                        // disabled={(date) => date <= new Date()}
+                        captionLayout="dropdown"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="toDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>掲載終了日</FormLabel>
+                  <Popover open={openToDate}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground",
+                          )}
+                          onClick={(date) => {
+                            field.onChange(date);
+                            setOpenToDate(true);
+                          }}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP", { locale: ja })
+                          ) : (
+                            <span>日付を選択してください。</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value ? field.value : null}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setOpenToDate(false);
+                        }}
+                        // disabled={(date) => date <= new Date()}
+                        captionLayout="dropdown"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="link"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>リンク先</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="リンク先" {...field} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0">ニュース</SelectItem>
+                        <SelectItem value="1">大会情報</SelectItem>
+                        <SelectItem value="2">委員会情報</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <SheetFooter className="p-0">
+              <Button type="submit">作成</Button>
+              <SheetClose asChild>
+                <Button variant="outline">キャンセル</Button>
+              </SheetClose>
+            </SheetFooter>
+          </form>
+        </Form>
+        {blob && (
+          <div>
+            Blob url: <a href={blob.url}>{blob.url}</a>
+            <Image
+              src={blob.url}
+              alt="blob image"
+              height={100}
+              width={100}
+              className="w-auto"
+            />
+          </div>
+        )}
+      </SheetContent>
+    </Sheet>
   );
 }
