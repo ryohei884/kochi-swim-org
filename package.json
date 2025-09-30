@@ -7,7 +7,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "postinstall": "prisma generate --no-engine",
-    "lint": "npx eslint --fix src/ --ignore-pattern 'src/app/generated/*'",
+    "lint": "npx eslint --fix src/ --ignore-pattern 'src/app/generated/**/*'",
     "format": "npx prettier --write src && npx prisma format",
     "reset": "rm -rf ./prisma/migrations && prisma migrate reset && npx prisma migrate dev --name init",
     "seed": "npx prisma db seed"
