@@ -1,10 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+import { getDate } from "date-fns";
+import { UsersIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+
+import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,7 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -28,11 +33,8 @@ import {
   SheetClose,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { UsersIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import { get_member, update_member } from "@/lib/group/actions";
-import { getDate } from "date-fns";
 
 const FormSchema = z.object({
   users: z.array(z.string()),
@@ -132,91 +134,94 @@ export default function MemberForm(props: Props) {
         </Button>
       </SheetTrigger>
       <SheetContent>
-        <SheetHeader>
-          <SheetTitle>メンバー編集</SheetTitle>
-          <SheetDescription className="sr-only">
-            メンバー編集画面
-          </SheetDescription>
-        </SheetHeader>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit, onError)}
-            className="space-y-8 p-4"
-          >
-            <FormField
-              control={form.control}
-              name="users"
-              render={() => (
-                <FormItem>
-                  <div className="mb-4">
-                    <FormLabel className="text-base">{groupName}</FormLabel>
-                    <FormDescription>
-                      メンバーに加入させる人をチェックしてください。
-                    </FormDescription>
-                  </div>
-                  {!isReady
-                    ? (function () {
-                        const rows = [];
-                        for (let i = 0; i < dataNum; i++) {
-                          rows.push(
-                            <Skeleton
-                              key={i}
-                              className="flex h-5 w-full border border-input p-2 file:border-0 max-w-full"
-                            />,
-                          );
-                        }
-                        return <>{rows}</>;
-                      })()
-                    : userList.map((user) => (
-                        <FormField
-                          key={user.id}
-                          control={form.control}
-                          name="users"
-                          render={({ field }) => {
-                            return (
-                              <FormItem
-                                key={user.id}
-                                className="flex flex-row items-center gap-2"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(user.id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([
-                                            ...field.value,
-                                            user.id,
-                                          ])
-                                        : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== user.id,
-                                            ),
-                                          );
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="text-sm font-normal">
-                                  {user.name}
-                                </FormLabel>
-                              </FormItem>
+        <ScrollArea className="h-dvh pr-2">
+          <SheetHeader>
+            <SheetTitle>メンバー編集</SheetTitle>
+            <SheetDescription className="sr-only">
+              メンバー編集画面
+            </SheetDescription>
+          </SheetHeader>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit, onError)}
+              className="space-y-8 p-4"
+            >
+              <FormField
+                control={form.control}
+                name="users"
+                render={() => (
+                  <FormItem>
+                    <div className="mb-4">
+                      <FormLabel className="text-base">{groupName}</FormLabel>
+                      <FormDescription>
+                        メンバーに加入させる人をチェックしてください。
+                      </FormDescription>
+                    </div>
+                    {!isReady
+                      ? (function () {
+                          const rows = [];
+                          for (let i = 0; i < dataNum; i++) {
+                            rows.push(
+                              <Skeleton
+                                key={i}
+                                className="flex h-5 w-full border border-input p-2 file:border-0 max-w-full"
+                              />,
                             );
-                          }}
-                        />
-                      ))}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <SheetFooter className="p-0">
-              <Button type="submit" disabled={!isReady}>
-                更新
-              </Button>
-              <SheetClose asChild>
-                <Button variant="outline">キャンセル</Button>
-              </SheetClose>
-            </SheetFooter>
-          </form>
-        </Form>
+                          }
+                          return <>{rows}</>;
+                        })()
+                      : userList.map((user) => (
+                          <FormField
+                            key={user.id}
+                            control={form.control}
+                            name="users"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={user.id}
+                                  className="flex flex-row items-center gap-2"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(user.id)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([
+                                              ...field.value,
+                                              user.id,
+                                            ])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== user.id,
+                                              ),
+                                            );
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="text-sm font-normal">
+                                    {user.name}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        ))}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <SheetFooter className="p-0">
+                <Button type="submit" disabled={!isReady}>
+                  更新
+                </Button>
+                <SheetClose asChild>
+                  <Button variant="outline">キャンセル</Button>
+                </SheetClose>
+              </SheetFooter>
+            </form>
+          </Form>
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );

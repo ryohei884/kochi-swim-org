@@ -1,17 +1,19 @@
 "use client";
 
-import { getList } from "@/lib/category/actions";
-import { categoryWithUserSchemaType } from "@/lib/category/verification";
-import CreateForm from "@/components/category/create-form";
-import UpdateForm from "@/components/category/update-form";
-import ExcludeForm from "@/components/category/exclude-form";
-import ReOrder from "@/components/category/reorder";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import Link from "next/link";
-import { categoryDisplay } from "@/lib/category/role";
+
+import type { categoryWithUserSchemaType } from "@/lib/category/verification";
+
+import CreateForm from "@/components/category/create-form";
+import ExcludeForm from "@/components/category/exclude-form";
+import ReOrder from "@/components/category/reorder";
+import UpdateForm from "@/components/category/update-form";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -20,7 +22,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
+import { getList } from "@/lib/category/actions";
+import { categoryDisplay } from "@/lib/category/role";
 
 export default function CategoryList() {
   const [data, setData] = useState<categoryWithUserSchemaType[]>([]);
@@ -110,7 +113,7 @@ export default function CategoryList() {
                           <Skeleton className="size-6 border border-input file:border-0" />
                         </Button>
                       </TableCell>
-                    </TableRow>,
+                    </TableRow>
                   );
                 }
                 return <>{rows}</>;

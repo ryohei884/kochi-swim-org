@@ -163,7 +163,8 @@ export const newsCreateOnSubmitSchema = newsSchema
         {
           message: ".jpg, .png, .gif, svgのみ利用可能です。",
         },
-      ),
+      )
+      .or(z.string()),
   });
 
 export type newsCreateOnSubmitSchemaType = z.infer<
@@ -178,4 +179,122 @@ export const newsCreateOnSubmitSchemaDV: newsCreateOnSubmitSchemaType = {
   toDate: newsSchemaDV.toDate,
   link: newsSchemaDV.link,
   createdUserId: newsSchemaDV.createdUserId,
+};
+
+// newsUpdateSchema
+export const newsUpdateSchema = newsSchema
+  .omit({
+    createdUserId: true,
+    revisedUserId: true,
+    approvedUserId: true,
+    approved: true,
+    revisedAt: true,
+    approvedAt: true,
+    createdAt: true,
+    image: true,
+  })
+  .extend({
+    image: z
+      .custom<FileList>()
+      .transform((file) => file[0])
+      .nullable()
+      .refine((file) => !file || file.size <= 512 * 1024 * 1024, {
+        message: "ファイルサイズは最大512MBです",
+      })
+      .refine(
+        (file) =>
+          !file ||
+          [
+            "image/png",
+            "image/jpeg",
+            "image/jpg",
+            "image/svg+xml",
+            "image/gif",
+          ].includes(file.type),
+        {
+          message: ".jpg, .png, .gif, svgのみ利用可能です。",
+        },
+      )
+      .or(z.string()),
+  });
+
+export type newsUpdateSchemaType = z.infer<typeof newsUpdateSchema>;
+
+export const newsUpdateSchemaDV: newsUpdateSchemaType = {
+  id: newsSchemaDV.id,
+  title: newsSchemaDV.title,
+  detail: newsSchemaDV.detail,
+  image: null,
+  fromDate: newsSchemaDV.fromDate,
+  toDate: newsSchemaDV.toDate,
+  link: newsSchemaDV.link,
+};
+
+// newsGetByIdSchema
+export const newsGetByIdSchema = newsSchema.omit({
+  title: true,
+  detail: true,
+  image: true,
+  fromDate: true,
+  toDate: true,
+  link: true,
+  createdUserId: true,
+  revisedUserId: true,
+  approvedUserId: true,
+  approved: true,
+  createdAt: true,
+  revisedAt: true,
+  approvedAt: true,
+});
+
+export type newsGetByIdSchemaType = z.infer<typeof newsGetByIdSchema>;
+
+export const newsGetByIdSchemaDV: newsGetByIdSchemaType = {
+  id: newsSchemaDV.id,
+};
+
+// newsExcludeSchema
+export const newsExcludeSchema = newsSchema.omit({
+  title: true,
+  detail: true,
+  image: true,
+  fromDate: true,
+  toDate: true,
+  link: true,
+  createdUserId: true,
+  revisedUserId: true,
+  approvedUserId: true,
+  approved: true,
+  createdAt: true,
+  revisedAt: true,
+  approvedAt: true,
+});
+
+export type newsExcludeSchemaType = z.infer<typeof newsExcludeSchema>;
+
+export const newsExcludeSchemaDV: newsExcludeSchemaType = {
+  id: newsSchemaDV.id,
+};
+
+// newsApproveSchema
+export const newsApproveSchema = newsSchema.omit({
+  title: true,
+  detail: true,
+  image: true,
+  fromDate: true,
+  toDate: true,
+  link: true,
+  createdUserId: true,
+  revisedUserId: true,
+  approvedUserId: true,
+  approved: true,
+  createdAt: true,
+  revisedAt: true,
+  approvedAt: true,
+});
+
+export type newsApproveSchemaType = z.infer<typeof newsApproveSchema>;
+
+export const newsApproveSchemaDV: newsApproveSchemaType = {
+  id: newsSchemaDV.id,
 };

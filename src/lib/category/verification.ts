@@ -127,7 +127,7 @@ export type categoryUpdateSchemaType = z.infer<typeof categoryUpdateSchema>;
 export const categoryUpdateSchemaDV: categoryUpdateSchemaType = {
   id: categorySchemaDV.id,
   name: categorySchemaDV.name,
-  link: categorySchemaDV.name,
+  link: categorySchemaDV.link,
   order: categorySchemaDV.order,
   role: categorySchemaDV.role,
   createdUserId: categorySchemaDV.createdUserId,

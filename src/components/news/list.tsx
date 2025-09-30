@@ -1,16 +1,21 @@
 "use client";
 
-import { getList } from "@/lib/news/actions";
-import CreateForm from "@/components/news/create-form";
-// import UpdateForm from "@/components/group/update-form";
-// import ExcludeForm from "@/components/group/exclude-form";
-// import MemberForm from "@/components/group/member-form";
 // import PermissionForm from "@/components/group/permission-form";
 // import ReOrder from "@/components/group/reorder";
 import { useEffect, useState } from "react";
+
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
+import { CheckIcon } from "lucide-react";
+
+import type { newsWithUserSchemaType } from "@/lib/news/verification";
+
+import ApproveForm from "@/components/news/approve-form";
+import CreateForm from "@/components/news/create-form";
+import ExcludeForm from "@/components/news/exclude-form";
+import UpdateForm from "@/components/news/update-form";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -19,26 +24,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckIcon, Trash2, PencilLine, Stamp } from "lucide-react";
-import { newsWithUserSchemaType } from "@/lib/news/verification";
-import { Skeleton } from "@/components/ui/skeleton";
+import { getList } from "@/lib/news/actions";
 
 export default function NewsList() {
   const [data, setData] = useState<newsWithUserSchemaType[]>([]);
-  const [callbackData, setCallbackData] = useState<
-    newsWithUserSchemaType | undefined
-  >(undefined);
+  const [callbackData, setCallbackData] = useState<string | undefined>(
+    undefined,
+  );
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(3);
 
-  const sleep = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
-
-  const fetchListData = async (data?: newsWithUserSchemaType) => {
+  const fetchListData = async (id?: string) => {
     setIsReady(false);
-    await sleep(2000);
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    data && setCallbackData(data);
+    data && setCallbackData(id);
     const res = await getList();
     if (res !== null) {
       setData(res);
@@ -133,7 +132,7 @@ export default function NewsList() {
                 return (
                   <TableRow
                     key={d.id}
-                    className={callbackData?.id === d.id ? "bg-muted" : ""}
+                    className={callbackData === d.id ? "bg-muted" : ""}
                   >
                     <TableCell>
                       {d.title.substring(0, 10)}
@@ -160,19 +159,25 @@ export default function NewsList() {
                     </TableCell>
                     <TableCell>{d.approvedUser?.name}</TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      <Button variant="ghost" size="sm">
-                        <PencilLine />
-                      </Button>
+                      <UpdateForm
+                        key={d.id}
+                        id={d.id}
+                        fetchListData={fetchListData}
+                      />
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      <Button variant="ghost" size="sm">
-                        <Trash2 />
-                      </Button>
+                      <ExcludeForm
+                        key={d.id}
+                        id={d.id}
+                        fetchListData={fetchListData}
+                      />
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      <Button variant="ghost" size="sm">
-                        <Stamp />
-                      </Button>
+                      <ApproveForm
+                        key={d.id}
+                        id={d.id}
+                        fetchListData={fetchListData}
+                      />
                     </TableCell>
                   </TableRow>
                 );

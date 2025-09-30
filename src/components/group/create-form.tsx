@@ -1,17 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { create } from "@/lib/group/actions";
-import {
+import { PlusIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+import type {
   groupWithUserSchemaType,
   groupCreateSchemaType,
-  groupCreateSchema,
-  groupCreateSchemaDV,
 } from "@/lib/group/verification";
+import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -21,7 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -32,8 +34,11 @@ import {
   SheetClose,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { create } from "@/lib/group/actions";
+import {
+  groupCreateSchema,
+  groupCreateSchemaDV,
+} from "@/lib/group/verification";
 
 interface Props {
   fetchListData: (data: groupWithUserSchemaType) => Promise<void>;
@@ -81,38 +86,41 @@ export default function GroupCreateForm(props: Props) {
         </Button>
       </SheetTrigger>
       <SheetContent>
-        <SheetHeader>
-          <SheetTitle>グループ作成</SheetTitle>
-          <SheetDescription className="sr-only">
-            グループ作成画面
-          </SheetDescription>
-        </SheetHeader>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit, onError)}
-            className="space-y-8 p-4"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>グループ名</FormLabel>
-                  <FormControl>
-                    <Input type="text" placeholder="グループ名" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <SheetFooter className="p-0">
-              <Button type="submit">作成</Button>
-              <SheetClose asChild>
-                <Button variant="outline">キャンセル</Button>
-              </SheetClose>
-            </SheetFooter>
-          </form>
-        </Form>
+        <ScrollArea className="h-dvh pr-2">
+          <SheetHeader>
+            <SheetTitle>グループ作成</SheetTitle>
+            <SheetDescription className="sr-only">
+              グループ作成画面
+            </SheetDescription>
+          </SheetHeader>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit, onError)}
+              className="space-y-8 p-4"
+            >
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>グループ名</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="グループ名" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <SheetFooter className="p-0">
+                <Button type="submit">作成</Button>
+                <SheetClose asChild>
+                  <Button variant="outline">キャンセル</Button>
+                </SheetClose>
+              </SheetFooter>
+            </form>
+          </Form>
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );

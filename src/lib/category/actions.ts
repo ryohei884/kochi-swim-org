@@ -1,12 +1,13 @@
 "use server";
-import { prisma } from "@/prisma";
-import { auth } from "@/auth";
-import {
+import type {
   categoryGetByIdSchemaType,
   categoryCreateSchemaType,
   categoryUpdateSchemaType,
   categoryExcludeSchemaType,
 } from "@/lib/category/verification";
+
+import { auth } from "@/auth";
+import { prisma } from "@/prisma";
 
 export async function getById(prop: categoryGetByIdSchemaType) {
   const { id } = prop;

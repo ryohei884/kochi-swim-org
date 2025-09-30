@@ -1,7 +1,14 @@
 "use server";
-import { prisma } from "@/prisma";
+import type {
+  newsCreateSchemaType,
+  newsGetByIdSchemaType,
+  newsUpdateSchemaType,
+  newsExcludeSchemaType,
+  newsApproveSchemaType,
+} from "@/lib/news/verification";
+
 import { auth } from "@/auth";
-import { newsCreateSchemaType } from "@/lib/news/verification";
+import { prisma } from "@/prisma";
 
 export async function getList() {
   const res = await prisma.news.findMany({
@@ -30,7 +37,7 @@ export async function create(prop: newsCreateSchemaType) {
       data: {
         title: data.title,
         detail: data.detail,
-        image: data.image,
+        image: typeof data.image === "string" ? data.image : null,
         fromDate: data.fromDate,
         toDate: data.toDate,
         link: data.link,
@@ -39,5 +46,104 @@ export async function create(prop: newsCreateSchemaType) {
       },
     });
     return res;
+  }
+}
+
+export async function getById(prop: newsGetByIdSchemaType) {
+  const { id } = prop;
+
+  const res = await prisma.news.findFirst({
+    where: {
+      id: id,
+    },
+    include: { createdUser: true, revisedUser: true, approvedUser: true },
+  });
+  return res;
+}
+
+export async function update(prop: newsUpdateSchemaType) {
+  const { id, title, detail, image, fromDate, toDate, link } = prop;
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated.");
+  } else {
+    const contest = await prisma.news.findFirst({
+      where: { id: id },
+      include: {
+        createdUser: true,
+      },
+    });
+
+    if (!contest) {
+      throw new Error("News ID does not exist.");
+    } else {
+      const res = await prisma.news.update({
+        where: {
+          id: id,
+        },
+        data: {
+          id: id,
+          title: title,
+          detail: detail,
+          image: typeof image === "string" ? image : null,
+          fromDate: fromDate,
+          toDate: toDate,
+          link: link,
+          revisedUserId: session?.user?.id,
+          approvedUserId: null,
+          approved: false,
+        },
+      });
+      return res;
+    }
+  }
+}
+
+export async function exclude(prop: newsExcludeSchemaType) {
+  const { id } = prop;
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated.");
+  } else {
+    const contest = await prisma.news.findFirst({
+      where: { id: id },
+    });
+
+    if (!contest) {
+      throw new Error("News ID does not exist.");
+    } else {
+      await prisma.news.delete({
+        where: {
+          id: id,
+        },
+      });
+    }
+  }
+}
+
+export async function approve(prop: newsApproveSchemaType) {
+  const { id } = prop;
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated.");
+  } else {
+    const contest = await prisma.news.findFirst({
+      where: { id: id },
+    });
+
+    if (!contest) {
+      throw new Error("News ID does not exist.");
+    } else {
+      await prisma.news.update({
+        where: {
+          id: id,
+        },
+        data: {
+          approved: true,
+          approvedUserId: session?.user?.id,
+          approvedAt: new Date(),
+        },
+      });
+    }
   }
 }

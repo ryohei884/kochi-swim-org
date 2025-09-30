@@ -1,10 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+import { FolderKey } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
+
+import type { categoryWithUserSchemaType } from "@/lib/category/verification";
+import type { permissionUpdateSchemaType } from "@/lib/group/verification";
+import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+import type { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,7 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -28,11 +34,7 @@ import {
   SheetClose,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { FolderKey } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-
-import { get_permission, update_permission } from "@/lib/group/actions";
-
 import {
   Table,
   TableBody,
@@ -42,10 +44,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getList } from "@/lib/category/actions";
-import { categoryWithUserSchemaType } from "@/lib/category/verification";
+import { get_permission, update_permission } from "@/lib/group/actions";
 import {
   permissionUpdateSchemaDV,
-  permissionUpdateSchemaType,
   permissionUpdateSchema,
 } from "@/lib/group/verification";
 
@@ -160,138 +161,143 @@ export default function PermissionForm(props: Props) {
         </Button>
       </SheetTrigger>
       <SheetContent>
-        <SheetHeader>
-          <SheetTitle>権限編集</SheetTitle>
-          <SheetDescription className="sr-only">権限編集画面</SheetDescription>
-        </SheetHeader>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit, onError)}
-            className="space-y-8 p-4"
-          >
-            <FormField
-              control={form.control}
-              name="data"
-              render={() => (
-                <FormItem>
-                  <div className="mb-4">
-                    <FormLabel className="text-base">{groupName}</FormLabel>
-                    <FormDescription>
-                      与える権限をチェックしてください。
-                    </FormDescription>
-                  </div>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>カテゴリ名</TableHead>
-                        <TableHead className="text-center">閲覧</TableHead>
-                        <TableHead className="text-center">作成</TableHead>
-                        <TableHead className="text-center">修正</TableHead>
-                        <TableHead className="text-center">削除</TableHead>
-                        <TableHead className="text-center">承認</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {!isReady
-                        ? (function () {
-                            const rows = [];
-                            for (let i = 0; i < dataNum; i++) {
-                              rows.push(
-                                <TableRow key={i}>
+        <ScrollArea className="h-dvh pr-2">
+          <SheetHeader>
+            <SheetTitle>権限編集</SheetTitle>
+            <SheetDescription className="sr-only">
+              権限編集画面
+            </SheetDescription>
+          </SheetHeader>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit, onError)}
+              className="space-y-8 p-4"
+            >
+              <FormField
+                control={form.control}
+                name="data"
+                render={() => (
+                  <FormItem>
+                    <div className="mb-4">
+                      <FormLabel className="text-base">{groupName}</FormLabel>
+                      <FormDescription>
+                        与える権限をチェックしてください。
+                      </FormDescription>
+                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>カテゴリ名</TableHead>
+                          <TableHead className="text-center">閲覧</TableHead>
+                          <TableHead className="text-center">作成</TableHead>
+                          <TableHead className="text-center">修正</TableHead>
+                          <TableHead className="text-center">削除</TableHead>
+                          <TableHead className="text-center">承認</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {!isReady
+                          ? (function () {
+                              const rows = [];
+                              for (let i = 0; i < dataNum; i++) {
+                                rows.push(
+                                  <TableRow key={i}>
+                                    <TableCell className="font-medium">
+                                      <Skeleton
+                                        key={i}
+                                        className="flex h-5 w-full border border-input p-2 file:border-0 max-w-full"
+                                      />
+                                    </TableCell>
+                                    {p_cat.map((cat) => {
+                                      return (
+                                        <TableCell
+                                          key={`${i}_${cat}`}
+                                          className="justify-items-center"
+                                        >
+                                          <Skeleton
+                                            key={i}
+                                            className="flex size-4 border border-input max-w-full rounded-[4px]"
+                                          />
+                                        </TableCell>
+                                      );
+                                    })}
+                                  </TableRow>,
+                                );
+                              }
+                              return <>{rows}</>;
+                            })()
+                          : categoryList.map((c, ci) => {
+                              return (
+                                <TableRow key={c.id}>
                                   <TableCell className="font-medium">
-                                    <Skeleton
-                                      key={i}
-                                      className="flex h-5 w-full border border-input p-2 file:border-0 max-w-full"
-                                    />
+                                    {c.name}
                                   </TableCell>
                                   {p_cat.map((cat) => {
                                     return (
                                       <TableCell
-                                        key={`${i}_${cat}`}
+                                        key={`${c.id}_${cat}`}
                                         className="justify-items-center"
                                       >
-                                        <Skeleton
-                                          key={i}
-                                          className="flex size-4 border border-input max-w-full rounded-[4px]"
+                                        <FormField
+                                          control={form.control}
+                                          name={`data.${ci}.permission`}
+                                          render={({ field }) => {
+                                            return (
+                                              <FormItem>
+                                                <FormControl>
+                                                  <Checkbox
+                                                    checked={field.value?.includes(
+                                                      cat,
+                                                    )}
+                                                    onCheckedChange={(
+                                                      checked,
+                                                    ) => {
+                                                      return checked
+                                                        ? field.onChange(
+                                                            field.value !== null
+                                                              ? [
+                                                                  ...field.value,
+                                                                  cat,
+                                                                ]
+                                                              : [cat],
+                                                          )
+                                                        : field.onChange(
+                                                            field.value?.filter(
+                                                              (value) =>
+                                                                value !== cat,
+                                                            ),
+                                                          );
+                                                    }}
+                                                  />
+                                                </FormControl>
+                                              </FormItem>
+                                            );
+                                          }}
                                         />
                                       </TableCell>
                                     );
                                   })}
-                                </TableRow>,
+                                </TableRow>
                               );
-                            }
-                            return <>{rows}</>;
-                          })()
-                        : categoryList.map((c, ci) => {
-                            return (
-                              <TableRow key={c.id}>
-                                <TableCell className="font-medium">
-                                  {c.name}
-                                </TableCell>
-                                {p_cat.map((cat) => {
-                                  return (
-                                    <TableCell
-                                      key={`${c.id}_${cat}`}
-                                      className="justify-items-center"
-                                    >
-                                      <FormField
-                                        control={form.control}
-                                        name={`data.${ci}.permission`}
-                                        render={({ field }) => {
-                                          return (
-                                            <FormItem>
-                                              <FormControl>
-                                                <Checkbox
-                                                  checked={field.value?.includes(
-                                                    cat,
-                                                  )}
-                                                  onCheckedChange={(
-                                                    checked,
-                                                  ) => {
-                                                    return checked
-                                                      ? field.onChange(
-                                                          field.value !== null
-                                                            ? [
-                                                                ...field.value,
-                                                                cat,
-                                                              ]
-                                                            : [cat],
-                                                        )
-                                                      : field.onChange(
-                                                          field.value?.filter(
-                                                            (value) =>
-                                                              value !== cat,
-                                                          ),
-                                                        );
-                                                  }}
-                                                />
-                                              </FormControl>
-                                            </FormItem>
-                                          );
-                                        }}
-                                      />
-                                    </TableCell>
-                                  );
-                                })}
-                              </TableRow>
-                            );
-                          })}
-                    </TableBody>
-                  </Table>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <SheetFooter className="p-0">
-              <Button type="submit" disabled={!isReady}>
-                更新
-              </Button>
-              <SheetClose asChild>
-                <Button variant="outline">キャンセル</Button>
-              </SheetClose>
-            </SheetFooter>
-          </form>
-        </Form>
+                            })}
+                      </TableBody>
+                    </Table>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <SheetFooter className="p-0">
+                <Button type="submit" disabled={!isReady}>
+                  更新
+                </Button>
+                <SheetClose asChild>
+                  <Button variant="outline">キャンセル</Button>
+                </SheetClose>
+              </SheetFooter>
+            </form>
+          </Form>
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );

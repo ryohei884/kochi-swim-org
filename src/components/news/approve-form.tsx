@@ -5,14 +5,15 @@ import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { Trash2Icon } from "lucide-react";
+import { Stamp } from "lucide-react";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import type {
-  groupExcludeSchemaType,
-  groupWithUserSchemaType,
-} from "@/lib/group/verification";
+  newsApproveSchemaType,
+  newsWithUserSchemaType,
+} from "@/lib/news/verification";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -36,24 +37,24 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getById, exclude } from "@/lib/group/actions";
+import { getById, approve } from "@/lib/news/actions";
 import {
-  groupWithUserSchema,
-  groupWithUserSchemaDV,
-} from "@/lib/group/verification";
+  newsWithUserSchema,
+  newsWithUserSchemaDV,
+} from "@/lib/news/verification";
 
 interface Props {
   id: string;
   fetchListData: () => Promise<void>;
 }
 
-export default function GroupExcludeForm(props: Props) {
+export default function NewsApproveForm(props: Props) {
   const { id, fetchListData } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const form = useForm<groupWithUserSchemaType>({
-    resolver: zodResolver(groupWithUserSchema),
-    defaultValues: groupWithUserSchemaDV,
+  const form = useForm<newsWithUserSchemaType>({
+    resolver: zodResolver(newsWithUserSchema),
+    defaultValues: newsWithUserSchemaDV,
   });
 
   const fetchData = async (id: string) => {
@@ -71,12 +72,12 @@ export default function GroupExcludeForm(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
 
-  const onSubmit: SubmitHandler<groupWithUserSchemaType> = async (
-    data: groupExcludeSchemaType
+  const onSubmit: SubmitHandler<newsWithUserSchemaType> = async (
+    data: newsApproveSchemaType
   ) => {
-    await exclude(data);
+    await approve(data);
 
-    toast("削除しました。", {
+    toast("承認しました。", {
       action: {
         label: "Undo",
         onClick: () => console.log("Undo"),
@@ -86,7 +87,7 @@ export default function GroupExcludeForm(props: Props) {
     setDialogOpen(false);
   };
 
-  const onError: SubmitErrorHandler<groupWithUserSchemaType> = (errors) => {
+  const onError: SubmitErrorHandler<newsWithUserSchemaType> = (errors) => {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
@@ -100,15 +101,15 @@ export default function GroupExcludeForm(props: Props) {
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
         <Button variant="ghost" size="sm">
-          <Trash2Icon />
+          <Stamp />
         </Button>
       </SheetTrigger>
       <SheetContent>
         <ScrollArea className="h-dvh pr-2">
           <SheetHeader>
-            <SheetTitle>グループ削除</SheetTitle>
+            <SheetTitle>ニュース承認</SheetTitle>
             <SheetDescription className="sr-only">
-              グループ削除画面
+              ニュース承認画面
             </SheetDescription>
           </SheetHeader>
           <Form {...form}>
@@ -121,7 +122,7 @@ export default function GroupExcludeForm(props: Props) {
                 name="id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>グループID</FormLabel>
+                    <FormLabel>ニュースID</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
@@ -137,10 +138,10 @@ export default function GroupExcludeForm(props: Props) {
               />
               <FormField
                 control={form.control}
-                name="name"
+                name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>グループ名</FormLabel>
+                    <FormLabel>題名</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
@@ -156,12 +157,12 @@ export default function GroupExcludeForm(props: Props) {
               />
               <FormField
                 control={form.control}
-                name="createdUser.name"
+                name="detail"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>作成者</FormLabel>
+                    <FormLabel>本文</FormLabel>
                     <FormControl hidden={!isReady}>
-                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                      <div className="whitespace-pre-wrap flex-none min-h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
                       </div>
                     </FormControl>
@@ -173,79 +174,74 @@ export default function GroupExcludeForm(props: Props) {
                   </FormItem>
                 )}
               />
-              {form.getValues("updatedUser.name") ? (
-                <FormField
-                  control={form.control}
-                  name="updatedUser.name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>更新者</FormLabel>
-                      <FormControl hidden={!isReady}>
-                        <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                          {field.value}
-                        </div>
-                      </FormControl>
-                      <Skeleton
-                        hidden={isReady}
-                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field: { value } }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>イメージ画像</FormLabel>
+                    <div className="flex-none  w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                      <Image
+                        src={
+                          value
+                            ? `https://nzprheefai1ubld0.public.blob.vercel-storage.com/${value}`
+                            : "/next.svg"
+                        }
+                        alt=""
+                        height={80}
+                        width={80}
+                        className="w-full h-full object-contain object-center"
                       />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <FormItem>
-                  <FormLabel>更新者</FormLabel>
-                  <FormControl hidden={!isReady}>
-                    <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"></div>
-                  </FormControl>
-                  <Skeleton
-                    hidden={isReady}
-                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-              <FormField
-                control={form.control}
-                name="createdAt"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>作成日</FormLabel>
-                    <div
-                      hidden={!isReady}
-                      className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP", { locale: ja })
-                      ) : (
-                        <span>作成されていません。</span>
-                      )}
                     </div>
-                    <Skeleton
-                      hidden={isReady}
-                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                    />
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
-                name="updatedAt"
+                name="fromDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>最終更新日</FormLabel>
-                    <div
-                      hidden={!isReady}
-                      className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"
-                    >
+                    <FormLabel>掲載開始日</FormLabel>
+                    <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                       {field.value ? (
                         format(field.value, "PPP", { locale: ja })
                       ) : (
-                        <span>作成されていません。</span>
+                        <span></span>
                       )}
                     </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="toDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>掲載終了日</FormLabel>
+                    <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                      {field.value ? (
+                        format(field.value, "PPP", { locale: ja })
+                      ) : (
+                        <span></span>
+                      )}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="link"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>リンク先</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                        {field.value}
+                      </div>
+                    </FormControl>
                     <Skeleton
                       hidden={isReady}
                       className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
@@ -255,8 +251,8 @@ export default function GroupExcludeForm(props: Props) {
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady}>
-                  削除
+                <Button type="submit" disabled={!isReady} variant="destructive">
+                  承認
                 </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>

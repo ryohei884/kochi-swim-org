@@ -1,20 +1,23 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { init } from "@paralleldrive/cuid2";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
+import { PencilLine } from "lucide-react";
 import { CalendarIcon } from "lucide-react";
-import { PlusIcon } from "lucide-react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import type { newsCreateOnSubmitSchemaType } from "@/lib/news/verification";
+import type {
+  newsWithUserSchemaType,
+  newsUpdateSchemaType,
+} from "@/lib/news/verification";
 import type { PutBlobResult } from "@vercel/blob";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
@@ -54,19 +57,17 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { create } from "@/lib/news/actions";
-import {
-  newsCreateOnSubmitSchema,
-  newsCreateOnSubmitSchemaDV,
-} from "@/lib/news/verification";
+import { getById, update } from "@/lib/news/actions";
+import { newsUpdateSchema, newsUpdateSchemaDV } from "@/lib/news/verification";
 import { cn } from "@/lib/utils";
 
 interface Props {
+  id: string;
   fetchListData: (id: string) => Promise<void>;
 }
 
-export default function NewsCreateForm(props: Props) {
-  const { fetchListData } = props;
+export default function NewsUpdateForm(props: Props) {
+  const { id, fetchListData } = props;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_blob, setBlob] = useState<PutBlobResult | null>(null);
   const [preview, setPreview] = useState("");
@@ -75,22 +76,38 @@ export default function NewsCreateForm(props: Props) {
   const [openFromDate, setOpenFromDate] = useState(false);
   const [openToDate, setOpenToDate] = useState(false);
 
-  const form = useForm<newsCreateOnSubmitSchemaType>({
-    // @ts-expect-error React-Hook-Formのエラーだから無視
-    resolver: zodResolver(newsCreateOnSubmitSchema),
-    defaultValues: newsCreateOnSubmitSchemaDV,
+  const [isReady, setIsReady] = useState<boolean>(false);
+  const form = useForm<newsUpdateSchemaType>({
+    resolver: zodResolver(newsUpdateSchema),
+    defaultValues: newsUpdateSchemaDV,
   });
 
-  const onSubmit: SubmitHandler<newsCreateOnSubmitSchemaType> = async (
-    data: newsCreateOnSubmitSchemaType,
+  const fetchData = async (id: string) => {
+    setIsReady(false);
+    const res = await getById({ id: id });
+    if (res !== null) {
+      form.reset(res);
+      setIsReady(true);
+    }
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    dialogOpen && fetchData(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogOpen]);
+
+  const onSubmit: SubmitHandler<newsUpdateSchemaType> = async (
+    data: newsUpdateSchemaType
   ) => {
-    let newBlob;
+    let newBlob: string | null = null;
     if (data.image !== null && typeof data.image !== "string") {
       newBlob = await uploadImage(data.image);
     }
-    const res = await create({ ...data, image: newBlob ?? null });
 
-    toast("作成しました。", {
+    const res = await update({ ...data, image: newBlob ?? data.image });
+
+    toast("更新しました。", {
       action: {
         label: "Undo",
         onClick: () => console.log("Undo"),
@@ -102,9 +119,7 @@ export default function NewsCreateForm(props: Props) {
     form.reset();
   };
 
-  const onError: SubmitErrorHandler<newsCreateOnSubmitSchemaType> = (
-    errors,
-  ) => {
+  const onError: SubmitErrorHandler<newsWithUserSchemaType> = (errors) => {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
@@ -127,12 +142,11 @@ export default function NewsCreateForm(props: Props) {
       {
         method: "POST",
         body: file,
-      },
+      }
     );
 
     const newBlob = (await response.json()) as PutBlobResult;
     setBlob(newBlob);
-
     return newBlob.pathname;
   };
 
@@ -140,7 +154,7 @@ export default function NewsCreateForm(props: Props) {
     const dataTransfer = new DataTransfer();
 
     Array.from(event.target.files!).forEach((image) =>
-      dataTransfer.items.add(image),
+      dataTransfer.items.add(image)
     );
 
     const files = dataTransfer.files;
@@ -152,16 +166,16 @@ export default function NewsCreateForm(props: Props) {
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
-        <Button variant="outline" size="sm">
-          <PlusIcon /> ニュース作成
+        <Button variant="ghost" size="sm">
+          <PencilLine />
         </Button>
       </SheetTrigger>
       <SheetContent>
         <ScrollArea className="h-dvh pr-2">
           <SheetHeader>
-            <SheetTitle>ニュース作成</SheetTitle>
+            <SheetTitle>ニュース編集</SheetTitle>
             <SheetDescription className="sr-only">
-              ニュース作成画面
+              ニュース編集画面
             </SheetDescription>
           </SheetHeader>
           <Form {...form}>
@@ -171,13 +185,36 @@ export default function NewsCreateForm(props: Props) {
             >
               <FormField
                 control={form.control}
+                name="id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ニュースID</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                        {field.value}
+                      </div>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>題名</FormLabel>
-                    <FormControl>
-                      <Input type="text" placeholder="題名" {...field} />
+                    <FormControl hidden={!isReady}>
+                      <Input type="text" {...field} />
                     </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -188,9 +225,13 @@ export default function NewsCreateForm(props: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>本文</FormLabel>
-                    <FormControl>
+                    <FormControl hidden={!isReady}>
                       <Textarea {...field} />
                     </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -198,40 +239,52 @@ export default function NewsCreateForm(props: Props) {
               <FormField
                 control={form.control}
                 name="image"
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 render={({ field: { onChange, value, ...rest } }) => (
-                  <FormItem>
-                    <FormLabel>イメージ画像</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="image"
-                        type="file"
-                        accept="image/*"
-                        {...rest}
-                        onChange={(event) => {
-                          const { files, displayUrl } = getImageData(event);
-                          setPreview(displayUrl);
-                          onChange(files);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                  <>
+                    {" "}
+                    <FormItem>
+                      <FormLabel>イメージ画像</FormLabel>
+                      <FormControl>
+                        <Input
+                          id="image"
+                          type="file"
+                          accept="image/*"
+                          {...rest}
+                          onChange={(event) => {
+                            const { files, displayUrl } = getImageData(event);
+                            setPreview(displayUrl);
+                            onChange(files);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                    <div className="aspect-video max-w-[560px]">
+                      {preview ? (
+                        <Image
+                          src={preview}
+                          alt=""
+                          height={100}
+                          width={100}
+                          className="w-full h-full object-contain object-center"
+                        />
+                      ) : (
+                        <Image
+                          src={
+                            value
+                              ? `https://nzprheefai1ubld0.public.blob.vercel-storage.com/${value}`
+                              : "/next.svg"
+                          }
+                          alt=""
+                          height={100}
+                          width={100}
+                          className="w-full h-full object-contain object-center"
+                        />
+                      )}
+                    </div>
+                  </>
                 )}
               />
-              <div className="aspect-video max-w-[560px]">
-                {preview ? (
-                  <Image
-                    src={preview}
-                    alt=""
-                    height={100}
-                    width={100}
-                    className="w-full h-full object-contain object-center"
-                  />
-                ) : (
-                  <Skeleton className="w-full h-full bg-accent rounded-lg border flex justify-center items-center" />
-                )}
-              </div>
               <FormField
                 control={form.control}
                 name="fromDate"
@@ -245,7 +298,7 @@ export default function NewsCreateForm(props: Props) {
                             variant={"outline"}
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-muted-foreground"
                             )}
                             onClick={(date) => {
                               field.onChange(date);
@@ -291,7 +344,7 @@ export default function NewsCreateForm(props: Props) {
                             variant={"outline"}
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-muted-foreground"
                             )}
                             onClick={(date) => {
                               field.onChange(date);
@@ -310,7 +363,7 @@ export default function NewsCreateForm(props: Props) {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value ? field.value : null}
+                          selected={field.value ? field.value : undefined}
                           onSelect={(date) => {
                             field.onChange(date);
                             setOpenToDate(false);
@@ -330,7 +383,7 @@ export default function NewsCreateForm(props: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>リンク先</FormLabel>
-                    <FormControl>
+                    <FormControl hidden={!isReady}>
                       <Select onValueChange={field.onChange}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="リンク先" {...field} />
@@ -342,12 +395,18 @@ export default function NewsCreateForm(props: Props) {
                         </SelectContent>
                       </Select>
                     </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit">作成</Button>
+                <Button type="submit" disabled={!isReady}>
+                  更新
+                </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>
                 </SheetClose>

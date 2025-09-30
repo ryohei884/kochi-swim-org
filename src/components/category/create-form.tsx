@@ -1,18 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { create } from "@/lib/category/actions";
-import { categoryDisplay } from "@/lib/category/role";
-import {
+import { PlusIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+import type {
   categoryWithUserSchemaType,
   categoryCreateSchemaType,
-  categoryCreateSchema,
-  categoryCreateSchemaDV,
 } from "@/lib/category/verification";
+import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -22,6 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -29,7 +31,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "sonner";
 import {
   Sheet,
   SheetContent,
@@ -40,8 +41,12 @@ import {
   SheetClose,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { create } from "@/lib/category/actions";
+import { categoryDisplay } from "@/lib/category/role";
+import {
+  categoryCreateSchema,
+  categoryCreateSchemaDV,
+} from "@/lib/category/verification";
 
 interface Props {
   fetchListData: (data: categoryWithUserSchemaType) => Promise<void>;
@@ -96,88 +101,99 @@ export default function CategoryCreateForm(props: Props) {
         </Button>
       </SheetTrigger>
       <SheetContent>
-        <SheetHeader>
-          <SheetTitle>カテゴリー作成</SheetTitle>
-          <SheetDescription className="sr-only">
-            カテゴリーー作成画面
-          </SheetDescription>
-        </SheetHeader>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit, onError)}
-            className="space-y-8 p-4"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>カテゴリー名</FormLabel>
-                  <FormControl>
-                    <Input type="text" placeholder="カテゴリー名" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="link"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>リンク文字列</FormLabel>
-                  <FormControl>
-                    <Input type="text" placeholder="リンク文字列" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="order"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>表示順</FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="表示順" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>表示設定</FormLabel>
-                  <FormControl>
-                    <Select onValueChange={field.onChange}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="表示設定" {...field} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categoryDisplay.map((value, index) => (
-                          <SelectItem key={index} value={String(value.range)}>
-                            {value.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <SheetFooter className="p-0">
-              <Button type="submit">作成</Button>
-              <SheetClose asChild>
-                <Button variant="outline">キャンセル</Button>
-              </SheetClose>
-            </SheetFooter>
-          </form>
-        </Form>
+        <ScrollArea className="h-dvh pr-2">
+          <SheetHeader>
+            <SheetTitle>カテゴリー作成</SheetTitle>
+            <SheetDescription className="sr-only">
+              カテゴリー作成画面
+            </SheetDescription>
+          </SheetHeader>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit, onError)}
+              className="space-y-8 p-4"
+            >
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>カテゴリー名</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="カテゴリー名"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="link"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>リンク文字列</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="リンク文字列"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="order"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>表示順</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="表示順" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>表示設定</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="表示設定" {...field} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categoryDisplay.map((value, index) => (
+                            <SelectItem key={index} value={String(value.range)}>
+                              {value.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <SheetFooter className="p-0">
+                <Button type="submit">作成</Button>
+                <SheetClose asChild>
+                  <Button variant="outline">キャンセル</Button>
+                </SheetClose>
+              </SheetFooter>
+            </form>
+          </Form>
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );

@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+import { useState, useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
+import { format } from "date-fns";
+import { ja } from "date-fns/locale/ja";
+import { ChevronDownIcon } from "lucide-react";
+import { SettingsIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+import type {
   categoryUpdateSchemaType,
-  categoryWithUserSchema,
   categoryWithUserSchemaType,
-  categoryWithUserSchemaDV,
 } from "@/lib/category/verification";
-import { categoryDisplay } from "@/lib/category/role";
+import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,13 +26,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { getById, update } from "@/lib/category/actions";
-import { useEffect } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { format } from "date-fns";
-import { ja } from "date-fns/locale/ja";
-import { ChevronDownIcon } from "lucide-react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -46,7 +44,13 @@ import {
   SheetClose,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { SettingsIcon } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getById, update } from "@/lib/category/actions";
+import { categoryDisplay } from "@/lib/category/role";
+import {
+  categoryWithUserSchema,
+  categoryWithUserSchemaDV,
+} from "@/lib/category/verification";
 
 interface Props {
   id: string;
@@ -78,7 +82,7 @@ export default function CategoryUpdateForm(props: Props) {
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<categoryWithUserSchemaType> = async (
-    data: categoryUpdateSchemaType,
+    data: categoryUpdateSchemaType
   ) => {
     const res = await update(data);
 
@@ -110,148 +114,24 @@ export default function CategoryUpdateForm(props: Props) {
         </Button>
       </SheetTrigger>
       <SheetContent>
-        <SheetHeader>
-          <SheetTitle>カテゴリーー編集</SheetTitle>
-          <SheetDescription className="sr-only">
-            カテゴリー編集画面
-          </SheetDescription>
-        </SheetHeader>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit, onError)}
-            className="space-y-8 p-4"
-          >
-            <FormField
-              control={form.control}
-              name="id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>カテゴリーID</FormLabel>
-                  <FormControl hidden={!isReady}>
-                    <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                      {field.value}
-                    </div>
-                  </FormControl>
-                  <Skeleton
-                    hidden={isReady}
-                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>カテゴリー名</FormLabel>
-                  <FormControl hidden={!isReady}>
-                    <Input type="text" {...field} />
-                  </FormControl>
-                  <Skeleton
-                    hidden={isReady}
-                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="link"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>リンク文字列</FormLabel>
-                  <FormControl hidden={!isReady}>
-                    <Input type="text" {...field} />
-                  </FormControl>
-                  <Skeleton
-                    hidden={isReady}
-                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="order"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>表示順</FormLabel>
-                  <FormControl hidden={!isReady}>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <Skeleton
-                    hidden={isReady}
-                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>表示設定</FormLabel>
-                  <div hidden={!isReady}>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={String(field.value)}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categoryDisplay.map((value, index) => (
-                            <SelectItem key={index} value={String(value.range)}>
-                              {value.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </div>
-                  <Skeleton
-                    className="flex h-9 items-center justify-end border border-input px-3 py-2 [&amp;&gt;span]:line-clamp-1 w-full"
-                    hidden={isReady}
-                  >
-                    <ChevronDownIcon className="size-4 opacity-50" />
-                  </Skeleton>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="createdUser.name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>作成者</FormLabel>
-                  <FormControl hidden={!isReady}>
-                    <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                      {field.value}
-                    </div>
-                  </FormControl>
-                  <Skeleton
-                    hidden={isReady}
-                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {form.getValues("updatedUser.name") ? (
+        <ScrollArea className="h-dvh pr-2">
+          <SheetHeader>
+            <SheetTitle>カテゴリー編集</SheetTitle>
+            <SheetDescription className="sr-only">
+              カテゴリー編集画面
+            </SheetDescription>
+          </SheetHeader>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit, onError)}
+              className="space-y-8 p-4"
+            >
               <FormField
                 control={form.control}
-                name="updatedUser.name"
+                name="id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>更新者</FormLabel>
+                    <FormLabel>カテゴリーID</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
@@ -265,35 +145,140 @@ export default function CategoryUpdateForm(props: Props) {
                   </FormItem>
                 )}
               />
-            ) : (
-              <FormItem>
-                <FormLabel>更新者</FormLabel>
-                <FormControl hidden={!isReady}>
-                  <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"></div>
-                </FormControl>
-                <Skeleton
-                  hidden={isReady}
-                  className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>カテゴリー名</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <Input type="text" {...field} />
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="link"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>リンク文字列</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <Input type="text" {...field} />
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="order"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>表示順</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <Input type="number" {...field} />
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>表示設定</FormLabel>
+                    <div hidden={!isReady}>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={String(field.value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categoryDisplay.map((value, index) => (
+                              <SelectItem
+                                key={index}
+                                value={String(value.range)}
+                              >
+                                {value.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <Skeleton
+                      className="flex h-9 items-center justify-end border border-input px-3 py-2 [&amp;&gt;span]:line-clamp-1 w-full"
+                      hidden={isReady}
+                    >
+                      <ChevronDownIcon className="size-4 opacity-50" />
+                    </Skeleton>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="createdUser.name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>作成者</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                        {field.value}
+                      </div>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {form.getValues("updatedUser.name") ? (
+                <FormField
+                  control={form.control}
+                  name="updatedUser.name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>更新者</FormLabel>
+                      <FormControl hidden={!isReady}>
+                        <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                          {field.value}
+                        </div>
+                      </FormControl>
+                      <Skeleton
+                        hidden={isReady}
+                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <FormMessage />
-              </FormItem>
-            )}
-            <FormField
-              control={form.control}
-              name="createdAt"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>作成日</FormLabel>
-                  <div
-                    hidden={!isReady}
-                    className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"
-                  >
-                    {field.value ? (
-                      format(field.value, "PPP", { locale: ja })
-                    ) : (
-                      <span>作成されていません。</span>
-                    )}
-                  </div>
+              ) : (
+                <FormItem>
+                  <FormLabel>更新者</FormLabel>
+                  <FormControl hidden={!isReady}>
+                    <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"></div>
+                  </FormControl>
                   <Skeleton
                     hidden={isReady}
                     className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
@@ -301,41 +286,66 @@ export default function CategoryUpdateForm(props: Props) {
                   <FormMessage />
                 </FormItem>
               )}
-            />
-            <FormField
-              control={form.control}
-              name="updatedAt"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>最終更新日</FormLabel>
-                  <div
-                    hidden={!isReady}
-                    className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"
-                  >
-                    {field.value ? (
-                      format(field.value, "PPP", { locale: ja })
-                    ) : (
-                      <span>作成されていません。</span>
-                    )}
-                  </div>
-                  <Skeleton
-                    hidden={isReady}
-                    className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <SheetFooter className="p-0">
-              <Button type="submit" disabled={!isReady}>
-                更新
-              </Button>
-              <SheetClose asChild>
-                <Button variant="outline">キャンセル</Button>
-              </SheetClose>
-            </SheetFooter>
-          </form>
-        </Form>
+              <FormField
+                control={form.control}
+                name="createdAt"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>作成日</FormLabel>
+                    <div
+                      hidden={!isReady}
+                      className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"
+                    >
+                      {field.value ? (
+                        format(field.value, "PPP", { locale: ja })
+                      ) : (
+                        <span>作成されていません。</span>
+                      )}
+                    </div>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="updatedAt"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>最終更新日</FormLabel>
+                    <div
+                      hidden={!isReady}
+                      className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"
+                    >
+                      {field.value ? (
+                        format(field.value, "PPP", { locale: ja })
+                      ) : (
+                        <span>作成されていません。</span>
+                      )}
+                    </div>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <SheetFooter className="p-0">
+                <Button type="submit" disabled={!isReady}>
+                  更新
+                </Button>
+                <SheetClose asChild>
+                  <Button variant="outline">キャンセル</Button>
+                </SheetClose>
+              </SheetFooter>
+            </form>
+          </Form>
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );

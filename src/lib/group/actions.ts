@@ -1,7 +1,5 @@
 "use server";
-import { prisma } from "@/prisma";
-import { auth } from "@/auth";
-import {
+import type {
   groupGetByIdSchemaType,
   groupCreateSchemaType,
   groupUpdateSchemaType,
@@ -14,6 +12,9 @@ import {
   permissionSchemaType,
   permissionUpdateSchemaType,
 } from "@/lib/group/verification";
+
+import { auth } from "@/auth";
+import { prisma } from "@/prisma";
 
 export async function getById(prop: groupGetByIdSchemaType) {
   const { id } = prop;
