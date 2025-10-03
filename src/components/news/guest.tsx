@@ -80,6 +80,8 @@ export default function News() {
                 <div className="relative aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0">
                   <Image
                     alt=""
+                    width={100}
+                    height={100}
                     src={post.imageUrl}
                     className="absolute inset-0 size-full rounded-2xl bg-gray-50 object-cover dark:bg-gray-800"
                   />
