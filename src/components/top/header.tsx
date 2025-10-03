@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import Link from "next/link";
 
 const navigation = [
   { name: "お知らせ", href: "news" },
@@ -26,7 +27,7 @@ export default function Heder() {
               aria-label="Global"
               className="flex items-center justify-between lg:justify-start"
             >
-              <a href="#" className="-m-1.5 p-1.5">
+              <Link href="/" className="-m-1.5 p-1.5">
                 <span className="sr-only">高知県水泳連盟</span>
                 <Image
                   alt="高知県水泳連盟"
@@ -42,7 +43,7 @@ export default function Heder() {
                   width={8}
                   height={8}
                 />
-              </a>
+              </Link>
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(true)}
@@ -53,13 +54,13 @@ export default function Heder() {
               </button>
               <div className="hidden lg:ml-12 lg:flex lg:gap-x-14">
                 {navigation.map((item) => (
-                  <a
+                  <Link
                     key={item.name}
                     href={item.href}
                     className="text-sm/6 font-semibold text-gray-900 dark:text-white"
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </nav>
@@ -73,23 +74,23 @@ export default function Heder() {
           <div className="fixed inset-0 z-50" />
           <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10 dark:bg-gray-900 dark:sm:ring-gray-100/10">
             <div className="flex items-center justify-between">
-              <a href="#" className="-m-1.5 p-1.5">
-                <span className="sr-only">Your Company</span>
+              <Link href="/" className="-m-1.5 p-1.5">
+                <span className="sr-only">高知県水泳連盟</span>
                 <Image
-                  alt=""
-                  width={100}
-                  height={100}
-                  src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+                  alt="高知県水泳連盟"
+                  src="/logo.svg"
                   className="h-8 w-auto dark:hidden"
+                  width={8}
+                  height={8}
                 />
                 <Image
-                  alt=""
-                  width={100}
-                  height={100}
-                  src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
+                  alt="高知県水泳連盟"
+                  src="/logo.svg"
                   className="h-8 w-auto not-dark:hidden"
+                  width={8}
+                  height={8}
                 />
-              </a>
+              </Link>
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
@@ -103,22 +104,22 @@ export default function Heder() {
               <div className="-my-6 divide-y divide-gray-500/10 dark:divide-white/10">
                 <div className="space-y-2 py-6">
                   {navigation.map((item) => (
-                    <a
+                    <Link
                       key={item.name}
                       href={item.href}
                       className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5"
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </div>
                 <div className="py-6">
-                  <a
-                    href="#"
+                  <Link
+                    href="/contact"
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5"
                   >
-                    Log in
-                  </a>
+                    お問い合わせ
+                  </Link>
                 </div>
               </div>
             </div>
