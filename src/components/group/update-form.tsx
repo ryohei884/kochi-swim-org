@@ -73,7 +73,7 @@ export default function GroupUpdateForm(props: Props) {
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<groupWithUserSchemaType> = async (
-    data: groupUpdateSchemaType
+    data: groupUpdateSchemaType,
   ) => {
     const res = await update(data);
 

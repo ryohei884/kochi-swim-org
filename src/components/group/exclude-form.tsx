@@ -72,7 +72,7 @@ export default function GroupExcludeForm(props: Props) {
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<groupWithUserSchemaType> = async (
-    data: groupExcludeSchemaType
+    data: groupExcludeSchemaType,
   ) => {
     await exclude(data);
 

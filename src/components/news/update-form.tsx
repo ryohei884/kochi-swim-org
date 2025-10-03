@@ -98,7 +98,7 @@ export default function NewsUpdateForm(props: Props) {
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<newsUpdateSchemaType> = async (
-    data: newsUpdateSchemaType
+    data: newsUpdateSchemaType,
   ) => {
     let newBlob: string | null = null;
     if (data.image !== null && typeof data.image !== "string") {
@@ -142,7 +142,7 @@ export default function NewsUpdateForm(props: Props) {
       {
         method: "POST",
         body: file,
-      }
+      },
     );
 
     const newBlob = (await response.json()) as PutBlobResult;
@@ -154,7 +154,7 @@ export default function NewsUpdateForm(props: Props) {
     const dataTransfer = new DataTransfer();
 
     Array.from(event.target.files!).forEach((image) =>
-      dataTransfer.items.add(image)
+      dataTransfer.items.add(image),
     );
 
     const files = dataTransfer.files;
@@ -298,7 +298,7 @@ export default function NewsUpdateForm(props: Props) {
                             variant={"outline"}
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                             onClick={(date) => {
                               field.onChange(date);
@@ -344,7 +344,7 @@ export default function NewsUpdateForm(props: Props) {
                             variant={"outline"}
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                             onClick={(date) => {
                               field.onChange(date);
@@ -394,6 +394,23 @@ export default function NewsUpdateForm(props: Props) {
                           <SelectItem value="2">委員会情報</SelectItem>
                         </SelectContent>
                       </Select>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="order"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>表示順</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <Input type="number" {...field} />
                     </FormControl>
                     <Skeleton
                       hidden={isReady}

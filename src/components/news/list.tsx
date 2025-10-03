@@ -1,7 +1,6 @@
 "use client";
 
-// import PermissionForm from "@/components/group/permission-form";
-// import ReOrder from "@/components/group/reorder";
+import ReOrder from "@/components/news/reorder";
 import { useEffect, useState } from "react";
 
 import { format } from "date-fns";
@@ -33,6 +32,7 @@ export default function NewsList() {
   );
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(3);
+  const [maxOrder, setMaxOrder] = useState<number>(0);
 
   const fetchListData = async (id?: string) => {
     setIsReady(false);
@@ -42,6 +42,8 @@ export default function NewsList() {
     if (res !== null) {
       setData(res);
       setDataNum(res.length);
+      const orders = res.map((value) => value.order);
+      setMaxOrder(Math.max(...orders) + 1);
       setIsReady(true);
     }
   };
@@ -54,12 +56,14 @@ export default function NewsList() {
   return (
     <>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight p-2 flex justify-between">
-        ニュース <CreateForm fetchListData={fetchListData} />
+        ニュース{" "}
+        <CreateForm fetchListData={fetchListData} maxOrder={maxOrder} />
       </h4>
       <hr />
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>表示順</TableHead>
             <TableHead>タイトル</TableHead>
             <TableHead>本文</TableHead>
             <TableHead>掲載期間</TableHead>
@@ -81,6 +85,9 @@ export default function NewsList() {
                 for (let i = 0; i < dataNum; i++) {
                   rows.push(
                     <TableRow key={i}>
+                      <TableCell>
+                        <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                      </TableCell>
                       <TableCell>
                         <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                       </TableCell>
@@ -134,6 +141,7 @@ export default function NewsList() {
                     key={d.id}
                     className={callbackData === d.id ? "bg-muted" : ""}
                   >
+                    <TableCell>{d.order}</TableCell>
                     <TableCell>
                       {d.title.substring(0, 10)}
                       {d.title.length > 10 && "..."}
@@ -185,6 +193,7 @@ export default function NewsList() {
         </TableBody>
       </Table>
       <hr />
+      <ReOrder fetchListData={fetchListData} />
     </>
   );
 }

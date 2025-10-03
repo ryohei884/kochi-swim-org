@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import { z } from "zod";
 
 // userSchema
 export const userSchema = z.object({
@@ -50,6 +50,14 @@ export const newsSchema = z.object({
   }),
   toDate: z.date().nullable(),
   link: z.string().nullable(),
+  order: z
+    .transform(Number)
+    .pipe(
+      z
+        .number("数字を入力してください。")
+        .int("整数を入力してください。")
+        .positive("自然数を入力してください。"),
+    ),
   createdUserId: z.string(),
   revisedUserId: z.string().nullable(),
   approvedUserId: z.string().nullable(),
@@ -69,6 +77,7 @@ export const newsSchemaDV: newsSchemaType = {
   fromDate: new Date(),
   toDate: null,
   link: null,
+  order: 0,
   createdUserId: "",
   revisedUserId: "",
   approvedUserId: "",
@@ -95,6 +104,7 @@ export const newsWithUserSchemaDV: newsWithUserSchemaType = {
   fromDate: newsSchemaDV.fromDate,
   toDate: newsSchemaDV.toDate,
   link: newsSchemaDV.link,
+  order: newsSchemaDV.order,
   createdUserId: newsSchemaDV.createdUserId,
   revisedUserId: newsSchemaDV.revisedUserId,
   approvedUserId: newsSchemaDV.approvedUserId,
@@ -127,6 +137,7 @@ export const newsCreateSchemaDV: newsCreateSchemaType = {
   fromDate: newsSchemaDV.fromDate,
   toDate: newsSchemaDV.toDate,
   link: newsSchemaDV.link,
+  order: newsSchemaDV.order,
   createdUserId: newsSchemaDV.createdUserId,
 };
 
@@ -178,6 +189,7 @@ export const newsCreateOnSubmitSchemaDV: newsCreateOnSubmitSchemaType = {
   fromDate: newsSchemaDV.fromDate,
   toDate: newsSchemaDV.toDate,
   link: newsSchemaDV.link,
+  order: newsSchemaDV.order,
   createdUserId: newsSchemaDV.createdUserId,
 };
 
@@ -228,6 +240,7 @@ export const newsUpdateSchemaDV: newsUpdateSchemaType = {
   fromDate: newsSchemaDV.fromDate,
   toDate: newsSchemaDV.toDate,
   link: newsSchemaDV.link,
+  order: newsSchemaDV.order,
 };
 
 // newsGetByIdSchema
@@ -238,6 +251,7 @@ export const newsGetByIdSchema = newsSchema.omit({
   fromDate: true,
   toDate: true,
   link: true,
+  order: true,
   createdUserId: true,
   revisedUserId: true,
   approvedUserId: true,
@@ -261,6 +275,7 @@ export const newsExcludeSchema = newsSchema.omit({
   fromDate: true,
   toDate: true,
   link: true,
+  order: true,
   createdUserId: true,
   revisedUserId: true,
   approvedUserId: true,
@@ -284,6 +299,7 @@ export const newsApproveSchema = newsSchema.omit({
   fromDate: true,
   toDate: true,
   link: true,
+  order: true,
   createdUserId: true,
   revisedUserId: true,
   approvedUserId: true,

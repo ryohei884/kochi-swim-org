@@ -73,7 +73,7 @@ export default function NewsExcludeForm(props: Props) {
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<newsWithUserSchemaType> = async (
-    data: newsExcludeSchemaType
+    data: newsExcludeSchemaType,
   ) => {
     await exclude(data);
 
@@ -239,6 +239,25 @@ export default function NewsExcludeForm(props: Props) {
                     <FormLabel>リンク先</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                        {field.value}
+                      </div>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="order"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>表示順</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <div className="whitespace-pre-wrap flex-none min-h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
                       </div>
                     </FormControl>

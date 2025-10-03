@@ -15,6 +15,9 @@ export async function getList() {
     include: { createdUser: true, revisedUser: true, approvedUser: true },
     orderBy: [
       {
+        order: "asc",
+      },
+      {
         createdAt: "asc",
       },
       {
@@ -41,6 +44,7 @@ export async function create(prop: newsCreateSchemaType) {
         fromDate: data.fromDate,
         toDate: data.toDate,
         link: data.link,
+        order: data.order,
         createdUserId: session?.user?.id,
         approved: false,
       },
@@ -62,7 +66,7 @@ export async function getById(prop: newsGetByIdSchemaType) {
 }
 
 export async function update(prop: newsUpdateSchemaType) {
-  const { id, title, detail, image, fromDate, toDate, link } = prop;
+  const { id, title, detail, image, fromDate, toDate, link, order } = prop;
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
@@ -89,6 +93,7 @@ export async function update(prop: newsUpdateSchemaType) {
           fromDate: fromDate,
           toDate: toDate,
           link: link,
+          order: order,
           revisedUserId: session?.user?.id,
           approvedUserId: null,
           approved: false,
@@ -146,4 +151,38 @@ export async function approve(prop: newsApproveSchemaType) {
       });
     }
   }
+}
+
+export async function reOrder() {
+  await prisma.$transaction(async (prisma) => {
+    const list = await prisma.news.findMany({
+      where: {
+        order: { gt: 0 },
+      },
+      orderBy: [
+        {
+          order: "asc",
+        },
+        {
+          createdAt: "asc",
+        },
+        {
+          revisedAt: "asc",
+        },
+      ],
+    });
+
+    if (!list) throw Error("There is no news data.");
+
+    for (let i = 0; i < list.length; i++) {
+      await prisma.news.update({
+        where: {
+          id: list[i].id,
+        },
+        data: {
+          order: i + 1,
+        },
+      });
+    }
+  });
 }

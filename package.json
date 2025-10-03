@@ -9,7 +9,8 @@
     "postinstall": "prisma generate --no-engine",
     "lint": "npx eslint --fix src/ --ignore-pattern 'src/app/generated/**/*'",
     "format": "npx prettier --write src && npx prisma format",
-    "reset": "rm -rf ./prisma/migrations && prisma migrate reset && npx prisma migrate dev --name init",
+    "reset": "rm -rf ./prisma/migrations && prisma migrate reset",
+    "migrate": "npx prisma migrate dev --name init",
     "seed": "npx prisma db seed"
   },
   "prisma": {
@@ -17,7 +18,10 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
+    "@headlessui/react": "^2.2.9",
+    "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.2.2",
+    "@line/bot-sdk": "^10.3.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@prisma/client": "^6.16.1",
     "@prisma/extension-accelerate": "^2.0.2",
@@ -34,10 +38,12 @@
     "@tinymce/tinymce-react": "^6.3.0",
     "@types/node": "^24.4.0",
     "@vercel/blob": "^2.0.0",
+    "@vercel/speed-insights": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.544.0",
+    "motion": "^12.23.22",
     "next": "^15.5.4",
     "next-auth": "^5.0.0-beta.29",
     "next-themes": "^0.4.6",

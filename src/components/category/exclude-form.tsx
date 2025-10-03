@@ -74,7 +74,7 @@ export default function CategoryExcludeForm(props: Props) {
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<categoryWithUserSchemaType> = async (
-    data: categoryExcludeSchemaType
+    data: categoryExcludeSchemaType,
   ) => {
     await exclude(data);
 

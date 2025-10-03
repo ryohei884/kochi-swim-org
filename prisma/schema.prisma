@@ -173,6 +173,7 @@ model News {
   fromDate       DateTime  @default(now())
   toDate         DateTime?
   link           String?
+  order          Int
   createdUserId  String
   revisedUserId  String?
   approvedUserId String?

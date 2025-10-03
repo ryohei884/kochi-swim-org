@@ -113,7 +113,7 @@ export default function CategoryList() {
                           <Skeleton className="size-6 border border-input file:border-0" />
                         </Button>
                       </TableCell>
-                    </TableRow>
+                    </TableRow>,
                   );
                 }
                 return <>{rows}</>;

@@ -82,7 +82,7 @@ export default function CategoryUpdateForm(props: Props) {
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<categoryWithUserSchemaType> = async (
-    data: categoryUpdateSchemaType
+    data: categoryUpdateSchemaType,
   ) => {
     const res = await update(data);
 

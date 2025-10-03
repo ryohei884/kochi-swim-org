@@ -2,7 +2,7 @@
 // @ts-nocheck
 
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { init } from "@paralleldrive/cuid2";
@@ -63,13 +63,15 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   fetchListData: (id: string) => Promise<void>;
+  maxOrder: number;
 }
 
 export default function NewsCreateForm(props: Props) {
-  const { fetchListData } = props;
+  const { fetchListData, maxOrder } = props;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_blob, setBlob] = useState<PutBlobResult | null>(null);
   const [preview, setPreview] = useState("");
+  const [isReady, setIsReady] = useState<boolean>(false);
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [openFromDate, setOpenFromDate] = useState(false);
@@ -80,6 +82,12 @@ export default function NewsCreateForm(props: Props) {
     resolver: zodResolver(newsCreateOnSubmitSchema),
     defaultValues: newsCreateOnSubmitSchemaDV,
   });
+
+  useEffect(() => {
+    form.setValue("order", maxOrder);
+    setIsReady(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maxOrder]);
 
   const onSubmit: SubmitHandler<newsCreateOnSubmitSchemaType> = async (
     data: newsCreateOnSubmitSchemaType,
@@ -346,8 +354,23 @@ export default function NewsCreateForm(props: Props) {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="order"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>表示順</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <SheetFooter className="p-0">
-                <Button type="submit">作成</Button>
+                <Button type="submit" disabled={!isReady}>
+                  作成
+                </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>
                 </SheetClose>
