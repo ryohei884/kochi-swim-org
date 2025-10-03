@@ -3,8 +3,8 @@ import { ClientConfig, messagingApi } from "@line/bot-sdk";
 import { NextResponse } from "next/server";
 import { getList } from "@/lib/contact/actions";
 const clientConfig: ClientConfig = {
-  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || "",
-  channelSecret: process.env.CHANNEL_SECRET || "",
+  channelAccessToken: process.env.NEXT_PUBLIC_AUTH_CHANNEL_ACCESS_TOKEN || "",
+  channelSecret: process.env.NEXT_PUBLIC_AUTH_CHANNEL_SECRET || "",
 };
 
 const client = new messagingApi.MessagingApiClient(clientConfig);
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
             },
           ],
         });
-      }),
+      })
     );
   } catch (err) {
     console.log(err);
