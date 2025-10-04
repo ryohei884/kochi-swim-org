@@ -14,9 +14,10 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import type {
-  newsWithUserSchemaType,
-  newsUpdateSchemaType,
+import {
+  newsUpdateOnSubmitSchemaType,
+  newsUpdateOnSubmitSchemaDV,
+  newsUpdateOnSubmitSchema,
 } from "@/lib/news/verification";
 import type { PutBlobResult } from "@vercel/blob";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
@@ -58,8 +59,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { getById, update } from "@/lib/news/actions";
-import { newsUpdateSchema, newsUpdateSchemaDV } from "@/lib/news/verification";
-import { cn } from "@/lib/utils";
+import { cn, newsLinkCategory } from "@/lib/utils";
 
 interface Props {
   id: string;
@@ -77,9 +77,9 @@ export default function NewsUpdateForm(props: Props) {
   const [openToDate, setOpenToDate] = useState(false);
 
   const [isReady, setIsReady] = useState<boolean>(false);
-  const form = useForm<newsUpdateSchemaType>({
-    resolver: zodResolver(newsUpdateSchema),
-    defaultValues: newsUpdateSchemaDV,
+  const form = useForm<newsUpdateOnSubmitSchemaType>({
+    resolver: zodResolver(newsUpdateOnSubmitSchema),
+    defaultValues: newsUpdateOnSubmitSchemaDV,
   });
 
   const fetchData = async (id: string) => {
@@ -97,15 +97,19 @@ export default function NewsUpdateForm(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
 
-  const onSubmit: SubmitHandler<newsUpdateSchemaType> = async (
-    data: newsUpdateSchemaType,
+  const onSubmit: SubmitHandler<newsUpdateOnSubmitSchemaType> = async (
+    data: newsUpdateOnSubmitSchemaType,
   ) => {
     let newBlob: string | null = null;
     if (data.image !== null && typeof data.image !== "string") {
       newBlob = await uploadImage(data.image);
     }
 
-    const res = await update({ ...data, image: newBlob ?? data.image });
+    const res = await update({
+      ...data,
+      link: Number(data.link),
+      image: newBlob ?? data.image,
+    });
 
     toast("更新しました。", {
       action: {
@@ -119,7 +123,9 @@ export default function NewsUpdateForm(props: Props) {
     form.reset();
   };
 
-  const onError: SubmitErrorHandler<newsWithUserSchemaType> = (errors) => {
+  const onError: SubmitErrorHandler<newsUpdateOnSubmitSchemaType> = (
+    errors,
+  ) => {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
@@ -384,14 +390,19 @@ export default function NewsUpdateForm(props: Props) {
                   <FormItem>
                     <FormLabel>リンク先</FormLabel>
                     <FormControl hidden={!isReady}>
-                      <Select onValueChange={field.onChange}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={String(field.value)}
+                      >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="リンク先" {...field} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="0">ニュース</SelectItem>
-                          <SelectItem value="1">大会情報</SelectItem>
-                          <SelectItem value="2">委員会情報</SelectItem>
+                          {newsLinkCategory.map((v) => (
+                            <SelectItem key={v.id} value={String(v.id)}>
+                              {v.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </FormControl>

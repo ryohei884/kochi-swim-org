@@ -59,6 +59,7 @@ export default function Hero() {
             width={100}
             height={100}
             src="/wp_club.jpg"
+            unoptimized
             className="aspect-3/2 object-cover lg:aspect-auto lg:size-full"
           />
         </div>

@@ -59,7 +59,7 @@ import {
   newsCreateOnSubmitSchema,
   newsCreateOnSubmitSchemaDV,
 } from "@/lib/news/verification";
-import { cn } from "@/lib/utils";
+import { cn, newsLinkCategory } from "@/lib/utils";
 
 interface Props {
   fetchListData: (id: string) => Promise<void>;
@@ -96,7 +96,11 @@ export default function NewsCreateForm(props: Props) {
     if (data.image !== null && typeof data.image !== "string") {
       newBlob = await uploadImage(data.image);
     }
-    const res = await create({ ...data, image: newBlob ?? null });
+    const res = await create({
+      ...data,
+      link: Number(data.link),
+      image: newBlob ?? null,
+    });
 
     toast("作成しました。", {
       action: {
@@ -344,9 +348,11 @@ export default function NewsCreateForm(props: Props) {
                           <SelectValue placeholder="リンク先" {...field} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="0">ニュース</SelectItem>
-                          <SelectItem value="1">大会情報</SelectItem>
-                          <SelectItem value="2">委員会情報</SelectItem>
+                          {newsLinkCategory.map((value, index) => (
+                            <SelectItem key={index} value={String(value.id)}>
+                              {value.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </FormControl>

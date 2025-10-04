@@ -49,7 +49,7 @@ export const newsSchema = z.object({
     error: "掲載開始日は必須項目です。",
   }),
   toDate: z.date().nullable(),
-  link: z.string().nullable(),
+  link: z.number().int().nullable(),
   order: z
     .transform(Number)
     .pipe(
@@ -145,6 +145,7 @@ export const newsCreateSchemaDV: newsCreateSchemaType = {
 export const newsCreateOnSubmitSchema = newsSchema
   .omit({
     id: true,
+    link: true,
     createdAt: true,
     revisedAt: true,
     approvedAt: true,
@@ -154,6 +155,7 @@ export const newsCreateOnSubmitSchema = newsSchema
     image: true,
   })
   .extend({
+    link: z.string(),
     image: z
       .custom<FileList>()
       .transform((file) => file[0])
@@ -188,7 +190,7 @@ export const newsCreateOnSubmitSchemaDV: newsCreateOnSubmitSchemaType = {
   image: null,
   fromDate: newsSchemaDV.fromDate,
   toDate: newsSchemaDV.toDate,
-  link: newsSchemaDV.link,
+  link: String(newsSchemaDV.link),
   order: newsSchemaDV.order,
   createdUserId: newsSchemaDV.createdUserId,
 };
@@ -240,6 +242,60 @@ export const newsUpdateSchemaDV: newsUpdateSchemaType = {
   fromDate: newsSchemaDV.fromDate,
   toDate: newsSchemaDV.toDate,
   link: newsSchemaDV.link,
+  order: newsSchemaDV.order,
+};
+
+// newsUpdateOnSubmitSchema
+export const newsUpdateOnSubmitSchema = newsSchema
+  .omit({
+    createdUserId: true,
+    revisedUserId: true,
+    approvedUserId: true,
+    approved: true,
+    revisedAt: true,
+    approvedAt: true,
+    createdAt: true,
+    image: true,
+    link: true,
+  })
+  .extend({
+    link: z.string(),
+    image: z
+      .custom<FileList>()
+      .transform((file) => file[0])
+      .nullable()
+      .refine((file) => !file || file.size <= 512 * 1024 * 1024, {
+        message: "ファイルサイズは最大512MBです",
+      })
+      .refine(
+        (file) =>
+          !file ||
+          [
+            "image/png",
+            "image/jpeg",
+            "image/jpg",
+            "image/svg+xml",
+            "image/gif",
+          ].includes(file.type),
+        {
+          message: ".jpg, .png, .gif, svgのみ利用可能です。",
+        },
+      )
+      .or(z.string()),
+  });
+
+export type newsUpdateOnSubmitSchemaType = z.infer<
+  typeof newsUpdateOnSubmitSchema
+>;
+
+export const newsUpdateOnSubmitSchemaDV: newsUpdateOnSubmitSchemaType = {
+  id: newsSchemaDV.id,
+  title: newsSchemaDV.title,
+  detail: newsSchemaDV.detail,
+  image: null,
+  fromDate: newsSchemaDV.fromDate,
+  toDate: newsSchemaDV.toDate,
+  link: String(newsSchemaDV.link),
   order: newsSchemaDV.order,
 };
 

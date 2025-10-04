@@ -10,7 +10,7 @@ import type {
 import { auth } from "@/auth";
 import { prisma } from "@/prisma";
 
-export async function getList() {
+export async function getList(page?: number) {
   const res = await prisma.news.findMany({
     include: { createdUser: true, revisedUser: true, approvedUser: true },
     orderBy: [
@@ -24,6 +24,41 @@ export async function getList() {
         revisedAt: "asc",
       },
     ],
+    skip: page ? (page - 1) * 10 : undefined,
+    take: page ? 10 : undefined,
+  });
+  return res;
+}
+
+export async function getListNum() {
+  const res = await prisma.news.count({
+    where: {
+      approved: true,
+      fromDate: {
+        lt: new Date(),
+      },
+      toDate: {
+        gte: new Date(),
+      },
+    },
+  });
+  return res;
+}
+
+export async function getList3() {
+  const res = await prisma.news.findMany({
+    orderBy: [
+      {
+        order: "asc",
+      },
+      {
+        createdAt: "asc",
+      },
+      {
+        revisedAt: "asc",
+      },
+    ],
+    take: 3,
   });
   return res;
 }

@@ -127,7 +127,7 @@ CREATE TABLE "public"."News" (
     "image" TEXT,
     "fromDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "toDate" TIMESTAMP(3),
-    "link" TEXT,
+    "link" INTEGER,
     "order" INTEGER NOT NULL,
     "createdUserId" TEXT NOT NULL,
     "revisedUserId" TEXT,

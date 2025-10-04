@@ -24,6 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getList } from "@/lib/news/actions";
+import { newsLinkCategory } from "@/lib/utils";
 
 export default function NewsList() {
   const [data, setData] = useState<newsWithUserSchemaType[]>([]);
@@ -66,6 +67,7 @@ export default function NewsList() {
             <TableHead>表示順</TableHead>
             <TableHead>タイトル</TableHead>
             <TableHead>本文</TableHead>
+            <TableHead>リンク</TableHead>
             <TableHead>掲載期間</TableHead>
             <TableHead>作成日</TableHead>
             <TableHead>最終更新日</TableHead>
@@ -85,6 +87,9 @@ export default function NewsList() {
                 for (let i = 0; i < dataNum; i++) {
                   rows.push(
                     <TableRow key={i}>
+                      <TableCell>
+                        <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                      </TableCell>
                       <TableCell>
                         <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                       </TableCell>
@@ -149,6 +154,9 @@ export default function NewsList() {
                     <TableCell>
                       {d.detail.substring(0, 10)}
                       {d.detail.length > 10 && "..."}
+                    </TableCell>
+                    <TableCell>
+                      {newsLinkCategory.find((v) => v.id === d.link)?.name}
                     </TableCell>
                     <TableCell>
                       {d.fromDate && format(d.fromDate, "PPP", { locale: ja })}{" "}

@@ -43,6 +43,8 @@ import {
   newsWithUserSchemaDV,
 } from "@/lib/news/verification";
 
+import { newsLinkCategory } from "@/lib/utils";
+
 interface Props {
   id: string;
   fetchListData: () => Promise<void>;
@@ -239,7 +241,10 @@ export default function NewsExcludeForm(props: Props) {
                     <FormLabel>リンク先</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                        {field.value}
+                        {
+                          newsLinkCategory.find((v) => v.id === field.value)
+                            ?.name
+                        }
                       </div>
                     </FormControl>
                     <Skeleton

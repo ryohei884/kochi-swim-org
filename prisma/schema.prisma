@@ -172,7 +172,7 @@ model News {
   image          String?
   fromDate       DateTime  @default(now())
   toDate         DateTime?
-  link           String?
+  link           Int?
   order          Int
   createdUserId  String
   revisedUserId  String?
