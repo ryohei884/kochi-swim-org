@@ -21,8 +21,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: profile.role ?? "user",
         };
       },
-      clientId: process.env.NEXT_PUBLIC_AUTH_LINE_ID,
-      clientSecret: process.env.NEXT_PUBLIC_AUTH_LINE_SECRET,
+      clientId: process.env.AUTH_LINE_ID,
+      clientSecret: process.env.AUTH_LINE_SECRET,
       checks: ["state"],
     }),
   ],
