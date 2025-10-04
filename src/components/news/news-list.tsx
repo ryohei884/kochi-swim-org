@@ -21,7 +21,7 @@ interface Props {
   page: string;
 }
 
-export default function News(props: Props) {
+export default function NewsList(props: Props) {
   const { page } = props;
   const previousPage = Number(page) - 1;
   const nextPage = Number(page) + 1;

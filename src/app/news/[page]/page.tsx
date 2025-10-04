@@ -1,5 +1,5 @@
 import Header from "@/components/top/header";
-import News from "@/components/news/guest";
+import NewsList from "@/components/news/news-list";
 import Footer from "@/components/top/footer";
 
 export default async function Page({
@@ -11,7 +11,7 @@ export default async function Page({
   return (
     <>
       <Header />
-      <News page={page} />
+      <NewsList page={page} />
       <Footer />
     </>
   );

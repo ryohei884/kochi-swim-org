@@ -1,17 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import Link from "next/link";
 
-import type { categoryWithUserSchemaType } from "@/lib/category/verification";
+import type { groupWithUserSchemaType } from "@/lib/group/verification";
 
-import CreateForm from "@/components/category/create-form";
-import ExcludeForm from "@/components/category/exclude-form";
-import ReOrder from "@/components/category/reorder";
-import UpdateForm from "@/components/category/update-form";
+import CreateForm from "@/components/dashboard/group/create-form";
+import ExcludeForm from "@/components/dashboard/group/exclude-form";
+import MemberForm from "@/components/dashboard/group/member-form";
+import PermissionForm from "@/components/dashboard/group/permission-form";
+import UpdateForm from "@/components/dashboard/group/update-form";
+// import ReOrder from "@/components/group/reorder";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -22,19 +23,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getList } from "@/lib/category/actions";
-import { categoryDisplay } from "@/lib/category/role";
+import { getList } from "@/lib/group/actions";
 
-export default function CategoryList() {
-  const [data, setData] = useState<categoryWithUserSchemaType[]>([]);
+export default function GroupList() {
+  const [data, setData] = useState<groupWithUserSchemaType[]>([]);
   const [callbackData, setCallbackData] = useState<
-    categoryWithUserSchemaType | undefined
+    groupWithUserSchemaType | undefined
   >(undefined);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(3);
-  const [maxOrder, setMaxOrder] = useState<number>(0);
 
-  const fetchListData = async (data?: categoryWithUserSchemaType) => {
+  const fetchListData = async (data?: groupWithUserSchemaType) => {
     setIsReady(false);
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     data && setCallbackData(data);
@@ -42,8 +41,6 @@ export default function CategoryList() {
     if (res !== null) {
       setData(res);
       setDataNum(res.length);
-      const orders = res.map((value) => value.order);
-      setMaxOrder(Math.max(...orders) + 1);
       setIsReady(true);
     }
   };
@@ -55,23 +52,23 @@ export default function CategoryList() {
   return (
     <>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight p-2 flex justify-between">
-        カテゴリー{" "}
-        <CreateForm fetchListData={fetchListData} maxOrder={maxOrder} />
+        グループ <CreateForm fetchListData={fetchListData} />
       </h4>
       <hr />
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>カテゴリー名</TableHead>
-            <TableHead>リンク先</TableHead>
-            <TableHead>表示順序</TableHead>
-            <TableHead>表示対象者</TableHead>
+            <TableHead>グループ名</TableHead>
             <TableHead>作成日</TableHead>
             <TableHead>最終更新日</TableHead>
             <TableHead>作成者</TableHead>
             <TableHead>更新者</TableHead>
             <TableHead className="flex-none text-center w-12">変更</TableHead>
             <TableHead className="flex-none text-center w-12">削除</TableHead>
+            <TableHead className="flex-none text-center w-12">
+              メンバー
+            </TableHead>
+            <TableHead className="flex-none text-center w-12">権限</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -126,20 +123,6 @@ export default function CategoryList() {
                   >
                     <TableCell>{value.name}</TableCell>
                     <TableCell>
-                      <Link href={`../${value.link}`}>
-                        <Button variant="link" className="pl-0">
-                          {value.link}
-                        </Button>
-                      </Link>
-                    </TableCell>
-                    <TableCell>{value.order}</TableCell>
-                    <TableCell>
-                      {
-                        categoryDisplay.find((v) => v.range === value.role)
-                          ?.label
-                      }
-                    </TableCell>
-                    <TableCell>
                       {format(value.createdAt, "PPP", { locale: ja })}
                     </TableCell>
                     <TableCell>
@@ -161,13 +144,29 @@ export default function CategoryList() {
                         fetchListData={fetchListData}
                       />
                     </TableCell>
+                    <TableCell className="flex-none text-center w-12">
+                      <MemberForm
+                        key={value.id}
+                        id={value.id}
+                        groupName={value.name}
+                        fetchListData={fetchListData}
+                      />
+                    </TableCell>
+                    <TableCell className="flex-none text-center w-12">
+                      <PermissionForm
+                        key={value.id}
+                        id={value.id}
+                        groupName={value.name}
+                        fetchListData={fetchListData}
+                      />
+                    </TableCell>
                   </TableRow>
                 );
               })}
         </TableBody>
       </Table>
       <hr />
-      <ReOrder fetchListData={fetchListData} />
+      {/* <ReOrder fetchListData={fetchListData} /> */}
     </>
   );
 }

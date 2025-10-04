@@ -1,18 +1,17 @@
 "use client";
 
-import ReOrder from "@/components/news/reorder";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { CheckIcon } from "lucide-react";
+import Link from "next/link";
 
-import type { newsWithUserSchemaType } from "@/lib/news/verification";
+import type { categoryWithUserSchemaType } from "@/lib/category/verification";
 
-import ApproveForm from "@/components/news/approve-form";
-import CreateForm from "@/components/news/create-form";
-import ExcludeForm from "@/components/news/exclude-form";
-import UpdateForm from "@/components/news/update-form";
+import CreateForm from "@/components/dashboard/category/create-form";
+import ExcludeForm from "@/components/dashboard/category/exclude-form";
+import ReOrder from "@/components/dashboard/category/reorder";
+import UpdateForm from "@/components/dashboard/category/update-form";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -23,22 +22,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getList } from "@/lib/news/actions";
-import { newsLinkCategory } from "@/lib/utils";
+import { getList } from "@/lib/category/actions";
+import { categoryDisplay } from "@/lib/category/role";
 
-export default function NewsList() {
-  const [data, setData] = useState<newsWithUserSchemaType[]>([]);
-  const [callbackData, setCallbackData] = useState<string | undefined>(
-    undefined,
-  );
+export default function CategoryList() {
+  const [data, setData] = useState<categoryWithUserSchemaType[]>([]);
+  const [callbackData, setCallbackData] = useState<
+    categoryWithUserSchemaType | undefined
+  >(undefined);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(3);
   const [maxOrder, setMaxOrder] = useState<number>(0);
 
-  const fetchListData = async (id?: string) => {
+  const fetchListData = async (data?: categoryWithUserSchemaType) => {
     setIsReady(false);
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    data && setCallbackData(id);
+    data && setCallbackData(data);
     const res = await getList();
     if (res !== null) {
       setData(res);
@@ -51,33 +50,28 @@ export default function NewsList() {
 
   useEffect(() => {
     fetchListData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight p-2 flex justify-between">
-        ニュース{" "}
+        カテゴリー{" "}
         <CreateForm fetchListData={fetchListData} maxOrder={maxOrder} />
       </h4>
       <hr />
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>表示順</TableHead>
-            <TableHead>タイトル</TableHead>
-            <TableHead>本文</TableHead>
-            <TableHead>リンク</TableHead>
-            <TableHead>掲載期間</TableHead>
+            <TableHead>カテゴリー名</TableHead>
+            <TableHead>リンク先</TableHead>
+            <TableHead>表示順序</TableHead>
+            <TableHead>表示対象者</TableHead>
             <TableHead>作成日</TableHead>
             <TableHead>最終更新日</TableHead>
             <TableHead>作成者</TableHead>
             <TableHead>更新者</TableHead>
-            <TableHead>承認状態</TableHead>
-            <TableHead>承認者</TableHead>
-            <TableHead className="text-center">変更</TableHead>
-            <TableHead className="text-center">削除</TableHead>
-            <TableHead className="text-center">承認</TableHead>
+            <TableHead className="flex-none text-center w-12">変更</TableHead>
+            <TableHead className="flex-none text-center w-12">削除</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -111,24 +105,8 @@ export default function NewsList() {
                       <TableCell>
                         <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                       </TableCell>
-                      <TableCell>
-                        <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
-                      </TableCell>
-                      <TableCell className="flex-none text-center w-12">
-                        <Button variant="ghost">
-                          <Skeleton className="size-6 border border-input file:border-0" />
-                        </Button>
-                      </TableCell>
-                      <TableCell className="flex-none text-center w-12">
-                        <Button variant="ghost">
-                          <Skeleton className="size-6 border border-input file:border-0" />
-                        </Button>
+                      <TableCell className="flex-none justify-items-center w-12">
+                        <Skeleton className="size-6 border border-input file:border-0" />
                       </TableCell>
                       <TableCell className="flex-none text-center w-12">
                         <Button variant="ghost">
@@ -140,58 +118,46 @@ export default function NewsList() {
                 }
                 return <>{rows}</>;
               })()
-            : data.map((d) => {
+            : data.map((value, index) => {
                 return (
                   <TableRow
-                    key={d.id}
-                    className={callbackData === d.id ? "bg-muted" : ""}
+                    key={index}
+                    className={callbackData?.id === value.id ? "bg-muted" : ""}
                   >
-                    <TableCell>{d.order}</TableCell>
+                    <TableCell>{value.name}</TableCell>
                     <TableCell>
-                      {d.title.substring(0, 10)}
-                      {d.title.length > 10 && "..."}
+                      <Link href={`../${value.link}`}>
+                        <Button variant="link" className="pl-0">
+                          {value.link}
+                        </Button>
+                      </Link>
+                    </TableCell>
+                    <TableCell>{value.order}</TableCell>
+                    <TableCell>
+                      {
+                        categoryDisplay.find((v) => v.range === value.role)
+                          ?.label
+                      }
                     </TableCell>
                     <TableCell>
-                      {d.detail.substring(0, 10)}
-                      {d.detail.length > 10 && "..."}
+                      {format(value.createdAt, "PPP", { locale: ja })}
                     </TableCell>
                     <TableCell>
-                      {newsLinkCategory.find((v) => v.id === d.link)?.name}
+                      {format(value.updatedAt, "PPP", { locale: ja })}
                     </TableCell>
-                    <TableCell>
-                      {d.fromDate && format(d.fromDate, "PPP", { locale: ja })}{" "}
-                      〜 {d.toDate && format(d.toDate, "PPP", { locale: ja })}
-                    </TableCell>
-                    <TableCell>
-                      {format(d.createdAt, "PPP", { locale: ja })}
-                    </TableCell>
-                    <TableCell>
-                      {format(d.revisedAt, "PPP", { locale: ja })}
-                    </TableCell>
-                    <TableCell>{d.createdUser.name}</TableCell>
-                    <TableCell>{d.revisedUser?.name}</TableCell>
-                    <TableCell>
-                      {d.approved && <CheckIcon className="size-4" />}
-                    </TableCell>
-                    <TableCell>{d.approvedUser?.name}</TableCell>
+                    <TableCell>{value.createdUser.name}</TableCell>
+                    <TableCell>{value.updatedUser?.name}</TableCell>
                     <TableCell className="flex-none text-center w-12">
                       <UpdateForm
-                        key={d.id}
-                        id={d.id}
+                        key={value.id}
+                        id={value.id}
                         fetchListData={fetchListData}
                       />
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
                       <ExcludeForm
-                        key={d.id}
-                        id={d.id}
-                        fetchListData={fetchListData}
-                      />
-                    </TableCell>
-                    <TableCell className="flex-none text-center w-12">
-                      <ApproveForm
-                        key={d.id}
-                        id={d.id}
+                        key={value.id}
+                        id={value.id}
                         fetchListData={fetchListData}
                       />
                     </TableCell>

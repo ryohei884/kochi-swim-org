@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function SignOut() {
   return (
-    <Button onClick={() => signOut({ redirectTo: "/sign-in" })}>
+    <Button onClick={() => signOut({ redirectTo: "/" })}>
       サインアウトする
     </Button>
   );

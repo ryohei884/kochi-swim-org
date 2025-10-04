@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function SignIn() {
   return (
-    <Button onClick={() => signIn("line", { redirectTo: "/category/list" })}>
+    <Button onClick={() => signIn("line", { redirectTo: "/dashboard" })}>
       LINEでサインインする
     </Button>
   );
