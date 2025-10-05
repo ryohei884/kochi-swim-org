@@ -24,3 +24,18 @@ export const newsLinkCategory = [
   { id: 16, name: "ハラスメント防止", href: "harassment_prevention" },
   { id: 17, name: "お問い合わせ", href: "contact" },
 ];
+
+export const meetKind = [
+  { id: 1, kind: "競泳", href: "swimming" },
+  { id: 2, kind: "飛込", href: "diving" },
+  { id: 3, kind: "水球", href: "waterpolo" },
+  { id: 4, kind: "AS", href: "as" },
+  { id: 5, kind: "OW", href: "ow" },
+];
+
+export const poolSize = [
+  { id: 0, size: "その他" },
+  { id: 1, size: "短水路" },
+  { id: 2, size: "長水路" },
+  { id: 3, size: "ダイビング・プール" },
+];

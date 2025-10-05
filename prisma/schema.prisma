@@ -37,6 +37,10 @@ model User {
   newsRevised   News[] @relation(name: "News.revisedUserId")
   newsAppproved News[] @relation(name: "News.approvedUserId")
 
+  meetCreated   Meet[] @relation(name: "Meet.createdUserId")
+  meetRevised   Meet[] @relation(name: "Meet.revisedUserId")
+  meetAppproved Meet[] @relation(name: "Meet.approvedUserId")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -184,4 +188,30 @@ model News {
   createdUser    User      @relation(name: "News.createdUserId", fields: [createdUserId], references: [id])
   revisedUser    User?     @relation(name: "News.revisedUserId", fields: [revisedUserId], references: [id])
   approvedUser   User?     @relation(name: "News.approvedUserId", fields: [approvedUserId], references: [id])
+}
+
+model Meet {
+  id             String    @id @default(cuid())
+  code           String?
+  kind           Int
+  title          String
+  fromDate       DateTime  @default(now())
+  toDate         DateTime?
+  deadline       DateTime?
+  place          String
+  poolsize       Int
+  result         Boolean   @default(false)
+  description    String?
+  detail         String?
+  attachment     String?
+  createdUserId  String
+  revisedUserId  String?
+  approvedUserId String?
+  approved       Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  revisedAt      DateTime  @updatedAt
+  approvedAt     DateTime?
+  createdUser    User      @relation(name: "Meet.createdUserId", fields: [createdUserId], references: [id])
+  revisedUser    User?     @relation(name: "Meet.revisedUserId", fields: [revisedUserId], references: [id])
+  approvedUser   User?     @relation(name: "Meet.approvedUserId", fields: [approvedUserId], references: [id])
 }

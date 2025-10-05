@@ -3,7 +3,7 @@ import Link from "next/link";
 const navigation = {
   frequently: [
     { name: "お知らせ", href: "news" },
-    { name: "競技会情報", href: "#" },
+    { name: "競技会情報", href: "meet" },
     { name: "ライブ配信", href: "#" },
     { name: "県記録", href: "#" },
     { name: "講習会情報", href: "#" },
@@ -15,9 +15,8 @@ const navigation = {
     { name: "クラブ員募集", href: "#" },
   ],
   association: [
-    { name: "ご挨拶", href: "#" },
-    { name: "法人概要", href: "#" },
-    { name: "各種委員会", href: "#" },
+    { name: "ご挨拶", href: "greetings" },
+    { name: "法人概要", href: "overview" },
     { name: "関連団体", href: "#" },
   ],
   legal: [
