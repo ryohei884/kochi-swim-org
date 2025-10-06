@@ -15,14 +15,13 @@ export const newsLinkCategory = [
   { id: 7, name: "競技役員募集", href: "official" },
   { id: 8, name: "指導者募集", href: "coach" },
   { id: 9, name: "クラブ員募集", href: "club" },
-  { id: 10, name: "連盟情報", href: "federation" },
-  { id: 11, name: "ご挨拶", href: "greetings" },
-  { id: 12, name: "法人概要", href: "overview" },
-  { id: 13, name: "利用規約", href: "terms_of_service" },
-  { id: 14, name: "プライバシー・ポリシー", href: "privacy_policy" },
-  { id: 15, name: "アンチ・ドーピング", href: "anti_doping" },
-  { id: 16, name: "ハラスメント防止", href: "harassment_prevention" },
-  { id: 17, name: "お問い合わせ", href: "contact" },
+  { id: 10, name: "ご挨拶", href: "greetings" },
+  { id: 11, name: "法人概要", href: "overview" },
+  { id: 12, name: "利用規約", href: "terms_of_service" },
+  { id: 13, name: "プライバシー・ポリシー", href: "privacy_policy" },
+  { id: 14, name: "アンチ・ドーピング", href: "anti_doping" },
+  { id: 15, name: "ハラスメント防止", href: "harassment_prevention" },
+  { id: 16, name: "お問い合わせ", href: "contact" },
 ];
 
 export const meetKind = [

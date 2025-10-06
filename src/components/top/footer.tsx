@@ -4,7 +4,7 @@ const navigation = {
   frequently: [
     { name: "お知らせ", href: "news" },
     { name: "競技会情報", href: "meet" },
-    { name: "ライブ配信", href: "#" },
+    { name: "ライブ配信", href: "live" },
     { name: "県記録", href: "#" },
     { name: "講習会情報", href: "#" },
   ],

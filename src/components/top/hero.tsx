@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -20,13 +21,13 @@ export default function Hero() {
                 <div className="hidden sm:mb-10 sm:flex">
                   <div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-500 ring-1 ring-gray-900/10 hover:ring-gray-900/20 dark:text-gray-400 dark:ring-white/10 dark:hover:ring-white/20">
                     高知県ジュニア春季選手権大会が開催されています。{" "}
-                    <a
-                      href="#"
+                    <Link
+                      href="/live"
                       className="font-semibold whitespace-nowrap text-indigo-600 dark:text-indigo-400"
                     >
                       <span aria-hidden="true" className="absolute inset-0" />
                       ライブ中継へ <span aria-hidden="true">&rarr;</span>
-                    </a>
+                    </Link>
                   </div>
                 </div>
                 <h1 className="text-5xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-7xl dark:text-white">
@@ -36,18 +37,18 @@ export default function Hero() {
                   高知県における水泳及び水泳競技の健全なる普及と発展を図るために、選手に向けた競技会や競技力向上活動、指導者や競技役員に向けた各種講習会の開催などを実施しています。
                 </p>
                 <div className="mt-10 flex items-center gap-x-6">
-                  <a
-                    href="#"
+                  <Link
+                    href="/greetings"
                     className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400 dark:focus-visible:outline-indigo-500"
                   >
-                    連盟情報
-                  </a>
-                  <a
-                    href="#"
+                    ご挨拶
+                  </Link>
+                  <Link
+                    href="/overview"
                     className="text-sm/6 font-semibold text-gray-900 dark:text-white"
                   >
                     活動を詳しく知る <span aria-hidden="true">→</span>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

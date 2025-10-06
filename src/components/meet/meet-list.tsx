@@ -70,6 +70,7 @@ export default function MeetList(props: Props) {
   useEffect(() => {
     getMeet(kind, Number(page));
   }, [kind, page]);
+
   return (
     <div className="bg-white py-24 sm:py-32 dark:bg-gray-900">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -119,10 +120,10 @@ export default function MeetList(props: Props) {
                             {m.fromDate &&
                               format(m.fromDate, "PPP", {
                                 locale: ja,
-                              })}{" "}
-                            〜{" "}
+                              })}
+                            {m.toDate && "〜"}
                             {m.toDate &&
-                              format(m.toDate, "PPP", { locale: ja })}
+                              format(m.toDate, "M月d日", { locale: ja })}
                           </TableCell>
                           <TableCell>{m.title}</TableCell>
                           <TableCell>{m.place}</TableCell>
@@ -141,7 +142,9 @@ export default function MeetList(props: Props) {
                         </TableRow>
                         {m.open && (
                           <TableRow className="bg-accent">
-                            <TableCell colSpan={6}>test</TableCell>
+                            <TableCell colSpan={6}>
+                              [詳細情報]{m.description}
+                            </TableCell>
                           </TableRow>
                         )}
                       </Fragment>
@@ -166,20 +169,6 @@ export default function MeetList(props: Props) {
                   </PaginationContent>
                 </Pagination>
               </TabsContent>
-              {/* <TabsContent value="diving">
-                Change your password here.
-              </TabsContent>
-              <TabsContent value="account">
-                Make changes to your account here.
-              </TabsContent>
-              <TabsContent value="waterpolo">
-                Change your password here.
-              </TabsContent>
-              <TabsContent value="account">
-                Make changes to your account here.
-              </TabsContent>
-              <TabsContent value="as">Change your password here.</TabsContent>
-              <TabsContent value="ow">Change your password here.</TabsContent> */}
             </Tabs>
           </div>
         </div>

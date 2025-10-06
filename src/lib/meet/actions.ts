@@ -65,12 +65,6 @@ export async function getListNum(kind?: number) {
     where: {
       kind: kind ? kind : undefined,
       approved: true,
-      fromDate: {
-        lt: new Date(),
-      },
-      toDate: {
-        gte: new Date(),
-      },
     },
   });
   return res;

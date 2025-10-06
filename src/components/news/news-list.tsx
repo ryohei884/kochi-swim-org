@@ -63,7 +63,7 @@ export default function NewsList(props: Props) {
                     src={
                       post.image
                         ? `https://nzprheefai1ubld0.public.blob.vercel-storage.com/${post.image}`
-                        : "/soukai.jp"
+                        : "/logo.svg"
                     }
                     className="absolute inset-0 size-full rounded-2xl bg-gray-50 object-cover dark:bg-gray-800"
                   />
@@ -80,8 +80,9 @@ export default function NewsList(props: Props) {
                     {post.link && (
                       <Link
                         href={
-                          newsLinkCategory.find((v) => v.id === post.link)
-                            ?.href || "#"
+                          "../" +
+                            newsLinkCategory.find((v) => v.id === post.link)
+                              ?.href || ""
                         }
                         className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:bg-gray-800"
                       >
