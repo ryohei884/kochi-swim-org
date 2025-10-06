@@ -181,10 +181,10 @@ export default function Footer() {
               <br />
               土佐中学校・高等学校内
               <br />
-              電話： 088-832-3392
-              <br />
-              <Link href="/contact">お問い合わせページ</Link>
-              からご連絡ください。
+              <Link href="/contact" className="font-bold">
+                お問い合わせ
+              </Link>
+              ページからご連絡ください。
             </p>
           </div>
         </div>
