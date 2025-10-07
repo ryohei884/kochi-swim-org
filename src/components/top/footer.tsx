@@ -184,7 +184,7 @@ export default function Footer() {
               <Link href="/contact" className="font-bold">
                 お問い合わせ
               </Link>
-              ページからご連絡ください。
+              からご連絡ください。
             </p>
           </div>
         </div>

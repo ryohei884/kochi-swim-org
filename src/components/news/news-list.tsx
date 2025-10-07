@@ -16,6 +16,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {
   page: string;
@@ -27,12 +28,19 @@ export default function NewsList(props: Props) {
   const nextPage = Number(page) + 1;
   const [news, setNews] = useState<newsWithUserSchemaType[]>([]);
   const [newsNum, setNewsNum] = useState<number>(0);
+  const [isReady, setIsReady] = useState<boolean>(false);
+  const [dataNum, setDataNum] = useState<number>(10);
 
   const getNews = async (page: number) => {
+    setIsReady(false);
     const newsList = await getList(page);
-    setNews(newsList);
-    const newsListNum = await getListNum();
-    setNewsNum(newsListNum);
+    if (newsList !== null) {
+      setNews(newsList);
+      setDataNum(newsList.length);
+      const newsListNum = await getListNum();
+      setNewsNum(newsListNum);
+      setIsReady(true);
+    }
   };
 
   useEffect(() => {
@@ -50,58 +58,92 @@ export default function NewsList(props: Props) {
             詳細は各リンク先からご覧ください。
           </p>
           <div className="mt-16 space-y-20 lg:mt-20">
-            {news.map((post) => (
-              <article
-                key={post.id}
-                className="relative isolate flex flex-col gap-8 lg:flex-row"
-              >
-                <div className="relative aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0">
-                  <Image
-                    alt=""
-                    width={256}
-                    height={256}
-                    src={
-                      post.image
-                        ? `https://nzprheefai1ubld0.public.blob.vercel-storage.com/${post.image}`
-                        : "/logo.svg"
-                    }
-                    className="absolute inset-0 size-full rounded-2xl bg-gray-50 object-cover dark:bg-gray-800"
-                  />
-                  <div className="absolute inset-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-x-4 text-xs">
-                    <time
-                      dateTime={String(post.revisedAt)}
-                      className="text-gray-500 dark:text-gray-400"
-                    >
-                      {format(post.revisedAt, "PPP", { locale: ja })}
-                    </time>
-                    {post.link && (
-                      <Link
-                        href={
-                          "../" +
-                            newsLinkCategory.find((v) => v.id === post.link)
-                              ?.href || ""
-                        }
-                        className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:bg-gray-800"
+            {!isReady
+              ? (function () {
+                  const rows = [];
+                  for (let i = 0; i < dataNum; i++) {
+                    rows.push(
+                      <article
+                        key={`skelton_${i}`}
+                        className="relative isolate flex flex-col gap-8 lg:flex-row"
                       >
-                        {newsLinkCategory.find((v) => v.id === post.link)?.name}
-                      </Link>
-                    )}
-                  </div>
-                  <div className="group relative max-w-xl">
-                    <h3 className="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600 dark:text-white dark:group-hover:text-gray-300">
-                      <span className="absolute inset-0" />
-                      {post.title}
-                    </h3>
-                    <p className="mt-5 text-sm/6 text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
-                      {post.detail}
-                    </p>
-                  </div>
-                </div>
-              </article>
-            ))}
+                        <div className="relative aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0">
+                          <Skeleton className="absolute inset-0 size-full rounded-2xl  object-cover dark:bg-gray-800" />
+                          <div className="absolute inset-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-x-4 text-xs">
+                            <Skeleton className="w-24 h-4" />
+                            <Skeleton className="w-24 h-4 relative z-10 rounded-full px-3 py-1.5 hover:bg-gray-100 dark:bg-gray-800/60" />
+                          </div>
+                          <div className="group relative max-w-xl">
+                            <h3 className="mt-3 text-lg/6 font-semibold">
+                              <span className="absolute inset-0" />
+                              <Skeleton className="w-120 h-6" />
+                            </h3>
+                            <Skeleton className="w-80 h-6 mt-5" />
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  }
+                  return <>{rows}</>;
+                })()
+              : news.map((post) => (
+                  <article
+                    key={post.id}
+                    className="relative isolate flex flex-col gap-8 lg:flex-row"
+                  >
+                    <div className="relative aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0">
+                      <Image
+                        alt=""
+                        width={256}
+                        height={256}
+                        src={
+                          post.image
+                            ? `https://nzprheefai1ubld0.public.blob.vercel-storage.com/${post.image}`
+                            : "/logo.svg"
+                        }
+                        className="absolute inset-0 size-full rounded-2xl bg-gray-50 object-cover dark:bg-gray-800"
+                      />
+                      <div className="absolute inset-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-x-4 text-xs">
+                        <time
+                          dateTime={String(post.revisedAt)}
+                          className="text-gray-500 dark:text-gray-400"
+                        >
+                          {format(post.revisedAt, "PPP", { locale: ja })}
+                        </time>
+                        {post.link && (
+                          <Link
+                            href={
+                              "../" +
+                                newsLinkCategory.find((v) => v.id === post.link)
+                                  ?.href || ""
+                            }
+                            className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:bg-gray-800"
+                          >
+                            {
+                              newsLinkCategory.find((v) => v.id === post.link)
+                                ?.name
+                            }
+                          </Link>
+                        )}
+                      </div>
+                      <div className="group relative max-w-xl">
+                        <h3 className="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600 dark:text-white dark:group-hover:text-gray-300">
+                          <span className="absolute inset-0" />
+                          {post.title}
+                        </h3>
+                        <p className="mt-5 text-sm/6 text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
+                          {post.detail}
+                        </p>
+                      </div>
+                    </div>
+                  </article>
+                ))}
           </div>
           <Pagination className="mt-16 flex items-center justify-between">
             <PaginationContent className="-mt-px flex w-0 flex-1">
