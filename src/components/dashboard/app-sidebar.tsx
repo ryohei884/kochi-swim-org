@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import {
   MessageCircleQuestion,
   UserRoundCog,
@@ -11,6 +12,8 @@ import {
   Timer,
   CalendarCheck2,
 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 import { NavMain } from "@/components/dashboard/nav-main";
 import { NavSecondary } from "@/components/dashboard/nav-secondary";
@@ -20,8 +23,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import Image from "next/image";
-import Link from "next/link";
 
 // This is sample data.
 const data = {

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusIcon } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -100,7 +100,7 @@ export default function CategoryCreateForm(props: Props) {
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
         <Button variant="outline" size="sm">
-          <PlusIcon /> カテゴリー作成
+          <Plus /> カテゴリー作成
         </Button>
       </SheetTrigger>
       <SheetContent>

@@ -1,9 +1,14 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+import type { contactSchemaType } from "@/lib/contact/verification";
+import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -12,16 +17,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import {
-  contactSchemaType,
-  contactSchemaDV,
-  contactSchema,
-} from "@/lib/contact/verification";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { contactSchemaDV, contactSchema } from "@/lib/contact/verification";
 
 export default function ContactForm() {
   const sendMessageViaLine = async (data: contactSchemaType) => {

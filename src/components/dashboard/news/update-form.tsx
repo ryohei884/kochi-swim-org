@@ -14,11 +14,7 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import {
-  newsUpdateOnSubmitSchemaType,
-  newsUpdateOnSubmitSchemaDV,
-  newsUpdateOnSubmitSchema,
-} from "@/lib/news/verification";
+import type { newsUpdateOnSubmitSchemaType } from "@/lib/news/verification";
 import type { PutBlobResult } from "@vercel/blob";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
@@ -59,6 +55,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { getById, update } from "@/lib/news/actions";
+import {
+  newsUpdateOnSubmitSchemaDV,
+  newsUpdateOnSubmitSchema,
+} from "@/lib/news/verification";
 import { cn, newsLinkCategory } from "@/lib/utils";
 
 interface Props {
@@ -68,8 +68,6 @@ interface Props {
 
 export default function NewsUpdateForm(props: Props) {
   const { id, fetchListData } = props;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_blob, setBlob] = useState<PutBlobResult | null>(null);
   const [preview, setPreview] = useState("");
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -86,7 +84,7 @@ export default function NewsUpdateForm(props: Props) {
     setIsReady(false);
     const res = await getById({ id: id });
     if (res !== null) {
-      form.reset(res);
+      form.reset({ ...res, link: String(res.link) });
       setIsReady(true);
     }
   };
@@ -144,7 +142,7 @@ export default function NewsUpdateForm(props: Props) {
     const extension = file.name.slice(file.name.lastIndexOf(".") + 1);
 
     const response = await fetch(
-      `/api/news/image/upload?filename=${filename()}.${extension}`,
+      `/api/news/image/upload?filename=images/${filename()}.${extension}`,
       {
         method: "POST",
         body: file,
@@ -152,8 +150,7 @@ export default function NewsUpdateForm(props: Props) {
     );
 
     const newBlob = (await response.json()) as PutBlobResult;
-    setBlob(newBlob);
-    return newBlob.pathname;
+    return newBlob.url;
   };
 
   function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
@@ -299,7 +296,7 @@ export default function NewsUpdateForm(props: Props) {
                     <FormLabel>掲載開始日</FormLabel>
                     <Popover open={openFromDate}>
                       <PopoverTrigger asChild>
-                        <FormControl>
+                        <FormControl hidden={!isReady}>
                           <Button
                             variant={"outline"}
                             className={cn(
@@ -332,6 +329,10 @@ export default function NewsUpdateForm(props: Props) {
                           captionLayout="dropdown"
                         />
                       </PopoverContent>
+                      <Skeleton
+                        hidden={isReady}
+                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                      />
                     </Popover>
                     <FormMessage />
                   </FormItem>
@@ -345,7 +346,7 @@ export default function NewsUpdateForm(props: Props) {
                     <FormLabel>掲載終了日</FormLabel>
                     <Popover open={openToDate}>
                       <PopoverTrigger asChild>
-                        <FormControl>
+                        <FormControl hidden={!isReady}>
                           <Button
                             variant={"outline"}
                             className={cn(
@@ -378,6 +379,10 @@ export default function NewsUpdateForm(props: Props) {
                           captionLayout="dropdown"
                         />
                       </PopoverContent>
+                      <Skeleton
+                        hidden={isReady}
+                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                      />
                     </Popover>
                     <FormMessage />
                   </FormItem>
@@ -394,7 +399,7 @@ export default function NewsUpdateForm(props: Props) {
                         onValueChange={field.onChange}
                         value={String(field.value)}
                       >
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="w-full" hidden={!isReady}>
                           <SelectValue placeholder="リンク先" {...field} />
                         </SelectTrigger>
                         <SelectContent>

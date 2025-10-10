@@ -1,8 +1,11 @@
 "use client";
 import { useState, Fragment } from "react";
 
-import { record } from "@/components/record/record-list";
+import { format } from "date-fns";
+import { ja } from "date-fns/locale/ja";
 
+import { record } from "@/components/record/record-list";
+import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -11,12 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-import { format } from "date-fns";
-import { ja } from "date-fns/locale/ja";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 
 // type Props = {
 //   id: number;

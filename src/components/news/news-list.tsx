@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 
-import Image from "next/image";
-import Link from "next/link";
-import { getList, getListNum } from "@/lib/news/actions";
-import { newsWithUserSchemaType } from "@/lib/news/verification";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { newsLinkCategory } from "@/lib/utils";
+import Image from "next/image";
+import Link from "next/link";
+
+import type { newsWithUserSchemaType } from "@/lib/news/verification";
+
 import {
   Pagination,
   PaginationContent,
@@ -17,6 +17,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getList, getListNum } from "@/lib/news/actions";
+import { newsLinkCategory } from "@/lib/utils";
 
 interface Props {
   page: string;
@@ -84,7 +86,7 @@ export default function NewsList(props: Props) {
                             <Skeleton className="w-80 h-6 mt-5" />
                           </div>
                         </div>
-                      </article>
+                      </article>,
                     );
                   }
                   return <>{rows}</>;

@@ -9,7 +9,7 @@ import { init } from "@paralleldrive/cuid2";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { CalendarIcon } from "lucide-react";
-import { PlusIcon } from "lucide-react";
+import { Plus } from "lucide-react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -68,8 +68,7 @@ interface Props {
 
 export default function NewsCreateForm(props: Props) {
   const { fetchListData, maxOrder } = props;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_blob, setBlob] = useState<PutBlobResult | null>(null);
+
   const [preview, setPreview] = useState("");
   const [isReady, setIsReady] = useState<boolean>(false);
 
@@ -135,7 +134,7 @@ export default function NewsCreateForm(props: Props) {
     const extension = file.name.slice(file.name.lastIndexOf(".") + 1);
 
     const response = await fetch(
-      `/api/news/image/upload?filename=${filename()}.${extension}`,
+      `/api/news/image/upload?filename=images/${filename()}.${extension}`,
       {
         method: "POST",
         body: file,
@@ -143,9 +142,7 @@ export default function NewsCreateForm(props: Props) {
     );
 
     const newBlob = (await response.json()) as PutBlobResult;
-    setBlob(newBlob);
-
-    return newBlob.pathname;
+    return newBlob.url;
   };
 
   function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
@@ -165,7 +162,7 @@ export default function NewsCreateForm(props: Props) {
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
         <Button variant="outline" size="sm">
-          <PlusIcon /> ニュース作成
+          <Plus /> ニュース作成
         </Button>
       </SheetTrigger>
       <SheetContent>

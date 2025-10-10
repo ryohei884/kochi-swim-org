@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { getList3 } from "@/lib/news/actions";
-import { newsSchemaType } from "@/lib/news/verification";
+
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
+import Image from "next/image";
+import Link from "next/link";
+
+import type { newsSchemaType } from "@/lib/news/verification";
+
+import { getList3 } from "@/lib/news/actions";
 import { newsLinkCategory } from "@/lib/utils";
 
 export default function News() {

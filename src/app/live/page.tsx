@@ -1,6 +1,6 @@
-import Header from "@/components/top/header";
-import Footer from "@/components/top/footer";
 import Youtube from "@/components/live/youtube";
+import Footer from "@/components/top/footer";
+import Header from "@/components/top/header";
 
 export default function Live() {
   return (

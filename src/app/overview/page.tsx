@@ -1,7 +1,7 @@
 import Committee from "@/components/overview/committee";
 import Team from "@/components/overview/team";
-import Header from "@/components/top/header";
 import Footer from "@/components/top/footer";
+import Header from "@/components/top/header";
 
 export default function Page() {
   return (

@@ -42,7 +42,6 @@ import {
   newsWithUserSchema,
   newsWithUserSchemaDV,
 } from "@/lib/news/verification";
-
 import { newsLinkCategory } from "@/lib/utils";
 
 interface Props {

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import ReactPlayer from "react-player";
+
 import {
   MediaController,
   MediaControlBar,
@@ -14,6 +14,7 @@ import {
   MediaMuteButton,
   MediaFullscreenButton,
 } from "media-chrome/react";
+import ReactPlayer from "react-player";
 
 // Render a YouTube video player
 interface Props {

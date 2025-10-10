@@ -1,6 +1,5 @@
 "use client";
 
-import ReOrder from "@/components/dashboard/news/reorder";
 import { useEffect, useState } from "react";
 
 import { format } from "date-fns";
@@ -12,6 +11,7 @@ import type { newsWithUserSchemaType } from "@/lib/news/verification";
 import ApproveForm from "@/components/dashboard/news/approve-form";
 import CreateForm from "@/components/dashboard/news/create-form";
 import ExcludeForm from "@/components/dashboard/news/exclude-form";
+import ReOrder from "@/components/dashboard/news/reorder";
 import UpdateForm from "@/components/dashboard/news/update-form";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";

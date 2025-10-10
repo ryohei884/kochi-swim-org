@@ -1,6 +1,7 @@
 import Image from "next/image";
-import Header from "@/components/top/header";
+
 import Footer from "@/components/top/footer";
+import Header from "@/components/top/header";
 
 export default function Greeting() {
   return (

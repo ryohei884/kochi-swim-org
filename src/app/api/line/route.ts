@@ -1,9 +1,9 @@
 // お問い合わせメッセージの送信
 import { NextResponse } from "next/server";
-import { getList } from "@/lib/contact/actions";
 
 import { contactEmail } from "@/app/api/line/email";
 import { contactLine } from "@/app/api/line/line";
+import { getList } from "@/lib/contact/actions";
 
 export function GET() {
   return NextResponse.json({ method: "GET" });

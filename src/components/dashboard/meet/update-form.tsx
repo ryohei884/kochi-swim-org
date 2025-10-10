@@ -1,15 +1,18 @@
 "use client";
+
 import { useState, useEffect, Fragment } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { init } from "@paralleldrive/cuid2";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { CalendarIcon, Plus, X } from "lucide-react";
+import { PencilLine } from "lucide-react";
+import { CalendarIcon, Plus, X, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 
-import type { meetCreateOnSubmitSchemaType } from "@/lib/meet/verification";
+import type { meetUpdateOnSubmitSchemaType } from "@/lib/meet/verification";
 import type { PutBlobResult } from "@vercel/blob";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
@@ -47,29 +50,31 @@ import {
   SheetClose,
   SheetFooter,
 } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { create } from "@/lib/meet/actions";
+import { getById, update } from "@/lib/meet/actions";
 import {
-  meetCreateOnSubmitSchema,
-  meetCreateOnSubmitSchemaDV,
+  meetUpdateOnSubmitSchemaDV,
+  meetUpdateOnSubmitSchema,
 } from "@/lib/meet/verification";
 import { cn, meetKind, poolSize } from "@/lib/utils";
 
 interface Props {
+  id: string;
   fetchListData: (id: string) => Promise<void>;
 }
 
-export default function MeetCreateForm(props: Props) {
-  const { fetchListData } = props;
-  const [isReady, setIsReady] = useState<boolean>(false);
+export default function MeetUpdateForm(props: Props) {
+  const { id, fetchListData } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [openFromDate, setOpenFromDate] = useState(false);
   const [openToDate, setOpenToDate] = useState(false);
   const [openDeadline, setOpenDeadline] = useState(false);
 
-  const form = useForm<meetCreateOnSubmitSchemaType>({
-    resolver: zodResolver(meetCreateOnSubmitSchema),
-    defaultValues: meetCreateOnSubmitSchemaDV,
+  const form = useForm<meetUpdateOnSubmitSchemaType>({
+    resolver: zodResolver(meetUpdateOnSubmitSchema),
+    defaultValues: meetUpdateOnSubmitSchemaDV,
   });
 
   const { register, control, handleSubmit, reset } = form;
@@ -93,8 +98,52 @@ export default function MeetCreateForm(props: Props) {
   });
 
   useEffect(() => {
-    setIsReady(true);
-  }, []);
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    dialogOpen && fetchData(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogOpen]);
+
+  const fetchData = async (id: string) => {
+    setIsReady(false);
+    const res = await getById({ id: id });
+    if (res !== null) {
+      reset({
+        ...res,
+        poolsize: String(res.poolsize),
+        kind: String(res.kind),
+        detail: JSON.parse(String(res.detail)),
+        attachment: JSON.parse(String(res.attachment)),
+      });
+      setIsReady(true);
+    }
+  };
+
+  const onSubmit: SubmitHandler<meetUpdateOnSubmitSchemaType> = async (
+    data: meetUpdateOnSubmitSchemaType,
+  ) => {
+    console.log(data);
+
+    const detailBlob = await uploadFile(data.detail);
+    const attachmentBlob = await uploadFile(data.attachment);
+
+    const res = await update({
+      ...data,
+      poolsize: Number(data.poolsize),
+      kind: Number(data.kind),
+      detail: JSON.stringify(detailBlob),
+      attachment: JSON.stringify(attachmentBlob),
+    });
+
+    toast("更新しました。", {
+      action: {
+        label: "Undo",
+        onClick: () => console.log("Undo"),
+      },
+    });
+    fetchListData(res.id);
+    setDialogOpen(false);
+    reset();
+  };
 
   type UploadFileProps = {
     value?: string | FileList;
@@ -123,6 +172,8 @@ export default function MeetCreateForm(props: Props) {
 
           const resBlob = (await response.json()) as PutBlobResult;
           return { value: resBlob.url, name: prop.name };
+        } else if (!!prop.value && typeof prop.value === "string") {
+          return { value: prop.value, name: prop.name };
         } else {
           return null;
         }
@@ -131,32 +182,7 @@ export default function MeetCreateForm(props: Props) {
     return blob.filter(Boolean);
   };
 
-  const onSubmit: SubmitHandler<meetCreateOnSubmitSchemaType> = async (
-    data: meetCreateOnSubmitSchemaType,
-  ) => {
-    const detailBlob = await uploadFile(data.detail);
-    const attachmentBlob = await uploadFile(data.attachment);
-
-    const res = await create({
-      ...data,
-      poolsize: Number(data.poolsize),
-      kind: Number(data.kind),
-      detail: JSON.stringify(detailBlob),
-      attachment: JSON.stringify(attachmentBlob),
-    });
-
-    toast("作成しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
-    fetchListData(res.id);
-    setDialogOpen(false);
-    reset();
-  };
-
-  const onError: SubmitErrorHandler<meetCreateOnSubmitSchemaType> = (
+  const onError: SubmitErrorHandler<meetUpdateOnSubmitSchemaType> = async (
     errors,
   ) => {
     toast("エラーが発生しました。", {
@@ -175,16 +201,16 @@ export default function MeetCreateForm(props: Props) {
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
-        <Button variant="outline" size="sm">
-          <Plus /> 競技会情報作成
+        <Button variant="ghost" size="sm">
+          <PencilLine />
         </Button>
       </SheetTrigger>
       <SheetContent>
         <ScrollArea className="h-dvh pr-2">
           <SheetHeader>
-            <SheetTitle>競技会情報作成</SheetTitle>
+            <SheetTitle>競技会情報編集</SheetTitle>
             <SheetDescription className="sr-only">
-              競技会情報作成画面
+              競技会情報編集画面
             </SheetDescription>
           </SheetHeader>
           <Form {...form}>
@@ -198,7 +224,7 @@ export default function MeetCreateForm(props: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>大会コード</FormLabel>
-                    <FormControl>
+                    <FormControl hidden={!isReady}>
                       <Input
                         type="text"
                         placeholder="大会コード"
@@ -206,6 +232,10 @@ export default function MeetCreateForm(props: Props) {
                         value={field.value || ""}
                       />
                     </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -216,9 +246,12 @@ export default function MeetCreateForm(props: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>競技種目</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange}>
-                        <SelectTrigger className="w-full">
+                    <FormControl hidden={!isReady}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={String(field.value)}
+                      >
+                        <SelectTrigger className="w-full" hidden={!isReady}>
                           <SelectValue placeholder="競技種目" {...field} />
                         </SelectTrigger>
                         <SelectContent>
@@ -230,6 +263,10 @@ export default function MeetCreateForm(props: Props) {
                         </SelectContent>
                       </Select>
                     </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -240,9 +277,13 @@ export default function MeetCreateForm(props: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>大会名</FormLabel>
-                    <FormControl>
+                    <FormControl hidden={!isReady}>
                       <Input type="text" placeholder="大会名" {...field} />
                     </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -255,7 +296,7 @@ export default function MeetCreateForm(props: Props) {
                     <FormLabel>開始日</FormLabel>
                     <Popover open={openFromDate}>
                       <PopoverTrigger asChild>
-                        <FormControl>
+                        <FormControl hidden={!isReady}>
                           <Button
                             variant={"outline"}
                             className={cn(
@@ -288,6 +329,10 @@ export default function MeetCreateForm(props: Props) {
                           captionLayout="dropdown"
                         />
                       </PopoverContent>
+                      <Skeleton
+                        hidden={isReady}
+                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                      />
                     </Popover>
                     <FormMessage />
                   </FormItem>
@@ -301,7 +346,7 @@ export default function MeetCreateForm(props: Props) {
                     <FormLabel>終了日</FormLabel>
                     <Popover open={openToDate}>
                       <PopoverTrigger asChild>
-                        <FormControl>
+                        <FormControl hidden={!isReady}>
                           <Button
                             variant={"outline"}
                             className={cn(
@@ -325,7 +370,7 @@ export default function MeetCreateForm(props: Props) {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value ? field.value : null}
+                          selected={field.value ? field.value : undefined}
                           onSelect={(date) => {
                             field.onChange(date);
                             setOpenToDate(false);
@@ -334,6 +379,10 @@ export default function MeetCreateForm(props: Props) {
                           captionLayout="dropdown"
                         />
                       </PopoverContent>
+                      <Skeleton
+                        hidden={isReady}
+                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                      />
                     </Popover>
                     <FormMessage />
                   </FormItem>
@@ -347,7 +396,7 @@ export default function MeetCreateForm(props: Props) {
                     <FormLabel>申込締切日</FormLabel>
                     <Popover open={openDeadline}>
                       <PopoverTrigger asChild>
-                        <FormControl>
+                        <FormControl hidden={!isReady}>
                           <Button
                             variant={"outline"}
                             className={cn(
@@ -380,6 +429,10 @@ export default function MeetCreateForm(props: Props) {
                           captionLayout="dropdown"
                         />
                       </PopoverContent>
+                      <Skeleton
+                        hidden={isReady}
+                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                      />
                     </Popover>
                     <FormMessage />
                   </FormItem>
@@ -391,9 +444,13 @@ export default function MeetCreateForm(props: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>プール名</FormLabel>
-                    <FormControl>
+                    <FormControl hidden={!isReady}>
                       <Input type="text" placeholder="プール名" {...field} />
                     </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -404,9 +461,12 @@ export default function MeetCreateForm(props: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>水路</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange}>
-                        <SelectTrigger className="w-full">
+                    <FormControl hidden={!isReady}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={String(field.value)}
+                      >
+                        <SelectTrigger className="w-full" hidden={!isReady}>
                           <SelectValue placeholder="水路" {...field} />
                         </SelectTrigger>
                         <SelectContent>
@@ -418,6 +478,10 @@ export default function MeetCreateForm(props: Props) {
                         </SelectContent>
                       </Select>
                     </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -428,51 +492,77 @@ export default function MeetCreateForm(props: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>詳細説明文</FormLabel>
-                    <FormControl>
+                    <FormControl hidden={!isReady}>
                       <Textarea
                         {...field}
                         value={field.value ? field.value : ""}
                       />
                     </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <FormItem>
                 <FormLabel>要項ファイル</FormLabel>
-                {detailFields.map((field, index) => (
-                  <Fragment key={field.id}>
-                    <div className="inline-flex mb-0">
-                      <div>
-                        <Input
-                          {...register(`detail.${index}.value`)}
-                          type="file"
-                          placeholder="要項ファイル"
-                          className="mb-2"
-                        />
-                        <Input
-                          {...register(`detail.${index}.name`)}
-                          type="text"
-                          placeholder="要項ファイル表示名"
-                          defaultValue={form.getValues(`detail.${index}.name`)}
-                        />
+                {detailFields.map((field, index) => {
+                  return (
+                    <Fragment key={field.id}>
+                      <div className="inline-flex mb-4 min-w-full">
+                        <div className="inline-block w-full">
+                          <Input
+                            {...register(`detail.${index}.value`)}
+                            type="file"
+                            placeholder="要項ファイル"
+                            className="mb-2"
+                            hidden={typeof field.value === "string"}
+                          />
+                          <Input
+                            {...register(`detail.${index}.name`)}
+                            type="text"
+                            placeholder="要項ファイル表示名"
+                            defaultValue={form.getValues(
+                              `detail.${index}.name`,
+                            )}
+                            className="mb-2"
+                          />
+                        </div>
+                        {typeof field.value === "string" && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            className="ml-2"
+                            asChild
+                          >
+                            <Link
+                              href={field.value}
+                              rel="noopener noreferrer"
+                              target="_blank"
+                            >
+                              <ExternalLink className="size-4" />
+                            </Link>
+                          </Button>
+                        )}
+                        <Button
+                          type="button"
+                          onClick={(
+                            e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+                          ) => {
+                            e.preventDefault();
+                            detailRemove(index);
+                          }}
+                          variant="ghost"
+                          className="ml-2"
+                        >
+                          <X className="size-4" />
+                        </Button>
                       </div>
-                      <Button
-                        type="button"
-                        onClick={(
-                          e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-                        ) => {
-                          e.preventDefault();
-                          detailRemove(index);
-                        }}
-                        variant="ghost"
-                        className="ml-2"
-                      >
-                        <X className="size-4" />
-                      </Button>
-                    </div>
-                  </Fragment>
-                ))}
+                    </Fragment>
+                  );
+                })}
                 <div className="text-center">
                   <Button
                     type="button"
@@ -480,7 +570,7 @@ export default function MeetCreateForm(props: Props) {
                       e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
                     ) => {
                       e.preventDefault();
-                      detailAppend({ value: "", name: "" });
+                      detailAppend({ value: undefined, name: "" });
                     }}
                     variant="ghost"
                   >
@@ -490,38 +580,61 @@ export default function MeetCreateForm(props: Props) {
               </FormItem>
               <FormItem>
                 <FormLabel>添付ファイル</FormLabel>
-                {attachmentFields.map((field, index) => (
-                  <Fragment key={field.id}>
-                    <div className="inline-flex mb-0">
-                      <div>
-                        <Input
-                          {...register(`attachment.${index}.value`)}
-                          type="file"
-                          placeholder="要項ファイル"
-                          className="mb-2"
-                        />
-                        <Input
-                          {...register(`attachment.${index}.name`)}
-                          type="text"
-                          placeholder="添付ファイル表示名"
-                        />
+                {attachmentFields.map((field, index) => {
+                  return (
+                    <Fragment key={field.id}>
+                      <div className="inline-flex mb-4 min-w-full">
+                        <div className="inline-block w-full">
+                          <Input
+                            {...register(`attachment.${index}.value`)}
+                            type="file"
+                            placeholder="添付ファイル"
+                            className="mb-2"
+                            hidden={typeof field.value === "string"}
+                          />
+                          <Input
+                            {...register(`attachment.${index}.name`)}
+                            type="text"
+                            placeholder="添付ファイル表示名"
+                            defaultValue={form.getValues(
+                              `attachment.${index}.name`,
+                            )}
+                            className="mb-2"
+                          />
+                        </div>
+                        {typeof field.value === "string" && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            className="ml-2"
+                            asChild
+                          >
+                            <Link
+                              href={field.value}
+                              rel="noopener noreferrer"
+                              target="_blank"
+                            >
+                              <ExternalLink className="size-4" />
+                            </Link>
+                          </Button>
+                        )}
+                        <Button
+                          type="button"
+                          onClick={(
+                            e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+                          ) => {
+                            e.preventDefault();
+                            attachmentRemove(index);
+                          }}
+                          variant="ghost"
+                          className="ml-2"
+                        >
+                          <X className="size-4" />
+                        </Button>
                       </div>
-                      <Button
-                        type="button"
-                        onClick={(
-                          e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-                        ) => {
-                          e.preventDefault();
-                          attachmentRemove(index);
-                        }}
-                        variant="ghost"
-                        className="ml-2"
-                      >
-                        <X className="size-4" />
-                      </Button>
-                    </div>
-                  </Fragment>
-                ))}
+                    </Fragment>
+                  );
+                })}
                 <div className="text-center">
                   <Button
                     type="button"
@@ -529,7 +642,7 @@ export default function MeetCreateForm(props: Props) {
                       e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
                     ) => {
                       e.preventDefault();
-                      attachmentAppend({ value: "", name: "" });
+                      attachmentAppend({ value: undefined, name: "" });
                     }}
                     variant="ghost"
                   >
@@ -542,7 +655,7 @@ export default function MeetCreateForm(props: Props) {
                   type="submit"
                   disabled={!isReady || form.formState.isSubmitting}
                 >
-                  {form.formState.isSubmitting ? "送信中" : "作成"}
+                  {form.formState.isSubmitting ? "送信中" : "更新"}
                 </Button>
                 <SheetClose asChild>
                   <Button
