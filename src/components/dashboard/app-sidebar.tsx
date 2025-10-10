@@ -88,7 +88,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar className="border-r-0" {...props}>
       <SidebarHeader>
-        <Link href="/" className="-m-1.5 p-1.5 inline-flex">
+        <Link href="/" className="-m-1.5 p-1.5 inline-flex" replace>
           <span className="sr-only">高知県水泳連盟</span>
           <Image
             alt="高知県水泳連盟"

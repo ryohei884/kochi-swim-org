@@ -26,46 +26,37 @@ export const userSchemaDV: userSchemaType = {
 };
 
 // meetSchema
-export const meetSchema = z
-  .object({
-    id: z.string(),
-    code: z.string().nullable(),
-    kind: z.number().int(),
-    fromDate: z.date().nonoptional({
-      error: "開始日は必須項目です。",
+export const meetSchema = z.object({
+  id: z.string(),
+  code: z.string().nullable(),
+  kind: z.number().int(),
+  fromDate: z.date().nonoptional({
+    error: "開始日は必須項目です。",
+  }),
+  toDate: z.date().nullable(),
+  title: z
+    .string()
+    .min(2, {
+      message: "大会名は2文字以上で入力してください。",
+    })
+    .max(128, {
+      message: "大会名は128文字以下で入力してください。",
     }),
-    toDate: z.date().nullable(),
-    title: z
-      .string()
-      .min(2, {
-        message: "大会名は2文字以上で入力してください。",
-      })
-      .max(128, {
-        message: "大会名は128文字以下で入力してください。",
-      }),
-    deadline: z.date().nullable(),
-    place: z.string(),
-    poolsize: z.number().int(),
-    result: z.boolean(),
-    description: z.string().nullable(),
-    detail: z.string().nullable(),
-    attachment: z.string().nullable(),
-    createdUserId: z.string(),
-    revisedUserId: z.string().nullable(),
-    approvedUserId: z.string().nullable(),
-    approved: z.boolean(),
-    createdAt: new Date(),
-    revisedAt: new Date(),
-    approvedAt: z.date().nullable(),
-  })
-  .refine(
-    (arg) =>
-      arg.toDate !== null && new Date(arg.fromDate) < new Date(arg.toDate),
-    {
-      message: "終了日は開始日より後の日付を入力してください。",
-      path: ["toDate"],
-    },
-  );
+  deadline: z.date().nullable(),
+  place: z.string(),
+  poolsize: z.number().int(),
+  result: z.boolean(),
+  description: z.string().nullable(),
+  detail: z.string().nullable(),
+  attachment: z.string().nullable(),
+  createdUserId: z.string(),
+  revisedUserId: z.string().nullable(),
+  approvedUserId: z.string().nullable(),
+  approved: z.boolean(),
+  createdAt: z.date(),
+  revisedAt: z.date(),
+  approvedAt: z.date().nullable(),
+});
 
 export type meetSchemaType = z.infer<typeof meetSchema>;
 
@@ -93,7 +84,7 @@ export const meetSchemaDV: meetSchemaType = {
 };
 
 // meetWithUserSchema
-export const meetWithUserSchema = meetSchema.safeExtend({
+export const meetWithUserSchema = meetSchema.extend({
   createdUser: userSchema,
   revisedUser: userSchema.nullable(),
   approvedUser: userSchema.nullable(),
@@ -307,4 +298,62 @@ export const meetUpdateSchemaDV: meetUpdateSchemaType = {
   poolsize: meetSchemaDV.poolsize,
   detail: meetSchemaDV.detail,
   attachment: meetSchemaDV.attachment,
+};
+
+// meetExcludeSchema
+export const meetExcludeSchema = meetSchema.omit({
+  code: true,
+  kind: true,
+  fromDate: true,
+  toDate: true,
+  title: true,
+  deadline: true,
+  place: true,
+  poolsize: true,
+  result: true,
+  description: true,
+  detail: true,
+  attachment: true,
+  createdUserId: true,
+  revisedUserId: true,
+  approvedUserId: true,
+  approved: true,
+  createdAt: true,
+  revisedAt: true,
+  approvedAt: true,
+});
+
+export type meetExcludeSchemaType = z.infer<typeof meetExcludeSchema>;
+
+export const meetExcludeSchemaDV: meetExcludeSchemaType = {
+  id: meetSchemaDV.id,
+};
+
+// meetApproveSchema
+export const meetApproveSchema = meetSchema.omit({
+  code: true,
+  kind: true,
+  fromDate: true,
+  toDate: true,
+  title: true,
+  deadline: true,
+  place: true,
+  poolsize: true,
+  result: true,
+  description: true,
+  detail: true,
+  attachment: true,
+  createdUserId: true,
+  revisedUserId: true,
+  approvedUserId: true,
+  approved: true,
+  createdAt: true,
+  revisedAt: true,
+  approvedAt: true,
+});
+
+export type meetApproveSchemaType = z.infer<typeof meetApproveSchema>;
+
+export const meetApproveSchemaDV: meetApproveSchemaType = {
+  id: meetSchemaDV.id,
 };

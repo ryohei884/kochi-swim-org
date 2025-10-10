@@ -118,7 +118,7 @@ export default function MeetCreateForm(props: Props) {
             {
               method: "POST",
               body: prop.value[0],
-            }
+            },
           );
 
           const resBlob = (await response.json()) as PutBlobResult;
@@ -126,13 +126,13 @@ export default function MeetCreateForm(props: Props) {
         } else {
           return null;
         }
-      })
+      }),
     );
     return blob.filter(Boolean);
   };
 
   const onSubmit: SubmitHandler<meetCreateOnSubmitSchemaType> = async (
-    data: meetCreateOnSubmitSchemaType
+    data: meetCreateOnSubmitSchemaType,
   ) => {
     const detailBlob = await uploadFile(data.detail);
     const attachmentBlob = await uploadFile(data.attachment);
@@ -157,7 +157,7 @@ export default function MeetCreateForm(props: Props) {
   };
 
   const onError: SubmitErrorHandler<meetCreateOnSubmitSchemaType> = (
-    errors
+    errors,
   ) => {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
@@ -260,7 +260,7 @@ export default function MeetCreateForm(props: Props) {
                             variant={"outline"}
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                             onClick={(date) => {
                               field.onChange(date);
@@ -306,7 +306,7 @@ export default function MeetCreateForm(props: Props) {
                             variant={"outline"}
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                             onClick={(date) => {
                               field.onChange(date);
@@ -352,7 +352,7 @@ export default function MeetCreateForm(props: Props) {
                             variant={"outline"}
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                             onClick={(date) => {
                               field.onChange(date);
@@ -460,7 +460,7 @@ export default function MeetCreateForm(props: Props) {
                       <Button
                         type="button"
                         onClick={(
-                          e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                          e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
                         ) => {
                           e.preventDefault();
                           detailRemove(index);
@@ -477,7 +477,7 @@ export default function MeetCreateForm(props: Props) {
                   <Button
                     type="button"
                     onClick={(
-                      e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                      e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
                     ) => {
                       e.preventDefault();
                       detailAppend({ value: "", name: "" });
@@ -509,7 +509,7 @@ export default function MeetCreateForm(props: Props) {
                       <Button
                         type="button"
                         onClick={(
-                          e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                          e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
                         ) => {
                           e.preventDefault();
                           attachmentRemove(index);
@@ -526,7 +526,7 @@ export default function MeetCreateForm(props: Props) {
                   <Button
                     type="button"
                     onClick={(
-                      e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                      e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
                     ) => {
                       e.preventDefault();
                       attachmentAppend({ value: "", name: "" });

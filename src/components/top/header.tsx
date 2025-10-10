@@ -57,7 +57,7 @@ export default function Heder() {
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
-                    href={item.href}
+                    href={`/${item.href}`}
                     className="text-sm/6 font-semibold text-gray-900 dark:text-white"
                   >
                     {item.name}

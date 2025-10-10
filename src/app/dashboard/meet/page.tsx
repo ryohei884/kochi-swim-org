@@ -1,4 +1,4 @@
 import MeetList from "@/components/dashboard/meet/list";
 export default function Page() {
-  return <MeetList />;
+  return <MeetList page="1" />;
 }

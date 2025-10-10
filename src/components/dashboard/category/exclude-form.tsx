@@ -5,8 +5,7 @@ import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { ChevronDownIcon } from "lucide-react";
-import { Trash2Icon } from "lucide-react";
+import { ChevronDownIcon, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -93,7 +92,11 @@ export default function CategoryExcludeForm(props: Props) {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
         label: "Undo",
-        onClick: () => console.log(errors),
+        onClick: (e) => {
+          e.preventDefault();
+          setDialogOpen(false);
+          console.log(errors);
+        },
       },
     });
   };
@@ -102,7 +105,7 @@ export default function CategoryExcludeForm(props: Props) {
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
         <Button variant="ghost" size="sm">
-          <Trash2Icon />
+          <Trash2 />
         </Button>
       </SheetTrigger>
       <SheetContent>

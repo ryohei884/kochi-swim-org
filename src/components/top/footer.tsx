@@ -123,7 +123,7 @@ export default function Footer() {
                   {navigation.recruitment.map((item) => (
                     <li key={item.name}>
                       <Link
-                        href={item.href}
+                        href={`/${item.href}`}
                         className="text-sm/6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                       >
                         {item.name}
@@ -142,7 +142,7 @@ export default function Footer() {
                   {navigation.association.map((item) => (
                     <li key={item.name}>
                       <Link
-                        href={item.href}
+                        href={`/${item.href}`}
                         className="text-sm/6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                       >
                         {item.name}
@@ -159,7 +159,7 @@ export default function Footer() {
                   {navigation.legal.map((item) => (
                     <li key={item.name}>
                       <Link
-                        href={item.href}
+                        href={`/${item.href}`}
                         className="text-sm/6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                       >
                         {item.name}
@@ -193,7 +193,7 @@ export default function Footer() {
             {navigation.social.map((item) => (
               <Link
                 key={item.name}
-                href={item.href}
+                href={`/${item.href}`}
                 className="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white"
               >
                 <span className="sr-only">{item.name}</span>

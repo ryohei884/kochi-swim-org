@@ -4,6 +4,8 @@ import type {
   meetCreateSchemaType,
   meetGetByIdSchemaType,
   meetUpdateSchemaType,
+  meetExcludeSchemaType,
+  meetApproveSchemaType,
 } from "@/lib/meet/verification";
 
 import { auth } from "@/auth";
@@ -118,5 +120,54 @@ export async function update(prop: meetUpdateSchemaType) {
       },
     });
     return res;
+  }
+}
+
+export async function exclude(prop: meetExcludeSchemaType) {
+  const { id } = prop;
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated.");
+  } else {
+    const contest = await prisma.meet.findFirst({
+      where: { id: id },
+    });
+
+    if (!contest) {
+      throw new Error("Meet ID does not exist.");
+    } else {
+      await prisma.meet.delete({
+        where: {
+          id: id,
+        },
+      });
+    }
+  }
+}
+
+export async function approve(prop: meetApproveSchemaType) {
+  const { id } = prop;
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated.");
+  } else {
+    const contest = await prisma.meet.findFirst({
+      where: { id: id },
+    });
+
+    if (!contest) {
+      throw new Error("Meet ID does not exist.");
+    } else {
+      await prisma.meet.update({
+        where: {
+          id: id,
+        },
+        data: {
+          approved: true,
+          approvedUserId: session?.user?.id,
+          approvedAt: new Date(),
+        },
+      });
+    }
   }
 }

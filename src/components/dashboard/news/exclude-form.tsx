@@ -14,6 +14,10 @@ import type {
   newsExcludeSchemaType,
   newsWithUserSchemaType,
 } from "@/lib/news/verification";
+import {
+  newsWithUserSchema,
+  newsWithUserSchemaDV,
+} from "@/lib/news/verification";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -38,10 +42,7 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getById, exclude } from "@/lib/news/actions";
-import {
-  newsWithUserSchema,
-  newsWithUserSchemaDV,
-} from "@/lib/news/verification";
+
 import { newsLinkCategory } from "@/lib/utils";
 
 interface Props {

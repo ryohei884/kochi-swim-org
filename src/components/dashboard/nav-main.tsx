@@ -26,7 +26,7 @@ export function NavMain({
         .map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <Link href={`/dashboard/${item.link}`}>
+              <Link href={`/dashboard/${item.link}`} replace>
                 <item.icon />
                 <span>{item.name}</span>
               </Link>

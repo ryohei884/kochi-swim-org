@@ -274,11 +274,20 @@ export default function NewsApproveForm(props: Props) {
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady} variant="destructive">
-                  承認
+                <Button
+                  type="submit"
+                  disabled={!isReady || form.formState.isSubmitting}
+                  variant="destructive"
+                >
+                  {form.formState.isSubmitting ? "送信中" : "承認"}
                 </Button>
                 <SheetClose asChild>
-                  <Button variant="outline">キャンセル</Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setDialogOpen(false)}
+                  >
+                    キャンセル
+                  </Button>
                 </SheetClose>
               </SheetFooter>
             </form>
