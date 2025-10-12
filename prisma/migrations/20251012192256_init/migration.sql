@@ -127,7 +127,8 @@ CREATE TABLE "News" (
     "image" TEXT,
     "fromDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "toDate" TIMESTAMP(3),
-    "link" INTEGER,
+    "linkCategory" INTEGER,
+    "linkString" TEXT,
     "order" INTEGER NOT NULL,
     "createdUserId" TEXT NOT NULL,
     "revisedUserId" TEXT,
@@ -164,6 +165,23 @@ CREATE TABLE "Meet" (
     "approvedAt" TIMESTAMP(3),
 
     CONSTRAINT "Meet_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Live" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "fromDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "meetId" TEXT,
+    "onAir" BOOLEAN NOT NULL DEFAULT false,
+    "url" TEXT,
+    "order" INTEGER NOT NULL,
+    "finished" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "createdUserId" TEXT NOT NULL,
+
+    CONSTRAINT "Live_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -237,3 +255,9 @@ ALTER TABLE "Meet" ADD CONSTRAINT "Meet_revisedUserId_fkey" FOREIGN KEY ("revise
 
 -- AddForeignKey
 ALTER TABLE "Meet" ADD CONSTRAINT "Meet_approvedUserId_fkey" FOREIGN KEY ("approvedUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Live" ADD CONSTRAINT "Live_meetId_fkey" FOREIGN KEY ("meetId") REFERENCES "Meet"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Live" ADD CONSTRAINT "Live_createdUserId_fkey" FOREIGN KEY ("createdUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

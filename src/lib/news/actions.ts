@@ -78,7 +78,8 @@ export async function create(prop: newsCreateSchemaType) {
         image: typeof data.image === "string" ? data.image : null,
         fromDate: data.fromDate,
         toDate: data.toDate,
-        link: data.link,
+        linkCategory: data.linkCategory,
+        linkString: data.linkString,
         order: data.order,
         createdUserId: session?.user?.id,
         approved: false,
@@ -101,7 +102,17 @@ export async function getById(prop: newsGetByIdSchemaType) {
 }
 
 export async function update(prop: newsUpdateSchemaType) {
-  const { id, title, detail, image, fromDate, toDate, link, order } = prop;
+  const {
+    id,
+    title,
+    detail,
+    image,
+    fromDate,
+    toDate,
+    linkCategory,
+    linkString,
+    order,
+  } = prop;
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
@@ -127,7 +138,8 @@ export async function update(prop: newsUpdateSchemaType) {
           image: typeof image === "string" ? image : null,
           fromDate: fromDate,
           toDate: toDate,
-          link: link,
+          linkCategory: linkCategory,
+          linkString: linkString,
           order: order,
           revisedUserId: session?.user?.id,
           approvedUserId: null,

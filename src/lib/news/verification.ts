@@ -49,7 +49,8 @@ export const newsSchema = z.object({
     error: "掲載開始日は必須項目です。",
   }),
   toDate: z.date().nullable(),
-  link: z.number().int().nullable(),
+  linkCategory: z.number().int().nullable(),
+  linkString: z.string().nullable(),
   order: z
     .transform(Number)
     .pipe(
@@ -76,7 +77,8 @@ export const newsSchemaDV: newsSchemaType = {
   image: null,
   fromDate: new Date(),
   toDate: null,
-  link: null,
+  linkCategory: null,
+  linkString: "",
   order: 0,
   createdUserId: "",
   revisedUserId: "",
@@ -103,7 +105,8 @@ export const newsWithUserSchemaDV: newsWithUserSchemaType = {
   image: newsSchemaDV.image,
   fromDate: newsSchemaDV.fromDate,
   toDate: newsSchemaDV.toDate,
-  link: newsSchemaDV.link,
+  linkCategory: newsSchemaDV.linkCategory,
+  linkString: newsSchemaDV.linkString,
   order: newsSchemaDV.order,
   createdUserId: newsSchemaDV.createdUserId,
   revisedUserId: newsSchemaDV.revisedUserId,
@@ -136,7 +139,8 @@ export const newsCreateSchemaDV: newsCreateSchemaType = {
   image: null,
   fromDate: newsSchemaDV.fromDate,
   toDate: newsSchemaDV.toDate,
-  link: newsSchemaDV.link,
+  linkCategory: newsSchemaDV.linkCategory,
+  linkString: newsSchemaDV.linkString,
   order: newsSchemaDV.order,
   createdUserId: newsSchemaDV.createdUserId,
 };
@@ -145,7 +149,7 @@ export const newsCreateSchemaDV: newsCreateSchemaType = {
 export const newsCreateOnSubmitSchema = newsSchema
   .omit({
     id: true,
-    link: true,
+    linkCategory: true,
     createdAt: true,
     revisedAt: true,
     approvedAt: true,
@@ -155,7 +159,7 @@ export const newsCreateOnSubmitSchema = newsSchema
     image: true,
   })
   .extend({
-    link: z.string(),
+    linkCategory: z.string(),
     image: z
       .custom<FileList>()
       .transform((file) => file[0])
@@ -190,7 +194,8 @@ export const newsCreateOnSubmitSchemaDV: newsCreateOnSubmitSchemaType = {
   image: null,
   fromDate: newsSchemaDV.fromDate,
   toDate: newsSchemaDV.toDate,
-  link: String(newsSchemaDV.link),
+  linkCategory: String(newsSchemaDV.linkCategory),
+  linkString: newsSchemaDV.linkString,
   order: newsSchemaDV.order,
   createdUserId: newsSchemaDV.createdUserId,
 };
@@ -241,7 +246,8 @@ export const newsUpdateSchemaDV: newsUpdateSchemaType = {
   image: null,
   fromDate: newsSchemaDV.fromDate,
   toDate: newsSchemaDV.toDate,
-  link: newsSchemaDV.link,
+  linkCategory: newsSchemaDV.linkCategory,
+  linkString: newsSchemaDV.linkString,
   order: newsSchemaDV.order,
 };
 
@@ -256,10 +262,10 @@ export const newsUpdateOnSubmitSchema = newsSchema
     approvedAt: true,
     createdAt: true,
     image: true,
-    link: true,
+    linkCategory: true,
   })
   .extend({
-    link: z.string(),
+    linkCategory: z.string(),
     image: z
       .custom<FileList>()
       .transform((file) => file[0])
@@ -295,7 +301,8 @@ export const newsUpdateOnSubmitSchemaDV: newsUpdateOnSubmitSchemaType = {
   image: null,
   fromDate: newsSchemaDV.fromDate,
   toDate: newsSchemaDV.toDate,
-  link: String(newsSchemaDV.link),
+  linkCategory: String(newsSchemaDV.linkCategory),
+  linkString: newsSchemaDV.linkString,
   order: newsSchemaDV.order,
 };
 
@@ -306,7 +313,8 @@ export const newsGetByIdSchema = newsSchema.omit({
   image: true,
   fromDate: true,
   toDate: true,
-  link: true,
+  linkCategory: true,
+  linkString: true,
   order: true,
   createdUserId: true,
   revisedUserId: true,
@@ -330,7 +338,8 @@ export const newsExcludeSchema = newsSchema.omit({
   image: true,
   fromDate: true,
   toDate: true,
-  link: true,
+  linkCategory: true,
+  linkString: true,
   order: true,
   createdUserId: true,
   revisedUserId: true,
@@ -354,7 +363,8 @@ export const newsApproveSchema = newsSchema.omit({
   image: true,
   fromDate: true,
   toDate: true,
-  link: true,
+  linkCategory: true,
+  linkString: true,
   order: true,
   createdUserId: true,
   revisedUserId: true,

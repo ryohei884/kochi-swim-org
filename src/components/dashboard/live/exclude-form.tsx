@@ -6,18 +6,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { Trash2 } from "lucide-react";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import type {
-  newsExcludeSchemaType,
-  newsWithUserSchemaType,
-} from "@/lib/news/verification";
+  liveExcludeSchemaType,
+  liveWithUserSchemaType,
+} from "@/lib/live/verification";
 import {
-  newsWithUserSchema,
-  newsWithUserSchemaDV,
-} from "@/lib/news/verification";
+  liveWithUserSchema,
+  liveWithUserSchemaDV,
+} from "@/lib/live/verification";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -41,22 +40,22 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getById, exclude } from "@/lib/news/actions";
-
-import { newsLinkCategory } from "@/lib/utils";
+import { getById, exclude } from "@/lib/live/actions";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface Props {
   id: string;
   fetchListData: () => Promise<void>;
 }
 
-export default function NewsExcludeForm(props: Props) {
+export default function LiveExcludeForm(props: Props) {
   const { id, fetchListData } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const form = useForm<newsWithUserSchemaType>({
-    resolver: zodResolver(newsWithUserSchema),
-    defaultValues: newsWithUserSchemaDV,
+  const form = useForm<liveWithUserSchemaType>({
+    resolver: zodResolver(liveWithUserSchema),
+    defaultValues: liveWithUserSchemaDV,
   });
 
   const fetchData = async (id: string) => {
@@ -74,8 +73,8 @@ export default function NewsExcludeForm(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
 
-  const onSubmit: SubmitHandler<newsWithUserSchemaType> = async (
-    data: newsExcludeSchemaType,
+  const onSubmit: SubmitHandler<liveWithUserSchemaType> = async (
+    data: liveExcludeSchemaType,
   ) => {
     await exclude(data);
 
@@ -89,7 +88,7 @@ export default function NewsExcludeForm(props: Props) {
     setDialogOpen(false);
   };
 
-  const onError: SubmitErrorHandler<newsWithUserSchemaType> = (errors) => {
+  const onError: SubmitErrorHandler<liveWithUserSchemaType> = (errors) => {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
@@ -109,9 +108,9 @@ export default function NewsExcludeForm(props: Props) {
       <SheetContent>
         <ScrollArea className="h-dvh pr-2">
           <SheetHeader>
-            <SheetTitle>ニュース削除</SheetTitle>
+            <SheetTitle>ライブ配信削除</SheetTitle>
             <SheetDescription className="sr-only">
-              ニュース削除画面
+              ライブ配信削除画面
             </SheetDescription>
           </SheetHeader>
           <Form {...form}>
@@ -119,25 +118,6 @@ export default function NewsExcludeForm(props: Props) {
               onSubmit={form.handleSubmit(onSubmit, onError)}
               className="space-y-8 p-4"
             >
-              <FormField
-                control={form.control}
-                name="id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>ニュースID</FormLabel>
-                    <FormControl hidden={!isReady}>
-                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                        {field.value}
-                      </div>
-                    </FormControl>
-                    <Skeleton
-                      hidden={isReady}
-                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="title"
@@ -159,12 +139,36 @@ export default function NewsExcludeForm(props: Props) {
               />
               <FormField
                 control={form.control}
-                name="detail"
+                name="fromDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>掲載開始日</FormLabel>
+                    <div
+                      hidden={!isReady}
+                      className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"
+                    >
+                      {field.value ? (
+                        format(field.value, "PPP", { locale: ja })
+                      ) : (
+                        <span>設定されていません。</span>
+                      )}
+                    </div>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="meetId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>本文</FormLabel>
+                    <FormLabel>関連大会ID</FormLabel>
                     <FormControl hidden={!isReady}>
-                      <div className="whitespace-pre-wrap flex-none min-h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
                       </div>
                     </FormControl>
@@ -178,69 +182,16 @@ export default function NewsExcludeForm(props: Props) {
               />
               <FormField
                 control={form.control}
-                name="image"
-                render={({ field: { value } }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>イメージ画像</FormLabel>
-                    <div className="flex-none  w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                      <Image
-                        src={value ? `${value}` : "/logo.png"}
-                        alt=""
-                        height={80}
-                        width={80}
-                        className="w-full h-full object-contain object-center"
-                      />
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="fromDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>掲載開始日</FormLabel>
-                    <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                      {field.value ? (
-                        format(field.value, "PPP", { locale: ja })
-                      ) : (
-                        <span></span>
-                      )}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="toDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>掲載終了日</FormLabel>
-                    <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                      {field.value ? (
-                        format(field.value, "PPP", { locale: ja })
-                      ) : (
-                        <span></span>
-                      )}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="linkCategory"
+                name="onAir"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>リンク先</FormLabel>
+                    <FormLabel>配信状態</FormLabel>
                     <FormControl hidden={!isReady}>
-                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                        {
-                          newsLinkCategory.find((v) => v.id === field.value)
-                            ?.name
-                        }
+                      <div className="flex items-center space-x-2 mt-4">
+                        <Switch id="onAir" checked={field.value} disabled />
+                        <Label htmlFor="onAir">
+                          {field.value ? "配信中" : "準備中"}
+                        </Label>
                       </div>
                     </FormControl>
                     <Skeleton
@@ -253,12 +204,12 @@ export default function NewsExcludeForm(props: Props) {
               />
               <FormField
                 control={form.control}
-                name="linkString"
+                name="url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>リンク先ID</FormLabel>
+                    <FormLabel>配信URL</FormLabel>
                     <FormControl hidden={!isReady}>
-                      <div className="whitespace-pre-wrap flex-none min-h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                      <div className="flex-none whitespace-pre-wrap h-fit w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
                       </div>
                     </FormControl>
@@ -277,7 +228,7 @@ export default function NewsExcludeForm(props: Props) {
                   <FormItem>
                     <FormLabel>表示順</FormLabel>
                     <FormControl hidden={!isReady}>
-                      <div className="whitespace-pre-wrap flex-none min-h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
                       </div>
                     </FormControl>
@@ -289,8 +240,30 @@ export default function NewsExcludeForm(props: Props) {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="finished"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>大会終了</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <div className="flex items-center space-x-2 mt-4">
+                        <Switch id="finished" checked={field.value} disabled />
+                        <Label htmlFor="finished">
+                          {field.value ? "大会終了後" : "大会終了前"}
+                        </Label>
+                      </div>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady}>
+                <Button type="submit" variant="destructive" disabled={!isReady}>
                   削除
                 </Button>
                 <SheetClose asChild>

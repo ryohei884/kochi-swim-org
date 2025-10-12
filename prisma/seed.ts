@@ -23,7 +23,8 @@ type newsType = {
   image: string | null;
   fromDate: Date;
   toDate: Date | null;
-  link: number | null;
+  linkCategory: number | null;
+  linkString: string | null;
   createdAt: Date;
   revisedAt: Date;
   approvedAt: Date;
@@ -286,7 +287,8 @@ const news: newsType[] = [
     image: null,
     fromDate: new Date("2025/10/4"),
     toDate: new Date("2026/10/4"),
-    link: 1,
+    linkCategory: 1,
+    linkString: null,
     createdAt: new Date("2025/10/4"),
     revisedAt: new Date("2025/10/4"),
     approvedAt: new Date("2025/10/4"),
@@ -298,7 +300,8 @@ const news: newsType[] = [
     image: null,
     fromDate: new Date("2025/9/21"),
     toDate: new Date("2026/9/21"),
-    link: 5,
+    linkCategory: 5,
+    linkString: null,
     createdAt: new Date("2025/9/21"),
     revisedAt: new Date("2025/9/21"),
     approvedAt: new Date("2025/9/21"),
@@ -309,7 +312,8 @@ const news: newsType[] = [
     image: null,
     fromDate: new Date("2025/9/16"),
     toDate: new Date("2026/9/16"),
-    link: 1,
+    linkCategory: 1,
+    linkString: null,
     createdAt: new Date("2025/9/16"),
     revisedAt: new Date("2025/9/16"),
     approvedAt: new Date("2025/9/16"),
@@ -321,7 +325,8 @@ const news: newsType[] = [
     image: null,
     fromDate: new Date("2025/9/11"),
     toDate: new Date("2026/9/11"),
-    link: 1,
+    linkCategory: 1,
+    linkString: null,
     createdAt: new Date("2025/9/11"),
     revisedAt: new Date("2025/9/11"),
     approvedAt: new Date("2025/9/11"),
@@ -332,7 +337,8 @@ const news: newsType[] = [
     image: null,
     fromDate: new Date("2025/9/5"),
     toDate: new Date("2026/9/5"),
-    link: 1,
+    linkCategory: 1,
+    linkString: null,
     createdAt: new Date("2025/9/5"),
     revisedAt: new Date("2025/9/5"),
     approvedAt: new Date("2025/9/5"),
@@ -343,7 +349,8 @@ const news: newsType[] = [
     image: null,
     fromDate: new Date("2025/9/4"),
     toDate: new Date("2026/9/4"),
-    link: 1,
+    linkCategory: 1,
+    linkString: null,
     createdAt: new Date("2025/9/4"),
     revisedAt: new Date("2025/9/4"),
     approvedAt: new Date("2025/9/4"),
@@ -351,25 +358,27 @@ const news: newsType[] = [
 ];
 
 async function main() {
-  await prisma.$transaction(async (prisma) => {
-    for (let i = 0; i < user.length; i++) {
-      if (!user[i].email) {
-        throw new Error(`user[${i}].email does not exist in .env`);
-      } else {
-        await prisma.user.upsert({
-          where: { email: user[i].email },
-          update: {},
-          create: {
-            name: user[i].name,
-            email: user[i].email ?? "",
-            emailVerified: null,
-            image: null,
-            role: user[i].role,
-          },
-        });
-      }
+  // await prisma.$transaction(async (prisma) => {
+  for (let i = 0; i < user.length; i++) {
+    if (!user[i].email) {
+      throw new Error(`user[${i}].email does not exist in .env`);
+    } else {
+      await prisma.user.upsert({
+        where: { email: user[i].email },
+        update: {},
+        create: {
+          name: user[i].name,
+          email: user[i].email ?? "",
+          emailVerified: null,
+          image: null,
+          role: user[i].role,
+        },
+      });
     }
+  }
+  // });
 
+  await prisma.$transaction(async (prisma) => {
     const administrator = await prisma.user.findFirst({
       where: { role: "administrator" },
     });
@@ -395,7 +404,8 @@ async function main() {
             image: null,
             fromDate: news[i].fromDate,
             toDate: news[i].toDate,
-            link: news[i].link,
+            linkCategory: news[i].linkCategory,
+            linkString: null,
             order: i + 1,
             createdAt: news[i].createdAt,
             revisedAt: news[i].revisedAt,
@@ -420,8 +430,8 @@ async function main() {
             poolsize: Number(meet[i].poolsize),
             result: false,
             description: "",
-            detail: "",
-            attachment: "",
+            detail: null,
+            attachment: null,
             createdUserId: administrator.id,
             approvedUserId: administrator.id,
             approved: true,

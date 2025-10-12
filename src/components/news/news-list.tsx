@@ -101,11 +101,7 @@ export default function NewsList(props: Props) {
                         alt=""
                         width={256}
                         height={256}
-                        src={
-                          post.image
-                            ? `https://nzprheefai1ubld0.public.blob.vercel-storage.com/${post.image}`
-                            : "/logo.svg"
-                        }
+                        src={post.image ? `${post.image}` : "/logo.svg"}
                         className="absolute inset-0 size-full rounded-2xl bg-gray-50 object-cover dark:bg-gray-800"
                       />
                       <div className="absolute inset-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
@@ -118,18 +114,22 @@ export default function NewsList(props: Props) {
                         >
                           {format(post.revisedAt, "PPP", { locale: ja })}
                         </time>
-                        {post.link && (
+                        {post.linkCategory && (
                           <Link
                             href={
-                              "../" +
-                                newsLinkCategory.find((v) => v.id === post.link)
-                                  ?.href || ""
+                              "/" +
+                              (newsLinkCategory.find(
+                                (v) => v.id === post.linkCategory,
+                              )?.href || "") +
+                              "/" +
+                              (post.linkString !== null ? post.linkString : "")
                             }
                             className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:bg-gray-800"
                           >
                             {
-                              newsLinkCategory.find((v) => v.id === post.link)
-                                ?.name
+                              newsLinkCategory.find(
+                                (v) => v.id === post.linkCategory,
+                              )?.name
                             }
                           </Link>
                         )}
@@ -139,10 +139,28 @@ export default function NewsList(props: Props) {
                           <span className="absolute inset-0" />
                           {post.title}
                         </h3>
-                        <p className="mt-5 text-sm/6 text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
+                        <p className="my-5 text-sm/6 text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
                           {post.detail}
                         </p>
                       </div>
+                      {post.linkCategory && post.linkString !== null && (
+                        <div>
+                          <Link
+                            href={
+                              "/" +
+                              (newsLinkCategory.find(
+                                (v) => v.id === post.linkCategory,
+                              )?.href || "") +
+                              "/" +
+                              post.linkString
+                            }
+                            className="text-sm/6 font-semibold text-gray-900 dark:text-white"
+                            replace
+                          >
+                            詳細へ <span aria-hidden="true">→</span>
+                          </Link>
+                        </div>
+                      )}
                     </div>
                   </article>
                 ))}

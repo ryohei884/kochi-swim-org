@@ -111,8 +111,9 @@ export default function MeetUpdateForm(props: Props) {
         ...res,
         poolsize: String(res.poolsize),
         kind: String(res.kind),
-        detail: JSON.parse(String(res.detail)),
-        attachment: JSON.parse(String(res.attachment)),
+        detail: res.detail !== null ? JSON.parse(String(res.detail)) : [],
+        attachment:
+          res.attachment !== null ? JSON.parse(String(res.attachment)) : [],
       });
       setIsReady(true);
     }

@@ -60,15 +60,18 @@ export default function News() {
                   >
                     {format(post.revisedAt, "PPP", { locale: ja })}
                   </time>
-                  {post.link && (
+                  {post.linkCategory && (
                     <Link
                       href={
-                        newsLinkCategory.find((v) => v.id === post.link)
+                        newsLinkCategory.find((v) => v.id === post.linkCategory)
                           ?.href || "#"
                       }
                       className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:bg-gray-800"
                     >
-                      {newsLinkCategory.find((v) => v.id === post.link)?.name}
+                      {
+                        newsLinkCategory.find((v) => v.id === post.linkCategory)
+                          ?.name
+                      }
                     </Link>
                   )}
                 </div>

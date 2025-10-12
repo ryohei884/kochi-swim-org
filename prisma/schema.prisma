@@ -41,6 +41,8 @@ model User {
   meetRevised   Meet[] @relation(name: "Meet.revisedUserId")
   meetAppproved Meet[] @relation(name: "Meet.approvedUserId")
 
+  liveCreated Live[] @relation(name: "Live.createdUserId")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -176,7 +178,8 @@ model News {
   image          String?
   fromDate       DateTime  @default(now())
   toDate         DateTime?
-  link           Int?
+  linkCategory   Int?
+  linkString     String?
   order          Int
   createdUserId  String
   revisedUserId  String?
@@ -214,4 +217,23 @@ model Meet {
   createdUser    User      @relation(name: "Meet.createdUserId", fields: [createdUserId], references: [id])
   revisedUser    User?     @relation(name: "Meet.revisedUserId", fields: [revisedUserId], references: [id])
   approvedUser   User?     @relation(name: "Meet.approvedUserId", fields: [approvedUserId], references: [id])
+
+  live Live[] @relation(name: "Live.meetId")
+}
+
+model Live {
+  id            String   @id @default(cuid())
+  title         String
+  fromDate      DateTime @default(now())
+  meetId        String?
+  onAir         Boolean  @default(false)
+  url           String?
+  order         Int
+  finished      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdUserId String
+
+  meet        Meet? @relation(name: "Live.meetId", fields: [meetId], references: [id])
+  createdUser User  @relation(name: "Live.createdUserId", fields: [createdUserId], references: [id])
 }

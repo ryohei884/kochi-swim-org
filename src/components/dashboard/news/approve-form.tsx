@@ -183,11 +183,7 @@ export default function NewsApproveForm(props: Props) {
                     <FormLabel>イメージ画像</FormLabel>
                     <div className="flex-none  w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                       <Image
-                        src={
-                          value
-                            ? `https://nzprheefai1ubld0.public.blob.vercel-storage.com/${value}`
-                            : "/next.svg"
-                        }
+                        src={value ? `${value}` : "/logo.png"}
                         alt=""
                         height={80}
                         width={80}
@@ -234,7 +230,7 @@ export default function NewsApproveForm(props: Props) {
               />
               <FormField
                 control={form.control}
-                name="link"
+                name="linkCategory"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>リンク先</FormLabel>
@@ -244,6 +240,25 @@ export default function NewsApproveForm(props: Props) {
                           newsLinkCategory.find((v) => v.id === field.value)
                             ?.name
                         }
+                      </div>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="linkString"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>リンク先ID</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                        {field.value}
                       </div>
                     </FormControl>
                     <Skeleton

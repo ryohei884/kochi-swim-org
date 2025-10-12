@@ -84,7 +84,7 @@ export default function NewsUpdateForm(props: Props) {
     setIsReady(false);
     const res = await getById({ id: id });
     if (res !== null) {
-      form.reset({ ...res, link: String(res.link) });
+      form.reset({ ...res, linkCategory: String(res.linkCategory) });
       setIsReady(true);
     }
   };
@@ -105,7 +105,7 @@ export default function NewsUpdateForm(props: Props) {
 
     const res = await update({
       ...data,
-      link: Number(data.link),
+      linkCategory: Number(data.linkCategory),
       image: newBlob ?? data.image,
     });
 
@@ -273,11 +273,7 @@ export default function NewsUpdateForm(props: Props) {
                         />
                       ) : (
                         <Image
-                          src={
-                            value
-                              ? `https://nzprheefai1ubld0.public.blob.vercel-storage.com/${value}`
-                              : "/next.svg"
-                          }
+                          src={value ? `${value}` : "/logo.png"}
                           alt=""
                           height={100}
                           width={100}
@@ -390,7 +386,7 @@ export default function NewsUpdateForm(props: Props) {
               />
               <FormField
                 control={form.control}
-                name="link"
+                name="linkCategory"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>リンク先</FormLabel>
@@ -410,6 +406,28 @@ export default function NewsUpdateForm(props: Props) {
                           ))}
                         </SelectContent>
                       </Select>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="linkString"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>リンク先ID</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <Input
+                        type="text"
+                        placeholder="リンク先ID"
+                        {...field}
+                        value={field.value || ""}
+                      />
                     </FormControl>
                     <Skeleton
                       hidden={isReady}

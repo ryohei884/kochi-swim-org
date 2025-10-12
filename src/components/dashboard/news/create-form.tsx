@@ -97,7 +97,7 @@ export default function NewsCreateForm(props: Props) {
     }
     const res = await create({
       ...data,
-      link: Number(data.link),
+      linkCategory: Number(data.linkCategory),
       image: newBlob ?? null,
     });
 
@@ -335,7 +335,7 @@ export default function NewsCreateForm(props: Props) {
               />
               <FormField
                 control={form.control}
-                name="link"
+                name="linkCategory"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>リンク先</FormLabel>
@@ -352,6 +352,24 @@ export default function NewsCreateForm(props: Props) {
                           ))}
                         </SelectContent>
                       </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="linkString"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>リンク先ID</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="リンク先ID"
+                        {...field}
+                        value={field.value || ""}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
