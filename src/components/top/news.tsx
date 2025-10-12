@@ -41,13 +41,10 @@ export default function News() {
               <div className="relative w-full">
                 <Image
                   alt=""
-                  width={256}
-                  height={256}
-                  src={
-                    post.image
-                      ? `https://nzprheefai1ubld0.public.blob.vercel-storage.com/${post.image}`
-                      : "/soukai.jp"
-                  }
+                  width={672}
+                  height={336}
+                  priority={true}
+                  src={post.image ? `${post.image}` : "/logo.png"}
                   className="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-2/1 lg:aspect-3/2 dark:bg-gray-800"
                 />
                 <div className="absolute inset-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />

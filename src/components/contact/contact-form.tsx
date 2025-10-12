@@ -38,7 +38,7 @@ export default function ContactForm() {
   });
 
   const onSubmit: SubmitHandler<contactSchemaType> = async (
-    data: contactSchemaType,
+    data: contactSchemaType
   ) => {
     await sendMessageViaLine(data);
     toast("お問い合わせを送信しました。", {
@@ -242,9 +242,9 @@ export default function ContactForm() {
         <div className="bg-gray-50 lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 dark:bg-gray-800">
           <Image
             alt=""
-            width={100}
-            height={100}
-            unoptimized
+            width={738}
+            height={1067}
+            priority={true}
             src="/swim_club.jpg"
             className="aspect-3/2 object-cover lg:aspect-auto lg:size-full"
           />

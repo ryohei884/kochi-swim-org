@@ -18,36 +18,40 @@ export default function Committee() {
               <div className="aspect-square overflow-hidden rounded-xl shadow-xl outline-1 -outline-offset-1 outline-black/10 dark:shadow-none dark:outline-white/10">
                 <Image
                   alt=""
-                  width={100}
-                  height={100}
+                  width={320}
+                  height={320}
                   src={"/tsutsumi.jpg"}
+                  priority={true}
                   className="block size-full object-cover"
                 />
               </div>
               <div className="-mt-8 aspect-square overflow-hidden rounded-xl shadow-xl outline-1 -outline-offset-1 outline-black/10 lg:-mt-40 dark:shadow-none dark:outline-white/10">
                 <Image
                   alt=""
-                  width={100}
-                  height={100}
+                  width={320}
+                  height={320}
                   src={"/wp_meet.jpg"}
+                  priority={true}
                   className="block size-full object-cover"
                 />
               </div>
               <div className="aspect-square overflow-hidden rounded-xl shadow-xl outline-1 -outline-offset-1 outline-black/10 dark:shadow-none dark:outline-white/10">
                 <Image
                   alt=""
-                  width={100}
-                  height={100}
+                  width={320}
+                  height={320}
                   src={"/party.jpg"}
+                  priority={true}
                   className="block size-full object-cover"
                 />
               </div>
               <div className="-mt-8 aspect-square overflow-hidden rounded-xl shadow-xl outline-1 -outline-offset-1 outline-black/10 lg:-mt-40 dark:shadow-none dark:outline-white/10">
                 <Image
                   alt=""
-                  width={100}
-                  height={100}
+                  width={320}
+                  height={320}
                   src={"/soukai.jpg"}
+                  priority={true}
                   className="block size-full object-cover"
                 />
               </div>

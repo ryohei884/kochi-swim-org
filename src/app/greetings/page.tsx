@@ -22,8 +22,9 @@ export default function Greeting() {
                         alt=""
                         src={"/miura.jpg"}
                         className="block size-full object-cover"
-                        width={560}
-                        height={747}
+                        width={672}
+                        height={896}
+                        priority={true}
                       />
                     </div>
                   </div>

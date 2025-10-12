@@ -81,6 +81,7 @@ export default function Heder() {
                   alt="高知県水泳連盟"
                   src="/logo.svg"
                   className="h-8 w-auto dark:hidden"
+                  priority={true}
                   width={8}
                   height={8}
                 />
@@ -88,6 +89,7 @@ export default function Heder() {
                   alt="高知県水泳連盟"
                   src="/logo.svg"
                   className="h-8 w-auto not-dark:hidden"
+                  priority={true}
                   width={8}
                   height={8}
                 />

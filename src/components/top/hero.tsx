@@ -57,10 +57,10 @@ export default function Hero() {
         <div className="bg-gray-50 lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 dark:bg-gray-800">
           <Image
             alt=""
-            width={100}
-            height={100}
+            width={738}
+            height={856}
             src="/wp_club.jpg"
-            unoptimized
+            priority={true}
             className="aspect-3/2 object-cover lg:aspect-auto lg:size-full"
           />
         </div>

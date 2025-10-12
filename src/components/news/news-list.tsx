@@ -86,7 +86,7 @@ export default function NewsList(props: Props) {
                             <Skeleton className="w-80 h-6 mt-5" />
                           </div>
                         </div>
-                      </article>,
+                      </article>
                     );
                   }
                   return <>{rows}</>;
@@ -99,8 +99,9 @@ export default function NewsList(props: Props) {
                     <div className="relative aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0">
                       <Image
                         alt=""
-                        width={256}
-                        height={256}
+                        width={672}
+                        height={336}
+                        priority={true}
                         src={post.image ? `${post.image}` : "/logo.svg"}
                         className="absolute inset-0 size-full rounded-2xl bg-gray-50 object-cover dark:bg-gray-800"
                       />
@@ -119,7 +120,7 @@ export default function NewsList(props: Props) {
                             href={
                               "/" +
                               (newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory,
+                                (v) => v.id === post.linkCategory
                               )?.href || "") +
                               "/" +
                               (post.linkString !== null ? post.linkString : "")
@@ -128,7 +129,7 @@ export default function NewsList(props: Props) {
                           >
                             {
                               newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory,
+                                (v) => v.id === post.linkCategory
                               )?.name
                             }
                           </Link>
@@ -149,7 +150,7 @@ export default function NewsList(props: Props) {
                             href={
                               "/" +
                               (newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory,
+                                (v) => v.id === post.linkCategory
                               )?.href || "") +
                               "/" +
                               post.linkString
