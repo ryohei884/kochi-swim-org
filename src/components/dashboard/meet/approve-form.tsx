@@ -10,6 +10,10 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import type {
+  meetApproveSchemaType,
+  meetWithUserSchemaType,
+} from "@/lib/meet/verification";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -37,10 +41,6 @@ import { getById, approve } from "@/lib/meet/actions";
 import {
   meetWithUserSchemaDV,
   meetWithUserSchema,
-} from "@/lib/meet/verification";
-import type {
-  meetApproveSchemaType,
-  meetWithUserSchemaType,
 } from "@/lib/meet/verification";
 import { meetKind, poolSize } from "@/lib/utils";
 
@@ -80,7 +80,7 @@ export default function MeetApproveForm(props: Props) {
     console.log("data", data);
     await approve(data);
 
-    toast("削除しました。", {
+    toast("承認しました。", {
       action: {
         label: "Undo",
         onClick: () => console.log("Undo"),

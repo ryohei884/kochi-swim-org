@@ -10,6 +10,7 @@
     "lint": "npx eslint --fix src/ --ignore-pattern 'src/app/generated/**/*'",
     "format": "npx prettier --write src && npx prisma format",
     "reset": "rm -rf ./prisma/migrations && prisma migrate reset",
+    "push": "rm -rf ./prisma/migrations && mkdir -p ./prisma/migrations/$(date '+%Y%m%d')_baseline && npx prisma migrate diff --from-schema-datamodel ./prisma/schema.prisma --to-schema-datamodel ./prisma/schema.prisma --script > ./prisma/migrations/$(date '+%Y%m%d')_baseline/migration.sql && npx prisma migrate resolve --applied $(date '+%Y%m%d')_baseline && npx prisma migrate deploy",
     "migrate": "npx prisma migrate dev --name init",
     "seed": "npx prisma db seed"
   },

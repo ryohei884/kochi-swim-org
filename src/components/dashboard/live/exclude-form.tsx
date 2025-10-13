@@ -13,10 +13,6 @@ import type {
   liveExcludeSchemaType,
   liveWithUserSchemaType,
 } from "@/lib/live/verification";
-import {
-  liveWithUserSchema,
-  liveWithUserSchemaDV,
-} from "@/lib/live/verification";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -28,6 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Sheet,
@@ -40,9 +37,12 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getById, exclude } from "@/lib/live/actions";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { getById, exclude } from "@/lib/live/actions";
+import {
+  liveWithUserSchema,
+  liveWithUserSchemaDV,
+} from "@/lib/live/verification";
 
 interface Props {
   id: string;

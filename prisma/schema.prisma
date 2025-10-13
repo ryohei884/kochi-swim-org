@@ -43,6 +43,10 @@ model User {
 
   liveCreated Live[] @relation(name: "Live.createdUserId")
 
+  seminarCreated   Seminar[] @relation(name: "Seminar.createdUserId")
+  seminarRevised   Seminar[] @relation(name: "Seminar.revisedUserId")
+  seminarAppproved Seminar[] @relation(name: "Seminar.approvedUserId")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -236,4 +240,26 @@ model Live {
 
   meet        Meet? @relation(name: "Live.meetId", fields: [meetId], references: [id])
   createdUser User  @relation(name: "Live.createdUserId", fields: [createdUserId], references: [id])
+}
+
+model Seminar {
+  id             String    @id @default(cuid())
+  title          String
+  fromDate       DateTime  @default(now())
+  toDate         DateTime?
+  deadline       DateTime?
+  place          String
+  description    String?
+  detail         String?
+  attachment     String?
+  createdUserId  String
+  revisedUserId  String?
+  approvedUserId String?
+  approved       Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  revisedAt      DateTime  @updatedAt
+  approvedAt     DateTime?
+  createdUser    User      @relation(name: "Seminar.createdUserId", fields: [createdUserId], references: [id])
+  revisedUser    User?     @relation(name: "Seminar.revisedUserId", fields: [revisedUserId], references: [id])
+  approvedUser   User?     @relation(name: "Seminar.approvedUserId", fields: [approvedUserId], references: [id])
 }

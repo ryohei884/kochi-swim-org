@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { userSchema, userSchemaDV } from "@/lib/news/verification";
+
 import { meetSchema, meetSchemaDV } from "@/lib/meet/verification";
+import { userSchema, userSchemaDV } from "@/lib/news/verification";
 
 // liveSchema
 export const liveSchema = z.object({

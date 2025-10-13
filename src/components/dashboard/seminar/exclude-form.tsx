@@ -11,9 +11,9 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import type {
-  meetExcludeSchemaType,
-  meetWithUserSchemaType,
-} from "@/lib/meet/verification";
+  seminarExcludeSchemaType,
+  seminarWithUserSchemaType,
+} from "@/lib/seminar/verification";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -37,26 +37,25 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getById, exclude } from "@/lib/meet/actions";
+import { getById, exclude } from "@/lib/seminar/actions";
 import {
-  meetWithUserSchemaDV,
-  meetWithUserSchema,
-} from "@/lib/meet/verification";
-import { meetKind, poolSize } from "@/lib/utils";
+  seminarWithUserSchemaDV,
+  seminarWithUserSchema,
+} from "@/lib/seminar/verification";
 
 interface Props {
   id: string;
   fetchListData: () => Promise<void>;
 }
 
-export default function MeetExcludeForm(props: Props) {
+export default function SeminarExcludeForm(props: Props) {
   const { id, fetchListData } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
 
-  const form = useForm<meetWithUserSchemaType>({
-    resolver: zodResolver(meetWithUserSchema),
-    defaultValues: meetWithUserSchemaDV,
+  const form = useForm<seminarWithUserSchemaType>({
+    resolver: zodResolver(seminarWithUserSchema),
+    defaultValues: seminarWithUserSchemaDV,
   });
 
   useEffect(() => {
@@ -74,8 +73,8 @@ export default function MeetExcludeForm(props: Props) {
     }
   };
 
-  const onSubmit: SubmitHandler<meetWithUserSchemaType> = async (
-    data: meetExcludeSchemaType,
+  const onSubmit: SubmitHandler<seminarWithUserSchemaType> = async (
+    data: seminarExcludeSchemaType,
   ) => {
     console.log("data", data);
     await exclude(data);
@@ -90,7 +89,7 @@ export default function MeetExcludeForm(props: Props) {
     setDialogOpen(false);
   };
 
-  const onError: SubmitErrorHandler<meetWithUserSchemaType> = (errors) => {
+  const onError: SubmitErrorHandler<seminarWithUserSchemaType> = (errors) => {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
@@ -114,9 +113,9 @@ export default function MeetExcludeForm(props: Props) {
       <SheetContent>
         <ScrollArea className="h-dvh pr-2">
           <SheetHeader>
-            <SheetTitle>競技会情報削除</SheetTitle>
+            <SheetTitle>講習会情報削除</SheetTitle>
             <SheetDescription className="sr-only">
-              競技会情報削除画面
+              講習会情報削除画面
             </SheetDescription>
           </SheetHeader>
           <Form {...form}>
@@ -129,48 +128,10 @@ export default function MeetExcludeForm(props: Props) {
                 name="id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>競技会情報ID</FormLabel>
+                    <FormLabel>講習会情報ID</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
-                      </div>
-                    </FormControl>
-                    <Skeleton
-                      hidden={isReady}
-                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>大会コード</FormLabel>
-                    <FormControl hidden={!isReady}>
-                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                        {field.value}
-                      </div>
-                    </FormControl>
-                    <Skeleton
-                      hidden={isReady}
-                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="kind"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>競技種目</FormLabel>
-                    <FormControl hidden={!isReady}>
-                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                        {meetKind.find((v) => v.id === field.value)?.kind}
                       </div>
                     </FormControl>
                     <Skeleton
@@ -186,7 +147,7 @@ export default function MeetExcludeForm(props: Props) {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>大会名</FormLabel>
+                    <FormLabel>講習会名</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
@@ -277,29 +238,10 @@ export default function MeetExcludeForm(props: Props) {
                 name="place"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>プール名</FormLabel>
+                    <FormLabel>会場名</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
-                      </div>
-                    </FormControl>
-                    <Skeleton
-                      hidden={isReady}
-                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="poolsize"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>水路</FormLabel>
-                    <FormControl hidden={!isReady}>
-                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                        {poolSize.find((v) => v.id === field.value)?.size}
                       </div>
                     </FormControl>
                     <Skeleton

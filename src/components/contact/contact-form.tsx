@@ -38,7 +38,7 @@ export default function ContactForm() {
   });
 
   const onSubmit: SubmitHandler<contactSchemaType> = async (
-    data: contactSchemaType
+    data: contactSchemaType,
   ) => {
     await sendMessageViaLine(data);
     toast("お問い合わせを送信しました。", {

@@ -5,15 +5,15 @@ import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { ExternalLink, Trash2 } from "lucide-react";
+import { ExternalLink, Stamp } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import type {
-  meetExcludeSchemaType,
-  meetWithUserSchemaType,
-} from "@/lib/meet/verification";
+  seminarApproveSchemaType,
+  seminarWithUserSchemaType,
+} from "@/lib/seminar/verification";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -37,26 +37,25 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getById, exclude } from "@/lib/meet/actions";
+import { getById, approve } from "@/lib/seminar/actions";
 import {
-  meetWithUserSchemaDV,
-  meetWithUserSchema,
-} from "@/lib/meet/verification";
-import { meetKind, poolSize } from "@/lib/utils";
+  seminarWithUserSchemaDV,
+  seminarWithUserSchema,
+} from "@/lib/seminar/verification";
 
 interface Props {
   id: string;
   fetchListData: () => Promise<void>;
 }
 
-export default function MeetExcludeForm(props: Props) {
+export default function SeminarApproveForm(props: Props) {
   const { id, fetchListData } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
 
-  const form = useForm<meetWithUserSchemaType>({
-    resolver: zodResolver(meetWithUserSchema),
-    defaultValues: meetWithUserSchemaDV,
+  const form = useForm<seminarWithUserSchemaType>({
+    resolver: zodResolver(seminarWithUserSchema),
+    defaultValues: seminarWithUserSchemaDV,
   });
 
   useEffect(() => {
@@ -74,13 +73,13 @@ export default function MeetExcludeForm(props: Props) {
     }
   };
 
-  const onSubmit: SubmitHandler<meetWithUserSchemaType> = async (
-    data: meetExcludeSchemaType,
+  const onSubmit: SubmitHandler<seminarWithUserSchemaType> = async (
+    data: seminarApproveSchemaType,
   ) => {
     console.log("data", data);
-    await exclude(data);
+    await approve(data);
 
-    toast("削除しました。", {
+    toast("承認しました。", {
       action: {
         label: "Undo",
         onClick: () => console.log("Undo"),
@@ -90,7 +89,7 @@ export default function MeetExcludeForm(props: Props) {
     setDialogOpen(false);
   };
 
-  const onError: SubmitErrorHandler<meetWithUserSchemaType> = (errors) => {
+  const onError: SubmitErrorHandler<seminarWithUserSchemaType> = (errors) => {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
@@ -108,15 +107,15 @@ export default function MeetExcludeForm(props: Props) {
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
         <Button variant="ghost" size="sm">
-          <Trash2 />
+          <Stamp />
         </Button>
       </SheetTrigger>
       <SheetContent>
         <ScrollArea className="h-dvh pr-2">
           <SheetHeader>
-            <SheetTitle>競技会情報削除</SheetTitle>
+            <SheetTitle>講習会情報承認</SheetTitle>
             <SheetDescription className="sr-only">
-              競技会情報削除画面
+              講習会情報承認画面
             </SheetDescription>
           </SheetHeader>
           <Form {...form}>
@@ -129,48 +128,10 @@ export default function MeetExcludeForm(props: Props) {
                 name="id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>競技会情報ID</FormLabel>
+                    <FormLabel>講習会情報ID</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
-                      </div>
-                    </FormControl>
-                    <Skeleton
-                      hidden={isReady}
-                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>大会コード</FormLabel>
-                    <FormControl hidden={!isReady}>
-                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                        {field.value}
-                      </div>
-                    </FormControl>
-                    <Skeleton
-                      hidden={isReady}
-                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="kind"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>競技種目</FormLabel>
-                    <FormControl hidden={!isReady}>
-                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                        {meetKind.find((v) => v.id === field.value)?.kind}
                       </div>
                     </FormControl>
                     <Skeleton
@@ -186,7 +147,7 @@ export default function MeetExcludeForm(props: Props) {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>大会名</FormLabel>
+                    <FormLabel>講習会名</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
@@ -277,29 +238,10 @@ export default function MeetExcludeForm(props: Props) {
                 name="place"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>プール名</FormLabel>
+                    <FormLabel>会場名</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
-                      </div>
-                    </FormControl>
-                    <Skeleton
-                      hidden={isReady}
-                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="poolsize"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>水路</FormLabel>
-                    <FormControl hidden={!isReady}>
-                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                        {poolSize.find((v) => v.id === field.value)?.size}
                       </div>
                     </FormControl>
                     <Skeleton
@@ -427,8 +369,9 @@ export default function MeetExcludeForm(props: Props) {
                 <Button
                   type="submit"
                   disabled={!isReady || form.formState.isSubmitting}
+                  variant="destructive"
                 >
-                  {form.formState.isSubmitting ? "送信中" : "削除"}
+                  {form.formState.isSubmitting ? "送信中" : "承認"}
                 </Button>
                 <SheetClose asChild>
                   <Button
