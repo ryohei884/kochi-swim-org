@@ -12,7 +12,9 @@
     "reset": "rm -rf ./prisma/migrations && prisma migrate reset",
     "push": "rm -rf ./prisma/migrations && mkdir -p ./prisma/migrations/$(date '+%Y%m%d')_baseline && npx prisma migrate diff --from-schema-datamodel ./prisma/schema.prisma --to-schema-datamodel ./prisma/schema.prisma --script > ./prisma/migrations/$(date '+%Y%m%d')_baseline/migration.sql && npx prisma migrate resolve --applied $(date '+%Y%m%d')_baseline && npx prisma migrate deploy",
     "migrate": "npx prisma migrate dev --name init",
-    "seed": "npx prisma db seed"
+    "seed": "npx prisma db seed",
+    "backup": "eval $(grep '^DATABASE_URL' .env) && pg_dump -Fc -d $DATABASE_URL > backup.dump",
+    "restore": "eval $(grep '^DATABASE_URL' .env) && pg_restore --data-only -d $DATABASE_URL backup.dump"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -44,6 +46,7 @@
     "@types/node": "^24.4.0",
     "@vercel/blob": "^2.0.0",
     "@vercel/speed-insights": "^1.2.0",
+    "@vorlefan/prisma-backup": "^0.4.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

@@ -43,3 +43,6 @@ next-env.d.ts
 # Prisma
 /src/app/generated/
 .env*.local
+
+# backup
+backup.dump
