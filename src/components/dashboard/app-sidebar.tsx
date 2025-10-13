@@ -3,7 +3,6 @@
 import * as React from "react";
 
 import {
-  MessageCircleQuestion,
   UserRoundCog,
   Users,
   Megaphone,
@@ -11,6 +10,7 @@ import {
   Video,
   Timer,
   CalendarCheck2,
+  MessageSquare,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -73,13 +73,13 @@ const data = {
   navSecondary: [
     {
       title: "アカウント設定",
-      url: "#",
+      url: "account",
       icon: UserRoundCog,
     },
     {
-      title: "Help",
-      url: "#",
-      icon: MessageCircleQuestion,
+      title: "お問い合わせ",
+      url: "../contact",
+      icon: MessageSquare,
     },
   ],
 };

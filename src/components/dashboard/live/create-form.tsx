@@ -44,7 +44,6 @@ import { create } from "@/lib/live/actions";
 import { liveCreateSchema, liveCreateSchemaDV } from "@/lib/live/verification";
 import { cn } from "@/lib/utils";
 
-
 interface Props {
   fetchListData: (id: string) => Promise<void>;
   maxOrder: number;
@@ -70,9 +69,7 @@ export default function LiveCreateForm(props: Props) {
   const onSubmit: SubmitHandler<liveCreateSchemaType> = async (
     data: liveCreateSchemaType,
   ) => {
-    const res = await create({
-      ...data,
-    });
+    const res = await create(data);
 
     toast("作成しました。", {
       action: {

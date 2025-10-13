@@ -128,8 +128,13 @@ export default function GroupList() {
                     <TableCell>
                       {format(value.updatedAt, "PPP", { locale: ja })}
                     </TableCell>
-                    <TableCell>{value.createdUser.name}</TableCell>
-                    <TableCell>{value.updatedUser?.name}</TableCell>
+                    <TableCell>
+                      {value.createdUser.displayName || value.createdUser.name}
+                    </TableCell>
+                    <TableCell>
+                      {value.updatedUser?.displayName ||
+                        value.updatedUser?.name}
+                    </TableCell>
                     <TableCell className="flex-none text-center w-12">
                       <UpdateForm
                         key={value.id}

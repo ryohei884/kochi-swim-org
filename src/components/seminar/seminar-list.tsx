@@ -4,6 +4,7 @@ import { useState, useEffect, Fragment } from "react";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { ChevronsUpDown, ChevronsDownUp } from "lucide-react";
+import Link from "next/link";
 
 import type { seminarWithUserSchemaType } from "@/lib/seminar/verification";
 
@@ -110,7 +111,75 @@ export default function SeminarList(props: Props) {
                     {m.open && (
                       <TableRow className="bg-accent">
                         <TableCell colSpan={6}>
-                          [詳細情報]{m.description}
+                          {m.description && (
+                            <div className="grid justify-start">
+                              [詳細情報]
+                              <div className="whitespace-pre-wrap p-4">
+                                {m.description}
+                              </div>
+                            </div>
+                          )}
+                          {m.detail && (
+                            <div className="grid justify-start">
+                              [要項ファイル]
+                              {JSON.parse(m.detail!) &&
+                                JSON.parse(m.detail!).map(
+                                  (
+                                    v: { value: string; name: string },
+                                    i: number,
+                                  ) => {
+                                    return (
+                                      <Button
+                                        variant="link"
+                                        key={i}
+                                        className="w-fit"
+                                      >
+                                        <Link
+                                          href={`${v.value}`}
+                                          rel="noopener noreferrer"
+                                          target="_blank"
+                                          key={i}
+                                        >
+                                          {v.name}
+                                        </Link>
+                                      </Button>
+                                    );
+                                  },
+                                )}
+                            </div>
+                          )}
+                          {m.attachment && (
+                            <div className="grid justify-start">
+                              [添付ファイル]
+                              {JSON.parse(m.attachment!) &&
+                                JSON.parse(m.attachment!).map(
+                                  (
+                                    v: { value: string; name: string },
+                                    i: number,
+                                  ) => {
+                                    return (
+                                      <Button
+                                        variant="link"
+                                        key={i}
+                                        className="w-fit"
+                                      >
+                                        <Link
+                                          href={`${v.value}`}
+                                          rel="noopener noreferrer"
+                                          target="_blank"
+                                          key={i}
+                                        >
+                                          {v.name}
+                                        </Link>
+                                      </Button>
+                                    );
+                                  },
+                                )}
+                            </div>
+                          )}
+                          {!m.description && !m.detail && !m.attachment && (
+                            <div>詳細情報はありません。</div>
+                          )}
                         </TableCell>
                       </TableRow>
                     )}

@@ -154,7 +154,9 @@ export default function LiveList(props: Props) {
                       {d.finished ? "終了" : d.onAir ? "配信中" : "配信前"}
                     </TableCell>
                     <TableCell>{d.url}</TableCell>
-                    <TableCell>{d.createdUser.name}</TableCell>
+                    <TableCell>
+                      {d.createdUser.displayName || d.createdUser.name}
+                    </TableCell>
                     <TableCell className="flex-none text-center w-12">
                       <UpdateForm
                         key={d.id}

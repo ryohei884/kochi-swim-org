@@ -12,7 +12,7 @@ const navigation = [
   { name: "競技会情報", href: "meet" },
   { name: "ライブ配信", href: "live" },
   { name: "県記録", href: "record" },
-  { name: "講習会情報", href: "#" },
+  { name: "講習会情報", href: "seminar" },
   // { name: "ログイン", href: "sign-in" },
 ];
 

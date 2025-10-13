@@ -3,7 +3,8 @@ import { useState, useEffect, Fragment } from "react";
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { ChevronsUpDown, ChevronsDownUp } from "lucide-react";
+import { ChevronsUpDown, ChevronsDownUp, Check } from "lucide-react";
+import Link from "next/link";
 
 import type { meetWithUserSchemaType } from "@/lib/meet/verification";
 
@@ -16,6 +17,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -40,8 +42,9 @@ export default function MeetList(props: Props) {
   const previousPage = Number(page) - 1;
   const nextPage = Number(page) + 1;
   const [meet, setMeet] = useState<meetListWithOpenType[]>([]);
-  const [meetNum, setMeetNum] = useState<number>(0);
+  const [meetNum, setMeetNum] = useState<number>(3);
   const [kind, setKind] = useState<string>("swimming");
+  const [isReady, setIsReady] = useState<boolean>(false);
 
   const getMeet = async (kind: string, page: number) => {
     const kindNum = meetKind.find((v) => v.href === kind)?.id || 0;
@@ -52,6 +55,7 @@ export default function MeetList(props: Props) {
     setMeet(meetListWithOpen);
     const meetListNum = await getListNum(kindNum);
     setMeetNum(meetListNum);
+    setIsReady(true);
   };
 
   const handleChange = (e: string) => {
@@ -70,6 +74,7 @@ export default function MeetList(props: Props) {
   };
 
   useEffect(() => {
+    setIsReady(false);
     getMeet(kind, Number(page));
   }, [kind, page]);
 
@@ -115,42 +120,166 @@ export default function MeetList(props: Props) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {meet.map((m) => (
-                      <Fragment key={m.id}>
-                        <TableRow>
-                          <TableCell>
-                            {m.fromDate &&
-                              format(m.fromDate, "PPP", {
-                                locale: ja,
-                              })}
-                            {m.toDate && "〜"}
-                            {m.toDate &&
-                              format(m.toDate, "M月d日", { locale: ja })}
-                          </TableCell>
-                          <TableCell>{m.title}</TableCell>
-                          <TableCell>{m.place}</TableCell>
-                          <TableCell>
-                            {poolSize.find((v) => v.id === m.poolsize)?.size}
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              onClick={() => handleOpen(m.id)}
-                              variant="ghost"
-                            >
-                              {m.open ? <ChevronsDownUp /> : <ChevronsUpDown />}
-                            </Button>
-                          </TableCell>
-                          <TableCell>{m.result ? "有" : "無"}</TableCell>
-                        </TableRow>
-                        {m.open && (
-                          <TableRow className="bg-accent">
-                            <TableCell colSpan={6}>
-                              [詳細情報]{m.description}
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </Fragment>
-                    ))}
+                    {!isReady
+                      ? (function () {
+                          const rows = [];
+                          for (let i = 0; i < meetNum; i++) {
+                            rows.push(
+                              <TableRow key={i}>
+                                <TableCell>
+                                  <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                </TableCell>
+                                <TableCell>
+                                  <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                </TableCell>
+                                <TableCell>
+                                  <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                </TableCell>
+                                <TableCell>
+                                  <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                </TableCell>
+                                <TableCell>
+                                  <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                </TableCell>
+                                <TableCell>
+                                  <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                </TableCell>
+                              </TableRow>,
+                            );
+                          }
+                          return <>{rows}</>;
+                        })()
+                      : meet.map((m) => (
+                          <Fragment key={m.id}>
+                            <TableRow>
+                              <TableCell>
+                                {m.fromDate &&
+                                  format(m.fromDate, "PPP", {
+                                    locale: ja,
+                                  })}
+                                {m.toDate && "〜"}
+                                {m.toDate &&
+                                  format(m.toDate, "M月d日", { locale: ja })}
+                              </TableCell>
+                              <TableCell>{m.title}</TableCell>
+                              <TableCell>{m.place}</TableCell>
+                              <TableCell>
+                                {
+                                  poolSize.find((v) => v.id === m.poolsize)
+                                    ?.size
+                                }
+                              </TableCell>
+                              <TableCell>
+                                <Button
+                                  onClick={() => handleOpen(m.id)}
+                                  variant="ghost"
+                                >
+                                  {m.open ? (
+                                    <ChevronsDownUp />
+                                  ) : (
+                                    <ChevronsUpDown />
+                                  )}
+                                </Button>
+                              </TableCell>
+                              <TableCell>
+                                {m.result ? (
+                                  <Button variant="ghost">
+                                    {m.code !== null ? (
+                                      <Link
+                                        href={`https://result.swim.or.jp/tournament/${m.code}`}
+                                        rel="noopener noreferrer"
+                                        target="_blank"
+                                      >
+                                        <Check />
+                                      </Link>
+                                    ) : (
+                                      <Check />
+                                    )}
+                                  </Button>
+                                ) : (
+                                  ""
+                                )}
+                              </TableCell>
+                            </TableRow>
+                            {m.open && (
+                              <TableRow className="bg-accent">
+                                <TableCell colSpan={6}>
+                                  {m.description && (
+                                    <div className="grid justify-start">
+                                      [詳細情報]
+                                      <div className="whitespace-pre-wrap p-4">
+                                        {m.description}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {m.detail && (
+                                    <div className="grid justify-start">
+                                      [要項ファイル]
+                                      {JSON.parse(m.detail!) &&
+                                        JSON.parse(m.detail!).map(
+                                          (
+                                            v: { value: string; name: string },
+                                            i: number,
+                                          ) => {
+                                            return (
+                                              <Button
+                                                variant="link"
+                                                key={i}
+                                                className="w-fit"
+                                              >
+                                                <Link
+                                                  href={`${v.value}`}
+                                                  rel="noopener noreferrer"
+                                                  target="_blank"
+                                                  key={i}
+                                                >
+                                                  {v.name}
+                                                </Link>
+                                              </Button>
+                                            );
+                                          },
+                                        )}
+                                    </div>
+                                  )}
+                                  {m.attachment && (
+                                    <div className="grid justify-start">
+                                      [添付ファイル]
+                                      {JSON.parse(m.attachment!) &&
+                                        JSON.parse(m.attachment!).map(
+                                          (
+                                            v: { value: string; name: string },
+                                            i: number,
+                                          ) => {
+                                            return (
+                                              <Button
+                                                variant="link"
+                                                key={i}
+                                                className="w-fit"
+                                              >
+                                                <Link
+                                                  href={`${v.value}`}
+                                                  rel="noopener noreferrer"
+                                                  target="_blank"
+                                                  key={i}
+                                                >
+                                                  {v.name}
+                                                </Link>
+                                              </Button>
+                                            );
+                                          },
+                                        )}
+                                    </div>
+                                  )}
+                                  {!m.description &&
+                                    !m.detail &&
+                                    !m.attachment && (
+                                      <div>詳細情報はありません。</div>
+                                    )}
+                                </TableCell>
+                              </TableRow>
+                            )}
+                          </Fragment>
+                        ))}
                   </TableBody>
                 </Table>
                 <Pagination className="mt-16 flex items-center justify-between">

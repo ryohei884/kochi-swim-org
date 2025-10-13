@@ -25,6 +25,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Sheet,
@@ -37,6 +38,7 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
 import { getById, exclude } from "@/lib/meet/actions";
 import {
   meetWithUserSchemaDV,
@@ -423,6 +425,30 @@ export default function MeetExcludeForm(props: Props) {
                 />
                 <FormMessage />
               </FormItem>
+              <FormField
+                control={form.control}
+                name="result"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>結果表示</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <div className="flex items-center space-x-2 mt-4">
+                        <Switch id="finished" checked={field.value} disabled />
+                        <Label htmlFor="finished">
+                          {field.value
+                            ? "Result of Japan Swimmingに結果掲載済み"
+                            : "結果未掲載"}
+                        </Label>
+                      </div>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <SheetFooter className="p-0">
                 <Button
                   type="submit"

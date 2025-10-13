@@ -231,7 +231,9 @@ export default function CategoryExcludeForm(props: Props) {
                     <FormLabel>作成者</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                        {field.value}
+                        {form.getValues("createdUser.displayName")
+                          ? form.getValues("createdUser.displayName")
+                          : field.value}
                       </div>
                     </FormControl>
                     <Skeleton
@@ -251,7 +253,9 @@ export default function CategoryExcludeForm(props: Props) {
                       <FormLabel>更新者</FormLabel>
                       <FormControl hidden={!isReady}>
                         <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                          {field.value}
+                          {form.getValues("updatedUser.displayName")
+                            ? form.getValues("updatedUser.displayName")
+                            : field.value}
                         </div>
                       </FormControl>
                       <Skeleton

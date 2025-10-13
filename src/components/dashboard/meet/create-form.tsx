@@ -24,6 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -47,6 +48,7 @@ import {
   SheetClose,
   SheetFooter,
 } from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { create } from "@/lib/meet/actions";
 import {
@@ -537,6 +539,30 @@ export default function MeetCreateForm(props: Props) {
                   </Button>
                 </div>
               </FormItem>
+              <FormField
+                control={form.control}
+                name="result"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>結果表示</FormLabel>
+                    <FormControl>
+                      <div className="flex items-center space-x-2 mt-4">
+                        <Switch
+                          id="finished"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                        <Label htmlFor="finished">
+                          {field.value
+                            ? "Result of Japan Swimmingに結果掲載済み"
+                            : "結果未掲載"}
+                        </Label>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <SheetFooter className="p-0">
                 <Button
                   type="submit"

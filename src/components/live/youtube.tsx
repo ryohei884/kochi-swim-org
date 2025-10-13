@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   MediaController,
@@ -16,23 +16,38 @@ import {
 } from "media-chrome/react";
 import ReactPlayer from "react-player";
 
-// Render a YouTube video player
-interface Props {
-  src: string;
-}
-export default function Youtube(props: Props) {
-  const { src } = props;
+import { Skeleton } from "../ui/skeleton";
 
-  return (
+import { getLiveNow } from "@/lib/live/actions";
+
+export default function Youtube() {
+  const [url, setUrl] = useState<string | null>(null);
+  const [isReady, setIsReady] = useState<boolean>(false);
+
+  const getLive = async () => {
+    const res = await getLiveNow();
+    if (res !== null && res.url !== null) {
+      setUrl(res.url);
+    }
+    setIsReady(true);
+  };
+
+  useEffect(() => {
+    setIsReady(false);
+    getLive();
+  }, []);
+
+  return url !== null ? (
     <MediaController
       style={{
         width: "100%",
         aspectRatio: "16/9",
       }}
+      hidden={!isReady}
     >
       <ReactPlayer
         slot="media"
-        src={src}
+        src={url}
         controls={false}
         style={{
           width: "100%",
@@ -52,5 +67,7 @@ export default function Youtube(props: Props) {
         <MediaFullscreenButton />
       </MediaControlBar>
     </MediaController>
+  ) : (
+    <Skeleton hidden={isReady} />
   );
 }

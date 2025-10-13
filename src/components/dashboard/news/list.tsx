@@ -176,12 +176,18 @@ export default function NewsList() {
                     <TableCell>
                       {format(d.revisedAt, "PPP", { locale: ja })}
                     </TableCell>
-                    <TableCell>{d.createdUser.name}</TableCell>
-                    <TableCell>{d.revisedUser?.name}</TableCell>
+                    <TableCell>
+                      {d.createdUser.displayName || d.createdUser.name}
+                    </TableCell>
+                    <TableCell>
+                      {d.revisedUser?.displayName || d.revisedUser?.name}
+                    </TableCell>
                     <TableCell>
                       {d.approved && <CheckIcon className="size-4" />}
                     </TableCell>
-                    <TableCell>{d.approvedUser?.name}</TableCell>
+                    <TableCell>
+                      {d.approvedUser?.displayName || d.approvedUser?.name}
+                    </TableCell>
                     <TableCell className="flex-none text-center w-12">
                       <UpdateForm
                         key={d.id}

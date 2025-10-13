@@ -1,7 +1,34 @@
+import { useEffect, useState } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 
+import type {
+  liveWithUserSchemaType} from "@/lib/live/verification";
+
+import { getLiveNow } from "@/lib/live/actions";
+import {
+  liveWithUserSchemaDV,
+} from "@/lib/live/verification";
+
 export default function Hero() {
+  const [live, setLive] =
+    useState<liveWithUserSchemaType>(liveWithUserSchemaDV);
+  const [isReady, setIsReady] = useState<boolean>(false);
+
+  const getLive = async () => {
+    const res = await getLiveNow();
+    if (res !== null) {
+      setLive(res);
+    }
+    setIsReady(true);
+  };
+
+  useEffect(() => {
+    setIsReady(false);
+    getLive();
+  }, []);
+
   return (
     <div className="bg-white dark:bg-gray-900">
       <div className="relative">
@@ -19,16 +46,18 @@ export default function Hero() {
             <div className="relative px-6 py-32 sm:py-40 lg:px-8 lg:py-56 lg:pr-0">
               <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-xl">
                 <div className="hidden sm:mb-10 sm:flex">
-                  <div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-500 ring-1 ring-gray-900/10 hover:ring-gray-900/20 dark:text-gray-400 dark:ring-white/10 dark:hover:ring-white/20">
-                    高知県ジュニア春季選手権大会が開催されています。{" "}
-                    <Link
-                      href="/live"
-                      className="font-semibold whitespace-nowrap text-indigo-600 dark:text-indigo-400"
-                    >
-                      <span aria-hidden="true" className="absolute inset-0" />
-                      ライブ中継へ <span aria-hidden="true">&rarr;</span>
-                    </Link>
-                  </div>
+                  {live.url !== null && live.meet !== null && isReady && (
+                    <div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-500 ring-1 ring-gray-900/10 hover:ring-gray-900/20 dark:text-gray-400 dark:ring-white/10 dark:hover:ring-white/20">
+                      {live.meet?.title}が開催されています。{" "}
+                      <Link
+                        href="/live"
+                        className="font-semibold whitespace-nowrap text-indigo-600 dark:text-indigo-400"
+                      >
+                        <span aria-hidden="true" className="absolute inset-0" />
+                        ライブ中継へ <span aria-hidden="true">&rarr;</span>
+                      </Link>
+                    </div>
+                  )}
                 </div>
                 <h1 className="text-5xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-7xl dark:text-white">
                   高知県水泳連盟

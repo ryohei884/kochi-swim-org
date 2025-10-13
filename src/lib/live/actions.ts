@@ -27,6 +27,11 @@ export async function getList(page?: number) {
   return res;
 }
 
+export async function getListNum() {
+  const res = await prisma.live.count();
+  return res;
+}
+
 export async function create(prop: liveCreateSchemaType) {
   const data = prop;
   const session = await auth();
@@ -116,4 +121,22 @@ export async function exclude(prop: liveExcludeSchemaType) {
       });
     }
   }
+}
+
+export async function getLiveNow() {
+  const res = await prisma.live.findFirst({
+    where: {
+      onAir: true,
+    },
+    include: { createdUser: true, meet: true },
+    orderBy: [
+      {
+        order: "asc",
+      },
+      {
+        createdAt: "asc",
+      },
+    ],
+  });
+  return res;
 }

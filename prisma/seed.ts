@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 
 type userType = {
   name: string;
+  displayName: string;
   email: string | undefined;
   emailVerified: null;
   image: null;
@@ -33,6 +34,7 @@ type newsType = {
 const user: userType[] = [
   {
     name: "管理者",
+    displayName: "管理者",
     email: process.env.PRISMA_ADMINISTRATOR_EMAIL,
     emailVerified: null,
     image: null,
@@ -40,6 +42,7 @@ const user: userType[] = [
   },
   {
     name: "承認者",
+    displayName: "承認者",
     email: process.env.PRISMA_APPROVER_EMAIL,
     emailVerified: null,
     image: null,
@@ -47,6 +50,7 @@ const user: userType[] = [
   },
   {
     name: "編集者",
+    displayName: "編集者",
     email: process.env.PRISMA_EDITOR_EMAIL,
     emailVerified: null,
     image: null,
