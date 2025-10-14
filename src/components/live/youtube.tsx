@@ -37,37 +37,40 @@ export default function Youtube() {
     getLive();
   }, []);
 
-  return url !== null ? (
-    <MediaController
-      style={{
-        width: "100%",
-        aspectRatio: "16/9",
-      }}
-      hidden={!isReady}
-    >
-      <ReactPlayer
-        slot="media"
-        src={url}
-        controls={false}
-        style={{
-          width: "100%",
-          height: "100%",
-          //   "--controls": "none",
-        }}
-      ></ReactPlayer>
-      <MediaControlBar>
-        <MediaPlayButton />
-        <MediaSeekBackwardButton seekOffset={10} />
-        <MediaSeekForwardButton seekOffset={10} />
-        <MediaTimeRange />
-        <MediaTimeDisplay showDuration />
-        <MediaMuteButton />
-        <MediaVolumeRange />
-        <MediaPlaybackRateButton />
-        <MediaFullscreenButton />
-      </MediaControlBar>
-    </MediaController>
-  ) : (
-    <Skeleton hidden={isReady} />
+  return (
+    url !== null && (
+      <>
+        <MediaController
+          style={{
+            width: "100%",
+            aspectRatio: "16/9",
+          }}
+          hidden={!isReady}
+        >
+          <ReactPlayer
+            slot="media"
+            src={url}
+            controls={false}
+            style={{
+              width: "100%",
+              height: "100%",
+              //   "--controls": "none",
+            }}
+          ></ReactPlayer>
+          <MediaControlBar>
+            <MediaPlayButton />
+            <MediaSeekBackwardButton seekOffset={10} />
+            <MediaSeekForwardButton seekOffset={10} />
+            <MediaTimeRange />
+            <MediaTimeDisplay showDuration />
+            <MediaMuteButton />
+            <MediaVolumeRange />
+            <MediaPlaybackRateButton />
+            <MediaFullscreenButton />
+          </MediaControlBar>
+        </MediaController>
+        <Skeleton hidden={isReady} />
+      </>
+    )
   );
 }

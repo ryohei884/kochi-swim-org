@@ -49,77 +49,70 @@ export default function LiveList(props: Props) {
   }, [page]);
 
   return (
-    <div className="bg-white py-24 sm:py-32 dark:bg-gray-900">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl lg:max-w-4xl">
-          <h2 className="text-4xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-5xl dark:text-white">
-            ライブ配信情報
-          </h2>
-          <div className="mt-16 space-y-20 lg:mt-20">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>視聴</TableHead>
-                  <TableHead>題名</TableHead>
-                  {/* <TableHead>大会名</TableHead> */}
-                  <TableHead>会場</TableHead>
-                  <TableHead>配信開始日</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {live.map((m) => (
-                  <Fragment key={m.id}>
-                    <TableRow>
-                      <TableCell>
-                        <Link
-                          href={`${m.url}`}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          <Play className="size-4" />
-                        </Link>
-                      </TableCell>
-                      <TableCell>{m.title}</TableCell>
-                      {/* <TableCell>{m.meet && m.meet.title}</TableCell> */}
-                      <TableCell>
-                        {m.meet && m.meet?.place}{" "}
-                        {m.meet &&
-                          "(" +
-                            poolSize.find((v) => v.id === m.meet?.poolsize)
-                              ?.size +
-                            ")"}
-                      </TableCell>
-                      <TableCell>
-                        {m.fromDate &&
-                          format(m.fromDate, "PPP", {
-                            locale: ja,
-                          })}
-                      </TableCell>
-                    </TableRow>
-                  </Fragment>
-                ))}
-              </TableBody>
-            </Table>
-            <Pagination className="mt-16 flex items-center justify-between">
-              <PaginationContent className="-mt-px flex w-0 flex-1">
-                <PaginationItem className="inline-flex items-center">
-                  <PaginationPrevious
-                    href={`/live/${previousPage}`}
-                    hidden={previousPage < 1}
-                  />
-                </PaginationItem>
-                <PaginationItem className="-mt-px flex w-0 flex-1 justify-end">
-                  <PaginationNext
-                    href={`/live/${nextPage}`}
-                    className="inline-flex items-center"
-                    hidden={liveNum <= Number(page) * 10}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
-        </div>
-      </div>
+    <div className="mt-16 lg:mt-20">
+      <p className="p-2 font-semibold tracking-tight text-pretty text-gray-900 dark:text-white">
+        過去の配信
+      </p>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>視聴</TableHead>
+            <TableHead>題名</TableHead>
+            {/* <TableHead>大会名</TableHead> */}
+            <TableHead>会場</TableHead>
+            <TableHead>配信開始日</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {live.map((m) => (
+            <Fragment key={m.id}>
+              <TableRow>
+                <TableCell>
+                  <Link
+                    href={`${m.url}`}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <Play className="size-4" />
+                  </Link>
+                </TableCell>
+                <TableCell>{m.title}</TableCell>
+                {/* <TableCell>{m.meet && m.meet.title}</TableCell> */}
+                <TableCell>
+                  {m.meet && m.meet?.place}{" "}
+                  {m.meet &&
+                    "(" +
+                      poolSize.find((v) => v.id === m.meet?.poolsize)?.size +
+                      ")"}
+                </TableCell>
+                <TableCell>
+                  {m.fromDate &&
+                    format(m.fromDate, "PPP", {
+                      locale: ja,
+                    })}
+                </TableCell>
+              </TableRow>
+            </Fragment>
+          ))}
+        </TableBody>
+      </Table>
+      <Pagination className="mt-16 flex items-center justify-between">
+        <PaginationContent className="-mt-px flex w-0 flex-1">
+          <PaginationItem className="inline-flex items-center">
+            <PaginationPrevious
+              href={`/live/${previousPage}`}
+              hidden={previousPage < 1}
+            />
+          </PaginationItem>
+          <PaginationItem className="-mt-px flex w-0 flex-1 justify-end">
+            <PaginationNext
+              href={`/live/${nextPage}`}
+              className="inline-flex items-center"
+              hidden={liveNum <= Number(page) * 10}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 }
