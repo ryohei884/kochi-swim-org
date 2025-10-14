@@ -41,7 +41,7 @@ export default function LiveList(props: Props) {
   const [data, setData] = useState<liveWithUserSchemaType[]>([]);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [callbackData, setCallbackData] = useState<string | undefined>(
-    undefined,
+    undefined
   );
   const [dataNum, setDataNum] = useState<number>(3);
   const [maxOrder, setMaxOrder] = useState<number>(0);
@@ -139,7 +139,7 @@ export default function LiveList(props: Props) {
                           <Skeleton className="size-6 border border-input file:border-0" />
                         </Button>
                       </TableCell>
-                    </TableRow>,
+                    </TableRow>
                   );
                 }
                 return <>{rows}</>;
@@ -156,8 +156,7 @@ export default function LiveList(props: Props) {
                       {d.title.length > 10 && "..."}
                     </TableCell>
                     <TableCell>
-                      {d.fromDate &&
-                        format(d.fromDate, "PPP", { locale: ja })}{" "}
+                      {d.fromDate && format(d.fromDate, "PPP", { locale: ja })}{" "}
                     </TableCell>
                     <TableCell>
                       {d.meet && d.meet.title.substring(0, 10)}
@@ -196,6 +195,7 @@ export default function LiveList(props: Props) {
               })}
         </TableBody>
       </Table>
+      <hr />
       <Pagination className="mt-16 flex items-center justify-between">
         <PaginationContent className="-mt-px flex w-0 flex-1">
           <PaginationItem className="inline-flex items-center">
@@ -213,7 +213,6 @@ export default function LiveList(props: Props) {
           </PaginationItem>
         </PaginationContent>
       </Pagination>
-      <hr />
     </>
   );
 }

@@ -43,7 +43,7 @@ export default function SeminarList(props: Props) {
   const [nextPage, setNextPage] = useState<number>(Number(page) + 1);
   const [data, setData] = useState<seminarWithUserSchemaType[]>([]);
   const [callbackData, setCallbackData] = useState<string | undefined>(
-    undefined,
+    undefined
   );
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(3);
@@ -147,7 +147,7 @@ export default function SeminarList(props: Props) {
                           <Skeleton className="size-6 border border-input file:border-0" />
                         </Button>
                       </TableCell>
-                    </TableRow>,
+                    </TableRow>
                   );
                 }
                 return <>{rows}</>;
@@ -220,6 +220,7 @@ export default function SeminarList(props: Props) {
               })}
         </TableBody>
       </Table>
+      <hr />
       <Pagination className="mt-16 flex items-center justify-between">
         <PaginationContent className="-mt-px flex w-0 flex-1">
           <PaginationItem className="inline-flex items-center">
@@ -237,7 +238,6 @@ export default function SeminarList(props: Props) {
           </PaginationItem>
         </PaginationContent>
       </Pagination>
-      <hr />
       {/* <ReOrder fetchListData={fetchListData} /> */}
     </>
   );
