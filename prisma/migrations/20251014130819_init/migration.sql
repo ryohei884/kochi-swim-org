@@ -207,6 +207,36 @@ CREATE TABLE "Seminar" (
     CONSTRAINT "Seminar_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Record" (
+    "id" TEXT NOT NULL,
+    "category" INTEGER NOT NULL,
+    "poolsize" INTEGER NOT NULL,
+    "sex" INTEGER NOT NULL,
+    "style" INTEGER NOT NULL,
+    "distance" INTEGER NOT NULL,
+    "time" INTEGER NOT NULL,
+    "swimmer1" TEXT NOT NULL,
+    "swimmer2" TEXT,
+    "swimmer3" TEXT,
+    "swimmer4" TEXT,
+    "team" TEXT NOT NULL,
+    "place" TEXT NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
+    "meetName" TEXT NOT NULL,
+    "valid" BOOLEAN NOT NULL DEFAULT false,
+    "image" TEXT,
+    "createdUserId" TEXT NOT NULL,
+    "revisedUserId" TEXT,
+    "approvedUserId" TEXT,
+    "approved" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "revisedAt" TIMESTAMP(3) NOT NULL,
+    "approvedAt" TIMESTAMP(3),
+
+    CONSTRAINT "Record_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -293,3 +323,12 @@ ALTER TABLE "Seminar" ADD CONSTRAINT "Seminar_revisedUserId_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "Seminar" ADD CONSTRAINT "Seminar_approvedUserId_fkey" FOREIGN KEY ("approvedUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Record" ADD CONSTRAINT "Record_createdUserId_fkey" FOREIGN KEY ("createdUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Record" ADD CONSTRAINT "Record_revisedUserId_fkey" FOREIGN KEY ("revisedUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Record" ADD CONSTRAINT "Record_approvedUserId_fkey" FOREIGN KEY ("approvedUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -166,6 +166,10 @@ export default function NewsUpdateForm(props: Props) {
     return { files, displayUrl };
   }
 
+  const dt = new Date();
+  const minDT = new Date(dt.setFullYear(dt.getFullYear() - 2));
+  const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 4));
+
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
@@ -317,11 +321,13 @@ export default function NewsUpdateForm(props: Props) {
                         <Calendar
                           mode="single"
                           selected={field.value}
+                          startMonth={minDT}
+                          endMonth={maxDT}
+                          disabled={(date) => date >= maxDT || date <= minDT}
                           onSelect={(date) => {
                             field.onChange(date);
                             setOpenFromDate(false);
                           }}
-                          // disabled={(date) => date <= new Date()}
                           captionLayout="dropdown"
                         />
                       </PopoverContent>
@@ -367,11 +373,13 @@ export default function NewsUpdateForm(props: Props) {
                         <Calendar
                           mode="single"
                           selected={field.value ? field.value : undefined}
+                          startMonth={minDT}
+                          endMonth={maxDT}
+                          disabled={(date) => date >= maxDT || date <= minDT}
                           onSelect={(date) => {
                             field.onChange(date);
                             setOpenToDate(false);
                           }}
-                          // disabled={(date) => date <= new Date()}
                           captionLayout="dropdown"
                         />
                       </PopoverContent>

@@ -108,6 +108,10 @@ export default function LiveUpdateForm(props: Props) {
     });
   };
 
+  //   const dt = new Date();
+  //   const minDT = new Date(dt.setFullYear(dt.getFullYear() - 2));
+  //   const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 4));
+
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
@@ -176,13 +180,15 @@ export default function LiveUpdateForm(props: Props) {
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
+                          //   startMonth={minDT}
+                          //   endMonth={maxDT}
+                          //   disabled={(date) => date >= maxDT || date <= minDT}
                           mode="single"
                           selected={field.value}
                           onSelect={(date) => {
                             field.onChange(date);
                             setOpenFromDate(false);
                           }}
-                          // disabled={(date) => date <= new Date()}
                           captionLayout="dropdown"
                         />
                       </PopoverContent>

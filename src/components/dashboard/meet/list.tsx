@@ -61,8 +61,8 @@ export default function MeetList(props: Props) {
 
     if (res !== null) {
       if (page !== undefined) {
-        setPreviousPage(page - 1);
-        setNextPage(page + 1);
+        setPreviousPage(Number(page) - 1);
+        setNextPage(Number(page) + 1);
       }
 
       setData(res);

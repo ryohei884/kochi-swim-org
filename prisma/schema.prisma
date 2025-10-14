@@ -48,6 +48,10 @@ model User {
   seminarRevised   Seminar[] @relation(name: "Seminar.revisedUserId")
   seminarAppproved Seminar[] @relation(name: "Seminar.approvedUserId")
 
+  recordCreated   Record[] @relation(name: "Record.createdUserId")
+  recordRevised   Record[] @relation(name: "Record.revisedUserId")
+  recordAppproved Record[] @relation(name: "Record.approvedUserId")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -263,4 +267,34 @@ model Seminar {
   createdUser    User      @relation(name: "Seminar.createdUserId", fields: [createdUserId], references: [id])
   revisedUser    User?     @relation(name: "Seminar.revisedUserId", fields: [revisedUserId], references: [id])
   approvedUser   User?     @relation(name: "Seminar.approvedUserId", fields: [approvedUserId], references: [id])
+}
+
+model Record {
+  id             String    @id @default(cuid())
+  category       Int
+  poolsize       Int
+  sex            Int
+  style          Int
+  distance       Int
+  time           Int
+  swimmer1       String
+  swimmer2       String?
+  swimmer3       String?
+  swimmer4       String?
+  team           String
+  place          String
+  date           DateTime
+  meetName       String
+  valid          Boolean   @default(false)
+  image          String?
+  createdUserId  String
+  revisedUserId  String?
+  approvedUserId String?
+  approved       Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  revisedAt      DateTime  @updatedAt
+  approvedAt     DateTime?
+  createdUser    User      @relation(name: "Record.createdUserId", fields: [createdUserId], references: [id])
+  revisedUser    User?     @relation(name: "Record.revisedUserId", fields: [revisedUserId], references: [id])
+  approvedUser   User?     @relation(name: "Record.approvedUserId", fields: [approvedUserId], references: [id])
 }

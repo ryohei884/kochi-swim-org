@@ -201,6 +201,10 @@ export default function MeetUpdateForm(props: Props) {
     });
   };
 
+  const dt = new Date();
+  const minDT = new Date(dt.setFullYear(dt.getFullYear() - 2));
+  const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 4));
+
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
@@ -323,6 +327,9 @@ export default function MeetUpdateForm(props: Props) {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
+                          startMonth={minDT}
+                          endMonth={maxDT}
+                          disabled={(date) => date >= maxDT || date <= minDT}
                           selected={field.value}
                           onSelect={(date) => {
                             field.onChange(date);
@@ -374,6 +381,9 @@ export default function MeetUpdateForm(props: Props) {
                         <Calendar
                           mode="single"
                           selected={field.value ? field.value : undefined}
+                          startMonth={minDT}
+                          endMonth={maxDT}
+                          disabled={(date) => date >= maxDT || date <= minDT}
                           onSelect={(date) => {
                             field.onChange(date);
                             setOpenToDate(false);
@@ -424,6 +434,9 @@ export default function MeetUpdateForm(props: Props) {
                         <Calendar
                           mode="single"
                           selected={field.value ? field.value : undefined}
+                          startMonth={minDT}
+                          endMonth={maxDT}
+                          disabled={(date) => date >= maxDT || date <= minDT}
                           onSelect={(date) => {
                             field.onChange(date);
                             setOpenDeadline(false);

@@ -11,6 +11,13 @@ import CreateForm from "@/components/dashboard/live/create-form";
 import ExcludeForm from "@/components/dashboard/live/exclude-form";
 import UpdateForm from "@/components/dashboard/live/update-form";
 import { Button } from "@/components/ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -28,6 +35,8 @@ interface Props {
 
 export default function LiveList(props: Props) {
   const { page } = props;
+  const [previousPage, setPreviousPage] = useState<number>(Number(page) - 1);
+  const [nextPage, setNextPage] = useState<number>(Number(page) + 1);
 
   const [data, setData] = useState<liveWithUserSchemaType[]>([]);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -52,6 +61,10 @@ export default function LiveList(props: Props) {
       setDataNum(res.length);
       const orders = res.map((value) => value.order);
       setMaxOrder(Math.max(...orders) + 1);
+      if (page !== undefined) {
+        setPreviousPage(Number(page) - 1);
+        setNextPage(Number(page) + 1);
+      }
       setIsReady(true);
     } else {
       setData(res);
@@ -183,6 +196,23 @@ export default function LiveList(props: Props) {
               })}
         </TableBody>
       </Table>
+      <Pagination className="mt-16 flex items-center justify-between">
+        <PaginationContent className="-mt-px flex w-0 flex-1">
+          <PaginationItem className="inline-flex items-center">
+            <PaginationPrevious
+              href={`/dashboard/live/${previousPage}`}
+              hidden={previousPage < 1}
+            />
+          </PaginationItem>
+          <PaginationItem className="-mt-px flex w-0 flex-1 justify-end">
+            <PaginationNext
+              href={`/dashboard/live/${nextPage}`}
+              className="inline-flex items-center"
+              hidden={dataNum <= (Number(page) - 1) * 10}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
       <hr />
     </>
   );
