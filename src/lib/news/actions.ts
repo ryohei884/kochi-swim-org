@@ -15,7 +15,7 @@ export async function getList(page?: number) {
     include: { createdUser: true, revisedUser: true, approvedUser: true },
     orderBy: [
       {
-        order: "asc",
+        order: "desc",
       },
       {
         createdAt: "asc",
@@ -49,7 +49,7 @@ export async function getList3() {
   const res = await prisma.news.findMany({
     orderBy: [
       {
-        order: "asc",
+        order: "desc",
       },
       {
         createdAt: "asc",

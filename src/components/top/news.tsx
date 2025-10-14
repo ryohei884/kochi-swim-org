@@ -73,13 +73,15 @@ export default function News() {
                   )}
                 </div>
                 <div className="group relative grow">
-                  <h3 className="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600 dark:text-white dark:group-hover:text-gray-300">
-                    <span className="absolute inset-0" />
-                    {post.title}
-                  </h3>
-                  <p className="mt-5 line-clamp-3 text-sm/6 text-gray-600 dark:text-gray-400">
-                    {post.detail}
-                  </p>
+                  <Link href="/news">
+                    <h3 className="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600 dark:text-white dark:group-hover:text-gray-300">
+                      <span className="absolute inset-0" />
+                      {post.title}
+                    </h3>
+                    <p className="whitespace-pre-wrap mt-5 line-clamp-3 text-sm/6 text-gray-600 dark:text-gray-400">
+                      {post.detail}
+                    </p>
+                  </Link>
                 </div>
               </div>
             </article>
