@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/table";
 import { getList, getListNum } from "@/lib/live/actions";
 import { poolSize } from "@/lib/utils";
+import Link from "next/link";
 
 interface Props {
   page: string;
@@ -60,7 +61,7 @@ export default function LiveList(props: Props) {
                 <TableRow>
                   <TableHead>視聴</TableHead>
                   <TableHead>題名</TableHead>
-                  <TableHead>大会名</TableHead>
+                  {/* <TableHead>大会名</TableHead> */}
                   <TableHead>会場</TableHead>
                   <TableHead>配信開始日</TableHead>
                 </TableRow>
@@ -70,10 +71,16 @@ export default function LiveList(props: Props) {
                   <Fragment key={m.id}>
                     <TableRow>
                       <TableCell>
-                        <Play />
+                        <Link
+                          href={`${m.url}`}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          <Play className="size-4" />
+                        </Link>
                       </TableCell>
                       <TableCell>{m.title}</TableCell>
-                      <TableCell>{m.meet && m.meet.title}</TableCell>
+                      {/* <TableCell>{m.meet && m.meet.title}</TableCell> */}
                       <TableCell>
                         {m.meet && m.meet?.place}{" "}
                         {m.meet &&
@@ -105,7 +112,7 @@ export default function LiveList(props: Props) {
                   <PaginationNext
                     href={`/live/${nextPage}`}
                     className="inline-flex items-center"
-                    hidden={liveNum <= (Number(page) - 1) * 10}
+                    hidden={liveNum <= Number(page) * 10}
                   />
                 </PaginationItem>
               </PaginationContent>

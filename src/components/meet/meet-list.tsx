@@ -144,7 +144,7 @@ export default function MeetList(props: Props) {
                                 <TableCell>
                                   <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                                 </TableCell>
-                              </TableRow>,
+                              </TableRow>
                             );
                           }
                           return <>{rows}</>;
@@ -219,7 +219,7 @@ export default function MeetList(props: Props) {
                                         JSON.parse(m.detail!).map(
                                           (
                                             v: { value: string; name: string },
-                                            i: number,
+                                            i: number
                                           ) => {
                                             return (
                                               <Button
@@ -237,7 +237,7 @@ export default function MeetList(props: Props) {
                                                 </Link>
                                               </Button>
                                             );
-                                          },
+                                          }
                                         )}
                                     </div>
                                   )}
@@ -248,7 +248,7 @@ export default function MeetList(props: Props) {
                                         JSON.parse(m.attachment!).map(
                                           (
                                             v: { value: string; name: string },
-                                            i: number,
+                                            i: number
                                           ) => {
                                             return (
                                               <Button
@@ -266,7 +266,7 @@ export default function MeetList(props: Props) {
                                                 </Link>
                                               </Button>
                                             );
-                                          },
+                                          }
                                         )}
                                     </div>
                                   )}
@@ -294,7 +294,7 @@ export default function MeetList(props: Props) {
                       <PaginationNext
                         href={`/meet/${nextPage}`}
                         className="inline-flex items-center"
-                        hidden={meetNum <= (Number(page) - 1) * 10}
+                        hidden={meetNum <= Number(page) * 10}
                       />
                     </PaginationItem>
                   </PaginationContent>

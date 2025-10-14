@@ -208,7 +208,7 @@ export default function LiveList(props: Props) {
             <PaginationNext
               href={`/dashboard/live/${nextPage}`}
               className="inline-flex items-center"
-              hidden={dataNum <= (Number(page) - 1) * 10}
+              hidden={dataNum <= Number(page) * 10}
             />
           </PaginationItem>
         </PaginationContent>

@@ -207,7 +207,6 @@ export default function SeminarList(props: Props) {
                         fetchListData={fetchListData}
                       />
                     </TableCell>
-
                     <TableCell className="flex-none text-center w-12">
                       <ApproveForm
                         key={d.id}
@@ -233,7 +232,7 @@ export default function SeminarList(props: Props) {
             <PaginationNext
               href={`/dashboard/seminar/${nextPage}`}
               className="inline-flex items-center"
-              hidden={dataNum <= (Number(page) - 1) * 10}
+              hidden={dataNum <= Number(page) * 10}
             />
           </PaginationItem>
         </PaginationContent>
