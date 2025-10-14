@@ -52,7 +52,7 @@ export default function NewsList(props: Props) {
   return (
     <div className="bg-white py-24 sm:py-32 dark:bg-gray-900">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl lg:max-w-4xl">
+        <div className="mx-auto max-w-2xl lg:max-w-5xl">
           <h2 className="text-4xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-5xl dark:text-white">
             お知らせ
           </h2>
@@ -86,7 +86,7 @@ export default function NewsList(props: Props) {
                             <Skeleton className="w-80 h-6 mt-5" />
                           </div>
                         </div>
-                      </article>,
+                      </article>
                     );
                   }
                   return <>{rows}</>;
@@ -120,7 +120,7 @@ export default function NewsList(props: Props) {
                             href={
                               "/" +
                               (newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory,
+                                (v) => v.id === post.linkCategory
                               )?.href || "") +
                               "/" +
                               (post.linkString !== null ? post.linkString : "")
@@ -129,7 +129,7 @@ export default function NewsList(props: Props) {
                           >
                             {
                               newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory,
+                                (v) => v.id === post.linkCategory
                               )?.name
                             }
                           </Link>
@@ -150,7 +150,7 @@ export default function NewsList(props: Props) {
                             href={
                               "/" +
                               (newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory,
+                                (v) => v.id === post.linkCategory
                               )?.href || "") +
                               "/" +
                               post.linkString
