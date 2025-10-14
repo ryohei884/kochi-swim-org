@@ -126,7 +126,7 @@ export default function SeminarList(props: Props) {
                                 JSON.parse(m.detail!).map(
                                   (
                                     v: { value: string; name: string },
-                                    i: number
+                                    i: number,
                                   ) => {
                                     return (
                                       <Button
@@ -144,7 +144,7 @@ export default function SeminarList(props: Props) {
                                         </Link>
                                       </Button>
                                     );
-                                  }
+                                  },
                                 )}
                             </div>
                           )}
@@ -155,7 +155,7 @@ export default function SeminarList(props: Props) {
                                 JSON.parse(m.attachment!).map(
                                   (
                                     v: { value: string; name: string },
-                                    i: number
+                                    i: number,
                                   ) => {
                                     return (
                                       <Button
@@ -173,7 +173,7 @@ export default function SeminarList(props: Props) {
                                         </Link>
                                       </Button>
                                     );
-                                  }
+                                  },
                                 )}
                             </div>
                           )}

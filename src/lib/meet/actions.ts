@@ -11,9 +11,50 @@ import type {
 import { auth } from "@/auth";
 import { prisma } from "@/prisma";
 
-export async function getList(kind?: number, page?: number) {
+export async function getList(kind: number, year: number, page: number) {
+  const nextYear: number = Number(year) + 1;
   const res = await prisma.meet.findMany({
     where: {
+      fromDate: year
+        ? {
+            gte: new Date(`${year}/4/1`),
+            lte: new Date(`${nextYear}/3/31`),
+          }
+        : undefined,
+      kind: kind ? kind : undefined,
+      approved: true,
+    },
+    include: { createdUser: true, revisedUser: true, approvedUser: true },
+    orderBy: [
+      {
+        fromDate: "asc",
+      },
+      {
+        toDate: "asc",
+      },
+      {
+        createdAt: "asc",
+      },
+      {
+        revisedAt: "asc",
+      },
+    ],
+    skip: page ? (page - 1) * 10 : undefined,
+    take: page ? 10 : undefined,
+  });
+  return res;
+}
+
+export async function getListAdmin(kind: number, year: number, page: number) {
+  const nextYear: number = Number(year) + 1;
+  const res = await prisma.meet.findMany({
+    where: {
+      fromDate: year
+        ? {
+            gte: new Date(`${year}/4/1`),
+            lte: new Date(`${nextYear}/3/31`),
+          }
+        : undefined,
       kind: kind ? kind : undefined,
     },
     include: { createdUser: true, revisedUser: true, approvedUser: true },
@@ -35,6 +76,44 @@ export async function getList(kind?: number, page?: number) {
     take: page ? 10 : undefined,
   });
   return res;
+}
+
+export async function getListPageAdmin(id: string) {
+  const meet = await getById({ id: id });
+
+  if (meet !== null) {
+    const fromDate =
+      meet.fromDate.getMonth() <= 3 && meet.fromDate.getDate() <= 31
+        ? meet.fromDate.getFullYear() - 1
+        : meet.fromDate.getFullYear();
+
+    const res = await prisma.meet.count({
+      where: {
+        fromDate: {
+          gte: new Date(`${fromDate}/4/1`),
+          lte: meet.fromDate,
+        },
+        kind: meet.kind,
+      },
+      orderBy: [
+        {
+          fromDate: "asc",
+        },
+        {
+          toDate: "asc",
+        },
+        {
+          createdAt: "asc",
+        },
+        {
+          revisedAt: "asc",
+        },
+      ],
+    });
+    return res;
+  } else {
+    return 0;
+  }
 }
 
 export async function create(prop: meetCreateSchemaType) {
@@ -67,9 +146,16 @@ export async function create(prop: meetCreateSchemaType) {
   }
 }
 
-export async function getListNum(kind?: number) {
+export async function getListNum(kind: number, year: number) {
+  const nextYear: number = Number(year) + 1;
   const res = await prisma.meet.count({
     where: {
+      fromDate: year
+        ? {
+            gte: new Date(`${year}/4/1`),
+            lte: new Date(`${nextYear}/3/31`),
+          }
+        : undefined,
       kind: kind ? kind : undefined,
       approved: true,
     },
@@ -77,9 +163,16 @@ export async function getListNum(kind?: number) {
   return res;
 }
 
-export async function getListNumAdmin(kind?: number) {
+export async function getListNumAdmin(kind: number, year: number) {
+  const nextYear: number = Number(year) + 1;
   const res = await prisma.meet.count({
     where: {
+      fromDate: year
+        ? {
+            gte: new Date(`${year}/4/1`),
+            lte: new Date(`${nextYear}/3/31`),
+          }
+        : undefined,
       kind: kind ? kind : undefined,
     },
   });

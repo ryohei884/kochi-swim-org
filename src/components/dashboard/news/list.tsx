@@ -43,7 +43,7 @@ export default function NewsList(props: Props) {
   const [nextPage, setNextPage] = useState<number>(Number(page) + 1);
   const [data, setData] = useState<newsWithUserSchemaType[]>([]);
   const [callbackData, setCallbackData] = useState<string | undefined>(
-    undefined
+    undefined,
   );
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(3);
@@ -160,7 +160,7 @@ export default function NewsList(props: Props) {
                           <Skeleton className="size-6 border border-input file:border-0" />
                         </Button>
                       </TableCell>
-                    </TableRow>
+                    </TableRow>,
                   );
                 }
                 return <>{rows}</>;

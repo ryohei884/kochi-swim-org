@@ -58,7 +58,7 @@ import {
 import { cn, meetKind, poolSize } from "@/lib/utils";
 
 interface Props {
-  fetchListData: (id: string) => Promise<void>;
+  fetchListData: (id?: string) => Promise<void>;
 }
 
 export default function MeetCreateForm(props: Props) {

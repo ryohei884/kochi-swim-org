@@ -5,13 +5,17 @@ import Header from "@/components/top/header";
 export default async function Page({
   params,
 }: {
-  params: Promise<{ page: string }>;
+  params: Promise<{
+    kind: "swimming" | "diving" | "waterpolo" | "as" | "ow";
+    year: number;
+    page: number;
+  }>;
 }) {
-  const { page } = await params;
+  const { kind, year, page } = await params;
   return (
     <>
       <Header />
-      <MeetList page={page} />
+      <MeetList kind={kind} year={year} page={page} />
       <Footer />
     </>
   );
