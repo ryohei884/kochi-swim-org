@@ -23,13 +23,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getList } from "@/lib/news/actions";
+import { getList, getListNum } from "@/lib/news/actions";
 import { newsLinkCategory } from "@/lib/utils";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
-export default function NewsList() {
+interface Props {
+  page: string;
+}
+
+export default function NewsList(props: Props) {
+  const { page } = props;
+  const [previousPage, setPreviousPage] = useState<number>(Number(page) - 1);
+  const [nextPage, setNextPage] = useState<number>(Number(page) + 1);
   const [data, setData] = useState<newsWithUserSchemaType[]>([]);
   const [callbackData, setCallbackData] = useState<string | undefined>(
-    undefined,
+    undefined
   );
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(3);
@@ -41,8 +55,14 @@ export default function NewsList() {
     data && setCallbackData(id);
     const res = await getList();
     if (res !== null) {
+      if (page !== undefined) {
+        setPreviousPage(Number(page) - 1);
+        setNextPage(Number(page) + 1);
+      }
+
       setData(res);
-      setDataNum(res.length);
+      const newsNum = await getListNum();
+      setDataNum(newsNum);
       const orders = res.map((value) => value.order);
       setMaxOrder(Math.max(...orders) + 1);
       setIsReady(true);
@@ -140,7 +160,7 @@ export default function NewsList() {
                           <Skeleton className="size-6 border border-input file:border-0" />
                         </Button>
                       </TableCell>
-                    </TableRow>,
+                    </TableRow>
                   );
                 }
                 return <>{rows}</>;
@@ -216,6 +236,23 @@ export default function NewsList() {
       </Table>
       <hr />
       <ReOrder fetchListData={fetchListData} />
+      <Pagination className="mt-16 flex items-center justify-between">
+        <PaginationContent className="-mt-px flex w-0 flex-1">
+          <PaginationItem className="inline-flex items-center">
+            <PaginationPrevious
+              href={`/dashboard/meet/${previousPage}`}
+              hidden={previousPage < 1}
+            />
+          </PaginationItem>
+          <PaginationItem className="-mt-px flex w-0 flex-1 justify-end">
+            <PaginationNext
+              href={`/dashboard/meet/${nextPage}`}
+              className="inline-flex items-center"
+              hidden={dataNum <= Number(page) * 10}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </>
   );
 }

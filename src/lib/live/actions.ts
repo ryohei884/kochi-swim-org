@@ -140,3 +140,37 @@ export async function getLiveNow() {
   });
   return res;
 }
+
+export async function reOrder() {
+  await prisma.$transaction(async (prisma) => {
+    const list = await prisma.live.findMany({
+      where: {
+        order: { gt: 0 },
+      },
+      orderBy: [
+        {
+          order: "asc",
+        },
+        {
+          fromDate: "asc",
+        },
+        {
+          createdAt: "asc",
+        },
+      ],
+    });
+
+    if (!list) throw Error("There is no live data.");
+
+    for (let i = 0; i < list.length; i++) {
+      await prisma.live.update({
+        where: {
+          id: list[i].id,
+        },
+        data: {
+          order: i + 1,
+        },
+      });
+    }
+  });
+}

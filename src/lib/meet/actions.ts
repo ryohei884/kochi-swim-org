@@ -77,6 +77,15 @@ export async function getListNum(kind?: number) {
   return res;
 }
 
+export async function getListNumAdmin(kind?: number) {
+  const res = await prisma.meet.count({
+    where: {
+      kind: kind ? kind : undefined,
+    },
+  });
+  return res;
+}
+
 export async function getById(prop: meetGetByIdSchemaType) {
   const { id } = prop;
 

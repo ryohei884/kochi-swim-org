@@ -30,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getList } from "@/lib/seminar/actions";
+import { getList, getListNum } from "@/lib/seminar/actions";
 
 interface Props {
   page: string;
@@ -60,7 +60,8 @@ export default function SeminarList(props: Props) {
         setNextPage(Number(page) + 1);
       }
       setData(res);
-      setDataNum(res.length);
+      const seminarNum = await getListNum();
+      setDataNum(seminarNum);
       // const orders = res.map((value) => value.order);
       // setMaxOrder(Math.max(...orders) + 1);
       setIsReady(true);

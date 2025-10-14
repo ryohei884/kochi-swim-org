@@ -33,8 +33,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getList } from "@/lib/meet/actions";
+import { getList, getListNumAdmin } from "@/lib/meet/actions";
 import { meetKind, poolSize } from "@/lib/utils";
+
 interface Props {
   page: string;
 }
@@ -65,8 +66,9 @@ export default function MeetList(props: Props) {
         setNextPage(Number(page) + 1);
       }
 
+      const meetNum = await getListNumAdmin(kindNum);
       setData(res);
-      setDataNum(res.length);
+      setDataNum(meetNum);
       // const orders = res.map((value) => value.order);
       // setMaxOrder(Math.max(...orders) + 1);
       setIsReady(true);

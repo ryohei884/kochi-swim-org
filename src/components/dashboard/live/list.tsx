@@ -27,7 +27,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getList } from "@/lib/live/actions";
+import { getList, getListNum } from "@/lib/live/actions";
+import ReOrder from "@/components/dashboard/live/reorder";
 
 interface Props {
   page: string;
@@ -58,7 +59,8 @@ export default function LiveList(props: Props) {
     const res = await getList(Number(page));
     if (res !== null) {
       setData(res);
-      setDataNum(res.length);
+      const listNum = await getListNum();
+      setDataNum(listNum);
       const orders = res.map((value) => value.order);
       setMaxOrder(Math.max(...orders) + 1);
       if (page !== undefined) {
@@ -196,6 +198,7 @@ export default function LiveList(props: Props) {
         </TableBody>
       </Table>
       <hr />
+      <ReOrder fetchListData={fetchListData} />
       <Pagination className="mt-16 flex items-center justify-between">
         <PaginationContent className="-mt-px flex w-0 flex-1">
           <PaginationItem className="inline-flex items-center">
