@@ -15,19 +15,19 @@ export default function Greeting() {
             </h2>
             <div className="overflow-hidden">
               <div className="mx-auto max-w-2xl lg:max-w-7xl">
-                <section className="grid grid-cols-1 lg:mt-6 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-16">
-                  <div className="justify-items-end-safe lg:row-span-2 lg:justify-items-center-safe">
+                <section className="grid grid-cols-1 justify-items-end-safe lg:justify-items-center-safe lg:mt-6 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-16">
+                  <div className="lg:row-span-2">
                     <div className="w-40 lg:w-60 aspect-3/4 overflow-hidden rounded-xl shadow-xl outline-1 -outline-offset-1 outline-black/10">
                       <Image
                         alt=""
                         src={"/miura.jpg"}
                         className="block size-full object-cover"
                         width={240}
-                        height={373}
+                        height={320}
                         priority={true}
                       />
                     </div>
-                    <div className="w-40 lg:w-60 justify-items-center-safe">
+                    <div className="w-40 lg:w-60 text-center">
                       <p className="mt-2 text-base/7 text-gray-600 dark:text-gray-400">
                         高知県水泳連盟会長
                       </p>
