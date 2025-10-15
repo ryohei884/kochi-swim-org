@@ -16,26 +16,24 @@ export default function Greeting() {
             <div className="overflow-hidden">
               <div className="mx-auto max-w-2xl lg:max-w-7xl">
                 <section className="grid grid-cols-1 lg:mt-6 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-16">
-                  <div className=" w-full justify-items-end lg:row-span-2 lg:justify-items-center">
-                    <div className="justify-center">
-                      <div className="max-w-40 lg:max-w-60 aspect-3/4 overflow-hidden rounded-xl shadow-xl outline-1 -outline-offset-1 outline-black/10">
-                        <Image
-                          alt=""
-                          src={"/miura.jpg"}
-                          className="block size-full object-cover"
-                          width={240}
-                          height={373}
-                          priority={true}
-                        />
-                      </div>
-                      <div className="max-w-60 justify-items-center">
-                        <p className="mt-2 text-base/7 text-gray-600 dark:text-gray-400">
-                          高知県水泳連盟会長
-                        </p>
-                        <h2 className="text-2xl font-semibold tracking-tight text-pretty text-gray-900 dark:text-gray-100">
-                          三浦 光夫
-                        </h2>
-                      </div>
+                  <div className="justify-items-end-safe lg:row-span-2 lg:justify-items-center-safe">
+                    <div className="w-40 lg:w-60 aspect-3/4 overflow-hidden rounded-xl shadow-xl outline-1 -outline-offset-1 outline-black/10">
+                      <Image
+                        alt=""
+                        src={"/miura.jpg"}
+                        className="block size-full object-cover"
+                        width={240}
+                        height={373}
+                        priority={true}
+                      />
+                    </div>
+                    <div className="w-40 lg:w-60 justify-items-center-safe">
+                      <p className="mt-2 text-base/7 text-gray-600 dark:text-gray-400">
+                        高知県水泳連盟会長
+                      </p>
+                      <h2 className="text-2xl font-semibold tracking-tight text-pretty text-gray-900 dark:text-gray-100">
+                        三浦 光夫
+                      </h2>
                     </div>
                   </div>
                   <div className="col-span-1 lg:col-span-2">
