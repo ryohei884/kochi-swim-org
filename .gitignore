@@ -45,4 +45,4 @@ next-env.d.ts
 .env*.local
 
 # backup
-backup.dump
+backup_**.dump

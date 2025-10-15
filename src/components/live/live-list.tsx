@@ -25,6 +25,7 @@ import {
 import { getList, getListNum } from "@/lib/live/actions";
 import { poolSize } from "@/lib/utils";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {
   page: string;
@@ -36,15 +37,18 @@ export default function LiveList(props: Props) {
   const nextPage = Number(page) + 1;
   const [live, setLive] = useState<liveWithUserSchemaType[]>([]);
   const [liveNum, setLiveNum] = useState<number>(0);
+  const [isReady, setIsReady] = useState<boolean>(false);
 
   const getLive = async (page: number) => {
     const liveList = await getList(page);
     setLive(liveList);
     const liveListNum = await getListNum();
     setLiveNum(liveListNum);
+    setIsReady(true);
   };
 
   useEffect(() => {
+    setIsReady(false);
     getLive(Number(page));
   }, [page]);
 
@@ -64,38 +68,65 @@ export default function LiveList(props: Props) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {live.map((m) => (
-            <Fragment key={m.id}>
-              <TableRow>
-                <TableCell>
-                  <Link
-                    href={`${m.url}`}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    <Play className="size-4" />
-                  </Link>
-                </TableCell>
-                <TableCell>{m.title}</TableCell>
-                {/* <TableCell>{m.meet && m.meet.title}</TableCell> */}
-                <TableCell>
-                  {m.meet && m.meet?.place}{" "}
-                  {m.meet &&
-                    "(" +
-                      poolSize.find((v) => v.id === m.meet?.poolsize)?.size +
-                      ")"}
-                </TableCell>
-                <TableCell>
-                  {m.fromDate &&
-                    format(m.fromDate, "PPP", {
-                      locale: ja,
-                    })}
-                </TableCell>
-              </TableRow>
-            </Fragment>
-          ))}
+          {!isReady
+            ? (function () {
+                const rows = [];
+                for (let i = 0; i < 10; i++) {
+                  rows.push(
+                    <TableRow key={i}>
+                      <TableCell>
+                        <Skeleton hidden={isReady} className="w-5 h-5" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton hidden={isReady} className="w-xs h-5" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton hidden={isReady} className="w-xs h-5" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton hidden={isReady} className="w-xs h-5" />
+                      </TableCell>
+                    </TableRow>,
+                  );
+                }
+                return <>{rows}</>;
+              })()
+            : live.map((m) => (
+                <Fragment key={m.id}>
+                  <TableRow>
+                    <TableCell>
+                      {m.url !== null && (
+                        <Link
+                          href={`${m.url}`}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          <Play className="size-4" />
+                        </Link>
+                      )}
+                    </TableCell>
+                    <TableCell>{m.title}</TableCell>
+                    {/* <TableCell>{m.meet && m.meet.title}</TableCell> */}
+                    <TableCell>
+                      {m.meet && m.meet?.place}{" "}
+                      {m.meet &&
+                        "(" +
+                          poolSize.find((v) => v.id === m.meet?.poolsize)
+                            ?.size +
+                          ")"}
+                    </TableCell>
+                    <TableCell>
+                      {m.fromDate &&
+                        format(m.fromDate, "PPP", {
+                          locale: ja,
+                        })}
+                    </TableCell>
+                  </TableRow>
+                </Fragment>
+              ))}
         </TableBody>
       </Table>
+      <hr />
       <Pagination className="mt-16 flex items-center justify-between">
         <PaginationContent className="-mt-px flex w-0 flex-1">
           <PaginationItem className="inline-flex items-center">

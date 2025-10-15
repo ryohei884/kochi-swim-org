@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getList, getListNum } from "@/lib/seminar/actions";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {
   page: string;
@@ -39,6 +40,7 @@ export default function SeminarList(props: Props) {
   const nextPage = Number(page) + 1;
   const [seminar, setSeminar] = useState<seminarListWithOpenType[]>([]);
   const [seminarNum, setSeminarNum] = useState<number>(0);
+  const [isReady, setIsReady] = useState<boolean>(false);
 
   const getSeminar = async (page: number) => {
     const seminarList = await getList(page);
@@ -48,6 +50,7 @@ export default function SeminarList(props: Props) {
     setSeminar(seminarListWithOpen);
     const seminarListNum = await getListNum();
     setSeminarNum(seminarListNum);
+    setIsReady(true);
   };
 
   const handleOpen = (id: string) => {
@@ -62,6 +65,7 @@ export default function SeminarList(props: Props) {
   };
 
   useEffect(() => {
+    setIsReady(false);
     getSeminar(Number(page));
   }, [page]);
 
@@ -75,7 +79,7 @@ export default function SeminarList(props: Props) {
           <p className="mt-2 text-lg/8 text-gray-600 dark:text-gray-400">
             詳細は各リンク先からご覧ください。
           </p>
-          <div className="mt-16 space-y-20 lg:mt-20">
+          <div className="mt-16 lg:mt-20">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -86,107 +90,132 @@ export default function SeminarList(props: Props) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {seminar.map((m) => (
-                  <Fragment key={m.id}>
-                    <TableRow>
-                      <TableCell>
-                        {m.fromDate &&
-                          format(m.fromDate, "PPP", {
-                            locale: ja,
-                          })}
-                        {m.toDate && "〜"}
-                        {m.toDate && format(m.toDate, "M月d日", { locale: ja })}
-                      </TableCell>
-                      <TableCell>{m.title}</TableCell>
-                      <TableCell>{m.place}</TableCell>
-                      <TableCell>
-                        <Button
-                          onClick={() => handleOpen(m.id)}
-                          variant="ghost"
-                        >
-                          {m.open ? <ChevronsDownUp /> : <ChevronsUpDown />}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                    {m.open && (
-                      <TableRow className="bg-accent">
-                        <TableCell colSpan={6}>
-                          {m.description && (
-                            <div className="grid justify-start">
-                              [詳細情報]
-                              <div className="whitespace-pre-wrap p-4">
-                                {m.description}
-                              </div>
-                            </div>
-                          )}
-                          {m.detail && (
-                            <div className="grid justify-start">
-                              [要項ファイル]
-                              {JSON.parse(m.detail!) &&
-                                JSON.parse(m.detail!).map(
-                                  (
-                                    v: { value: string; name: string },
-                                    i: number,
-                                  ) => {
-                                    return (
-                                      <Button
-                                        variant="link"
-                                        key={i}
-                                        className="w-fit"
-                                      >
-                                        <Link
-                                          href={`${v.value}`}
-                                          rel="noopener noreferrer"
-                                          target="_blank"
-                                          key={i}
-                                        >
-                                          {v.name}
-                                        </Link>
-                                      </Button>
-                                    );
-                                  },
-                                )}
-                            </div>
-                          )}
-                          {m.attachment && (
-                            <div className="grid justify-start">
-                              [添付ファイル]
-                              {JSON.parse(m.attachment!) &&
-                                JSON.parse(m.attachment!).map(
-                                  (
-                                    v: { value: string; name: string },
-                                    i: number,
-                                  ) => {
-                                    return (
-                                      <Button
-                                        variant="link"
-                                        key={i}
-                                        className="w-fit"
-                                      >
-                                        <Link
-                                          href={`${v.value}`}
-                                          rel="noopener noreferrer"
-                                          target="_blank"
-                                          key={i}
-                                        >
-                                          {v.name}
-                                        </Link>
-                                      </Button>
-                                    );
-                                  },
-                                )}
-                            </div>
-                          )}
-                          {!m.description && !m.detail && !m.attachment && (
-                            <div>詳細情報はありません。</div>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </Fragment>
-                ))}
+                {!isReady
+                  ? (function () {
+                      const rows = [];
+                      for (let i = 0; i < 10; i++) {
+                        rows.push(
+                          <TableRow key={i}>
+                            <TableCell>
+                              <Skeleton className="w-48 h-5 my-2" />
+                            </TableCell>
+                            <TableCell>
+                              <Skeleton className="w-96 h-5 my-2" />
+                            </TableCell>
+                            <TableCell>
+                              <Skeleton className="w-36 h-5 my-2" />
+                            </TableCell>
+                            <TableCell>
+                              <Skeleton className="w-16 h-5 my-2" />
+                            </TableCell>
+                          </TableRow>,
+                        );
+                      }
+                      return <>{rows}</>;
+                    })()
+                  : seminar.map((m) => (
+                      <Fragment key={m.id}>
+                        <TableRow>
+                          <TableCell>
+                            {m.fromDate &&
+                              format(m.fromDate, "PPP", {
+                                locale: ja,
+                              })}
+                            {m.toDate && "〜"}
+                            {m.toDate &&
+                              format(m.toDate, "M月d日", { locale: ja })}
+                          </TableCell>
+                          <TableCell>{m.title}</TableCell>
+                          <TableCell>{m.place}</TableCell>
+                          <TableCell>
+                            <Button
+                              onClick={() => handleOpen(m.id)}
+                              variant="ghost"
+                            >
+                              {m.open ? <ChevronsDownUp /> : <ChevronsUpDown />}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                        {m.open && (
+                          <TableRow className="bg-accent">
+                            <TableCell colSpan={6}>
+                              {m.description && (
+                                <div className="grid justify-start">
+                                  [詳細情報]
+                                  <div className="whitespace-pre-wrap p-4">
+                                    {m.description}
+                                  </div>
+                                </div>
+                              )}
+                              {m.detail && (
+                                <div className="grid justify-start">
+                                  [要項ファイル]
+                                  {JSON.parse(m.detail!) &&
+                                    JSON.parse(m.detail!).map(
+                                      (
+                                        v: { value: string; name: string },
+                                        i: number,
+                                      ) => {
+                                        return (
+                                          <Button
+                                            variant="link"
+                                            key={i}
+                                            className="w-fit"
+                                          >
+                                            <Link
+                                              href={`${v.value}`}
+                                              rel="noopener noreferrer"
+                                              target="_blank"
+                                              key={i}
+                                            >
+                                              {v.name}
+                                            </Link>
+                                          </Button>
+                                        );
+                                      },
+                                    )}
+                                </div>
+                              )}
+                              {m.attachment && (
+                                <div className="grid justify-start">
+                                  [添付ファイル]
+                                  {JSON.parse(m.attachment!) &&
+                                    JSON.parse(m.attachment!).map(
+                                      (
+                                        v: { value: string; name: string },
+                                        i: number,
+                                      ) => {
+                                        return (
+                                          <Button
+                                            variant="link"
+                                            key={i}
+                                            className="w-fit"
+                                          >
+                                            <Link
+                                              href={`${v.value}`}
+                                              rel="noopener noreferrer"
+                                              target="_blank"
+                                              key={i}
+                                            >
+                                              {v.name}
+                                            </Link>
+                                          </Button>
+                                        );
+                                      },
+                                    )}
+                                </div>
+                              )}
+                              {!m.description && !m.detail && !m.attachment && (
+                                <div>詳細情報はありません。</div>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </Fragment>
+                    ))}
               </TableBody>
             </Table>
+            <hr />
             <Pagination className="mt-16 flex items-center justify-between">
               <PaginationContent className="-mt-px flex w-0 flex-1">
                 <PaginationItem className="inline-flex items-center">

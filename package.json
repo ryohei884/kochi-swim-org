@@ -13,7 +13,7 @@
     "push": "rm -rf ./prisma/migrations && mkdir -p ./prisma/migrations/$(date '+%Y%m%d')_baseline && npx prisma migrate diff --from-schema-datamodel ./prisma/schema.prisma --to-schema-datamodel ./prisma/schema.prisma --script > ./prisma/migrations/$(date '+%Y%m%d')_baseline/migration.sql && npx prisma migrate resolve --applied $(date '+%Y%m%d')_baseline && npx prisma migrate deploy",
     "migrate": "npx prisma migrate dev --name init",
     "seed": "npx prisma db seed",
-    "backup": "eval $(grep '^DATABASE_URL' .env) && pg_dump -Fc -d $DATABASE_URL > backup.dump",
+    "backup": "eval $(grep '^DATABASE_URL' .env) && pg_dump -Fc -d $DATABASE_URL > backup_$(date '+%Y%m%d').dump",
     "restore": "eval $(grep '^DATABASE_URL' .env) && pg_restore --data-only -d $DATABASE_URL backup.dump"
   },
   "prisma": {

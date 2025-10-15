@@ -88,7 +88,7 @@ export default function MeetList(props: Props) {
         const resList = await getListAdmin(
           resMeet.kind,
           resMeet.fromDate.getFullYear(),
-          Math.floor(resPage / 10) + 1,
+          Math.round(resPage > 0 ? Math.floor((resPage - 1) / 10) + 1 : 1),
         );
         if (resList !== null) {
           const kindHref = meetKind.find((v) => v.id === resMeet.kind)?.href;
@@ -101,7 +101,7 @@ export default function MeetList(props: Props) {
           setCallbackData(id);
           router.push(
             `/dashboard/meet/${kindHref}/${resMeet.fromDate.getFullYear()}/${Math.round(
-              Math.floor(resPage / 10) + 1,
+              resPage > 0 ? Math.floor((resPage - 1) / 10) + 1 : 1,
             )}`,
           );
           setIsReady(true);

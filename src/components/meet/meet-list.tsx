@@ -92,7 +92,7 @@ export default function MeetList(props: Props) {
           <p className="mt-2 text-lg/8 text-gray-600 dark:text-gray-400">
             詳細は各リンク先からご覧ください。
           </p>
-          <div className="mt-16 space-y-20 lg:mt-20">
+          <div className="mt-16 lg:mt-20">
             <Tabs
               defaultValue={`${kind}/${year}`}
               onValueChange={(e) => handleChange(e)}
@@ -117,10 +117,16 @@ export default function MeetList(props: Props) {
                   <Separator orientation="vertical" />
                   <TabsTrigger value={`${kind}/2026`}>2026年度</TabsTrigger>
                 </TabsList>
-                <TabsContent value={`${kind}/${year}`} hidden={!isReady}>
-                  <p className="p-2 font-semibold tracking-tight text-pretty text-gray-900 dark:text-white">
+                <TabsContent value={`${kind}/${year}`}>
+                  <p
+                    hidden={!isReady}
+                    className="p-2 font-semibold tracking-tight text-pretty text-gray-900 dark:text-white"
+                  >
                     {meetKind.find((v) => v.href === kind)?.kind}
                   </p>
+                  <div hidden={isReady} className="p-2">
+                    <Skeleton className="p-2 w-xs h-6 font-semibold tracking-tight text-pretty text-gray-900 dark:text-white" />
+                  </div>
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -136,26 +142,26 @@ export default function MeetList(props: Props) {
                       {!isReady
                         ? (function () {
                             const rows = [];
-                            for (let i = 0; i < meetNum; i++) {
+                            for (let i = 0; i < 10; i++) {
                               rows.push(
                                 <TableRow key={i}>
                                   <TableCell>
-                                    <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                    <Skeleton className="w-48 h-5 my-2" />
                                   </TableCell>
                                   <TableCell>
-                                    <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                    <Skeleton className="w-96 h-5 my-2" />
                                   </TableCell>
                                   <TableCell>
-                                    <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                    <Skeleton className="w-36 h-5 my-2" />
                                   </TableCell>
                                   <TableCell>
-                                    <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                    <Skeleton className="w-16 h-5 my-2" />
                                   </TableCell>
                                   <TableCell>
-                                    <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                    <Skeleton className="w-16 h-5 my-2" />
                                   </TableCell>
                                   <TableCell>
-                                    <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                    <Skeleton className="w-16 h-5 my-2" />
                                   </TableCell>
                                 </TableRow>,
                               );
@@ -303,6 +309,7 @@ export default function MeetList(props: Props) {
                           ))}
                     </TableBody>
                   </Table>
+                  <hr />
                   <Pagination className="mt-16 flex items-center justify-between">
                     <PaginationContent className="-mt-px flex w-0 flex-1">
                       <PaginationItem className="inline-flex items-center">
