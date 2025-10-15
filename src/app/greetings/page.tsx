@@ -18,7 +18,7 @@ export default function Greeting() {
                 <section className="grid grid-cols-1 lg:mt-6 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-16">
                   <div className=" w-full justify-items-end lg:row-span-2 lg:justify-items-center">
                     <div className="justify-center">
-                      <div className="max-w-60 aspect-3/4 overflow-hidden rounded-xl shadow-xl outline-1 -outline-offset-1 outline-black/10">
+                      <div className="max-w-40 lg:max-w-60 aspect-3/4 overflow-hidden rounded-xl shadow-xl outline-1 -outline-offset-1 outline-black/10">
                         <Image
                           alt=""
                           src={"/miura.jpg"}
@@ -29,7 +29,7 @@ export default function Greeting() {
                         />
                       </div>
                       <div className="max-w-60 justify-items-center">
-                        <p className="text-base/7 text-gray-600 dark:text-gray-400">
+                        <p className="mt-2 text-base/7 text-gray-600 dark:text-gray-400">
                           高知県水泳連盟会長
                         </p>
                         <h2 className="text-2xl font-semibold tracking-tight text-pretty text-gray-900 dark:text-gray-100">
@@ -40,7 +40,7 @@ export default function Greeting() {
                   </div>
                   <div className="col-span-1 lg:col-span-2">
                     <div className="lg:pr-8">
-                      <p className="text-justify indent-[1em] text-base/7 text-gray-600 dark:text-gray-400">
+                      <p className="mt-6 lg:mt-0 text-justify indent-[1em] text-base/7 text-gray-600 dark:text-gray-400">
                         本連盟の活動目的は、「高知県における水泳及び水泳競技の健全なる普及と発展を図ること」としています。この目的達成のために競技力向上や競技会の開催、指導者や競技役員の育成及び各種講瑠会の開催などを実施しています。
                       </p>
                       <p className="mt-4 text-justify indent-[1em] text-base/7 text-gray-600 dark:text-gray-400">
