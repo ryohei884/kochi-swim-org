@@ -37,7 +37,7 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getById, exclude } from "@/lib/news/actions";
+import { getByIdAdmin, exclude } from "@/lib/news/actions";
 import {
   newsWithUserSchema,
   newsWithUserSchemaDV,
@@ -60,7 +60,7 @@ export default function NewsExcludeForm(props: Props) {
 
   const fetchData = async (id: string) => {
     setIsReady(false);
-    const res = await getById({ id: id });
+    const res = await getByIdAdmin({ id: id });
     if (res !== null) {
       form.reset(res);
       setIsReady(true);
@@ -74,7 +74,7 @@ export default function NewsExcludeForm(props: Props) {
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<newsWithUserSchemaType> = async (
-    data: newsExcludeSchemaType,
+    data: newsExcludeSchemaType
   ) => {
     await exclude(data);
 

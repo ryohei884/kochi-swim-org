@@ -33,10 +33,44 @@ export async function getList(page?: number) {
   return res;
 }
 
+export async function getListAdmin(page?: number) {
+  const res = await prisma.news.findMany({
+    include: { createdUser: true, revisedUser: true, approvedUser: true },
+    orderBy: [
+      {
+        order: "desc",
+      },
+      {
+        createdAt: "asc",
+      },
+      {
+        revisedAt: "asc",
+      },
+    ],
+    skip: page ? (page - 1) * 10 : undefined,
+    take: page ? 10 : undefined,
+  });
+  return res;
+}
+
 export async function getListNum() {
   const res = await prisma.news.count({
     where: {
       approved: true,
+      fromDate: {
+        lt: new Date(),
+      },
+      toDate: {
+        gte: new Date(),
+      },
+    },
+  });
+  return res;
+}
+
+export async function getListNumAdmin() {
+  const res = await prisma.news.count({
+    where: {
       fromDate: {
         lt: new Date(),
       },
@@ -102,6 +136,18 @@ export async function getById(prop: newsGetByIdSchemaType) {
     where: {
       id: id,
       approved: true,
+    },
+    include: { createdUser: true, revisedUser: true, approvedUser: true },
+  });
+  return res;
+}
+
+export async function getByIdAdmin(prop: newsGetByIdSchemaType) {
+  const { id } = prop;
+
+  const res = await prisma.news.findFirst({
+    where: {
+      id: id,
     },
     include: { createdUser: true, revisedUser: true, approvedUser: true },
   });

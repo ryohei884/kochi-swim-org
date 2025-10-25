@@ -54,7 +54,7 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { getById, update } from "@/lib/news/actions";
+import { getByIdAdmin, update } from "@/lib/news/actions";
 import {
   newsUpdateOnSubmitSchemaDV,
   newsUpdateOnSubmitSchema,
@@ -82,7 +82,7 @@ export default function NewsUpdateForm(props: Props) {
 
   const fetchData = async (id: string) => {
     setIsReady(false);
-    const res = await getById({ id: id });
+    const res = await getByIdAdmin({ id: id });
     if (res !== null) {
       form.reset({ ...res, linkCategory: String(res.linkCategory) });
       setIsReady(true);
@@ -96,7 +96,7 @@ export default function NewsUpdateForm(props: Props) {
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<newsUpdateOnSubmitSchemaType> = async (
-    data: newsUpdateOnSubmitSchemaType,
+    data: newsUpdateOnSubmitSchemaType
   ) => {
     let newBlob: string | null = null;
     if (data.image !== null && typeof data.image !== "string") {
@@ -122,7 +122,7 @@ export default function NewsUpdateForm(props: Props) {
   };
 
   const onError: SubmitErrorHandler<newsUpdateOnSubmitSchemaType> = (
-    errors,
+    errors
   ) => {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
@@ -146,7 +146,7 @@ export default function NewsUpdateForm(props: Props) {
       {
         method: "POST",
         body: file,
-      },
+      }
     );
 
     const newBlob = (await response.json()) as PutBlobResult;
@@ -157,7 +157,7 @@ export default function NewsUpdateForm(props: Props) {
     const dataTransfer = new DataTransfer();
 
     Array.from(event.target.files!).forEach((image) =>
-      dataTransfer.items.add(image),
+      dataTransfer.items.add(image)
     );
 
     const files = dataTransfer.files;
@@ -301,7 +301,7 @@ export default function NewsUpdateForm(props: Props) {
                             variant={"outline"}
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-muted-foreground"
                             )}
                             onClick={(date) => {
                               field.onChange(date);
@@ -353,7 +353,7 @@ export default function NewsUpdateForm(props: Props) {
                             variant={"outline"}
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-muted-foreground"
                             )}
                             onClick={(date) => {
                               field.onChange(date);

@@ -23,7 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getList, getListNum } from "@/lib/news/actions";
+import { getListAdmin, getListNumAdmin } from "@/lib/news/actions";
 import { newsLinkCategory } from "@/lib/utils";
 import {
   Pagination,
@@ -43,7 +43,7 @@ export default function NewsList(props: Props) {
   const [nextPage, setNextPage] = useState<number>(Number(page) + 1);
   const [data, setData] = useState<newsWithUserSchemaType[]>([]);
   const [callbackData, setCallbackData] = useState<string | undefined>(
-    undefined,
+    undefined
   );
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(3);
@@ -53,7 +53,7 @@ export default function NewsList(props: Props) {
     setIsReady(false);
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     data && setCallbackData(id);
-    const res = await getList();
+    const res = await getListAdmin();
     if (res !== null) {
       if (page !== undefined) {
         setPreviousPage(Number(page) - 1);
@@ -61,7 +61,7 @@ export default function NewsList(props: Props) {
       }
 
       setData(res);
-      const newsNum = await getListNum();
+      const newsNum = await getListNumAdmin();
       setDataNum(newsNum);
       const orders = res.map((value) => value.order);
       setMaxOrder(Math.max(...orders) + 1);
@@ -160,7 +160,7 @@ export default function NewsList(props: Props) {
                           <Skeleton className="size-6 border border-input file:border-0" />
                         </Button>
                       </TableCell>
-                    </TableRow>,
+                    </TableRow>
                   );
                 }
                 return <>{rows}</>;

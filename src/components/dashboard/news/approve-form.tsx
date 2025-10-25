@@ -37,7 +37,7 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getById, approve } from "@/lib/news/actions";
+import { getByIdAdmin, approve } from "@/lib/news/actions";
 import {
   newsWithUserSchema,
   newsWithUserSchemaDV,
@@ -60,7 +60,7 @@ export default function NewsApproveForm(props: Props) {
 
   const fetchData = async (id: string) => {
     setIsReady(false);
-    const res = await getById({ id: id });
+    const res = await getByIdAdmin({ id: id });
     if (res !== null) {
       form.reset(res);
       setIsReady(true);
@@ -74,7 +74,7 @@ export default function NewsApproveForm(props: Props) {
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<newsWithUserSchemaType> = async (
-    data: newsApproveSchemaType,
+    data: newsApproveSchemaType
   ) => {
     await approve(data);
 
