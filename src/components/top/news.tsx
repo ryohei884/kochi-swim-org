@@ -11,16 +11,20 @@ import type { newsSchemaType } from "@/lib/news/verification";
 
 import { getList3 } from "@/lib/news/actions";
 import { newsLinkCategory } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function News() {
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [news, setNews] = useState<newsSchemaType[]>([]);
 
   const getNews = async () => {
     const newsList = await getList3();
     setNews(newsList);
+    setIsReady(true);
   };
 
   useEffect(() => {
+    setIsReady(false);
     getNews();
   }, []);
 
@@ -32,7 +36,43 @@ export default function News() {
             お知らせ
           </h2>
         </div>
-        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        <div
+          hidden={isReady}
+          className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3"
+        >
+          {(function () {
+            const rows = [];
+            for (let i = 0; i < 3; i++) {
+              rows.push(
+                <article
+                  key={i}
+                  className="flex flex-col items-start justify-between"
+                >
+                  <div className="relative w-full">
+                    <Skeleton className="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-2/1 lg:aspect-3/2 dark:bg-gray-800" />
+                    <div className="absolute inset-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
+                  </div>
+                  <div className="flex min-w-full max-w-xl grow flex-col justify-between">
+                    <div className="mt-8 flex items-center gap-x-4 text-xs">
+                      <Skeleton className="w-23 h-4 text-gray-500 dark:text-gray-400" />
+                      <Skeleton className="relative z-10 w-23 h-7 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:bg-gray-800" />
+                    </div>
+                    <div className="group relative grow">
+                      <Skeleton className="mt-3 w-[60%] h-8" />
+                      <Skeleton className="w-[80%] h-6 mt-5" />
+                      <Skeleton className="w-[40%] h-6 mt-2" />
+                    </div>
+                  </div>
+                </article>
+              );
+            }
+            return <>{rows}</>;
+          })()}
+        </div>
+        <div
+          hidden={!isReady}
+          className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3"
+        >
           {news.map((post) => (
             <article
               key={post.id}
