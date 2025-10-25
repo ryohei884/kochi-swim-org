@@ -24,6 +24,9 @@ export async function getList(page?: number) {
         revisedAt: "asc",
       },
     ],
+    where: {
+      approved: true,
+    },
     skip: page ? (page - 1) * 10 : undefined,
     take: page ? 10 : undefined,
   });
@@ -47,6 +50,9 @@ export async function getListNum() {
 
 export async function getList3() {
   const res = await prisma.news.findMany({
+    where: {
+      approved: true,
+    },
     orderBy: [
       {
         order: "desc",
@@ -95,6 +101,7 @@ export async function getById(prop: newsGetByIdSchemaType) {
   const res = await prisma.news.findFirst({
     where: {
       id: id,
+      approved: true,
     },
     include: { createdUser: true, revisedUser: true, approvedUser: true },
   });

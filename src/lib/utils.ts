@@ -38,3 +38,74 @@ export const poolSize = [
   { id: 2, size: "長水路" },
   { id: 3, size: "ダイビング・プール" },
 ];
+
+export const recordCategory = [
+  { id: 0, herf: "null", label: "その他" },
+  { id: 1, herf: "prefecture", label: "県" },
+  { id: 2, herf: "high", label: "高校" },
+  { id: 3, herf: "junior_high", label: "中学" },
+  { id: 4, herf: "elementary", label: "学童" },
+];
+
+export const recordPoolsize = [
+  { id: 0, label: "その他", herf: "null" },
+  { id: 1, label: "長水路", herf: "long" },
+  { id: 2, label: "短水路", herf: "short" },
+];
+
+export const recordSex = [
+  { id: 0, label: "その他", herf: "null" },
+  { id: 1, label: "男子", herf: "men" },
+  { id: 2, label: "女子", herf: "women" },
+  { id: 3, label: "混合", herf: "mixed" },
+];
+
+export const recordStyle = [
+  { id: 0, label: "その他", herf: "null" },
+  { id: 1, label: "自由形", herf: "free" },
+  { id: 2, label: "背泳ぎ", herf: "back" },
+  { id: 3, label: "平泳ぎ", herf: "breast" },
+  { id: 4, label: "バタフライ", herf: "butterfly" },
+  { id: 5, label: "個人メドレー", herf: "im" },
+  { id: 6, label: "フリーリレー", herf: "free_relay" },
+  { id: 7, label: "メドレーリレー", herf: "medley_relay" },
+];
+
+export const recordDistance = [
+  { id: 0, label: "その他", herf: "null" },
+  { id: 1, label: "50m", herf: "50m" },
+  { id: 2, label: "100m", herf: "100m" },
+  { id: 3, label: "200m", herf: "200m" },
+  { id: 4, label: "400m", herf: "400m" },
+  { id: 5, label: "800m", herf: "800m" },
+  { id: 6, label: "1500m", herf: "1500m" },
+  { id: 7, label: "4×50m", herf: "4_50m" },
+  { id: 8, label: "4×100m", herf: "4_100m" },
+  { id: 9, label: "4×200m", herf: "4_200m" },
+];
+
+export const intToTime = (time: number) => {
+  if (time >= 6000) {
+    const min = Math.floor(time / 6000);
+    const sec = Math.floor((time - min * 6000) / 100);
+    const msec = time - min * 6000 - sec * 100;
+    return `${min}:${String(sec).padStart(2, "0")}.${String(msec).padStart(
+      2,
+      "0",
+    )}`;
+  } else {
+    const sec = Math.floor(time / 100);
+    const msec = time - sec * 100;
+    return `${sec}.${String(msec).padStart(2, "0")}`;
+  }
+};
+
+export const timeToInt = (time: number) => {
+  if (time >= 10000) {
+    const min = Math.floor(time / 10000);
+    const sec = time - min * 10000;
+    return min * 6000 + sec;
+  } else {
+    return time;
+  }
+};

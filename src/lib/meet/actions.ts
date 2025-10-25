@@ -185,6 +185,7 @@ export async function getById(prop: meetGetByIdSchemaType) {
   const res = await prisma.meet.findFirst({
     where: {
       id: id,
+      approved: true,
     },
     include: { createdUser: true, revisedUser: true, approvedUser: true },
   });

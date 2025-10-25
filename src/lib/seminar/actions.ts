@@ -14,6 +14,9 @@ import { prisma } from "@/prisma";
 export async function getList(page?: number) {
   const res = await prisma.seminar.findMany({
     include: { createdUser: true, revisedUser: true, approvedUser: true },
+    where: {
+      approved: true,
+    },
     orderBy: [
       {
         fromDate: "asc",
@@ -75,6 +78,7 @@ export async function getById(prop: seminarGetByIdSchemaType) {
   const res = await prisma.seminar.findFirst({
     where: {
       id: id,
+      approved: true,
     },
     include: { createdUser: true, revisedUser: true, approvedUser: true },
   });

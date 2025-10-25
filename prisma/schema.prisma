@@ -282,9 +282,9 @@ model Record {
   swimmer3       String?
   swimmer4       String?
   team           String
-  place          String
   date           DateTime
   meetName       String
+  place          String
   valid          Boolean   @default(false)
   image          String?
   createdUserId  String
