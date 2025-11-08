@@ -154,7 +154,7 @@ export default function MeetList(props: Props) {
                                   <TableCell>
                                     <Skeleton className="w-16 h-5 my-2" />
                                   </TableCell>
-                                </TableRow>,
+                                </TableRow>
                               );
                             }
                             return <>{rows}</>;
@@ -234,7 +234,7 @@ export default function MeetList(props: Props) {
                                                 value: string;
                                                 name: string;
                                               },
-                                              i: number,
+                                              i: number
                                             ) => {
                                               return (
                                                 <Button
@@ -248,11 +248,13 @@ export default function MeetList(props: Props) {
                                                     target="_blank"
                                                     key={i}
                                                   >
-                                                    {v.name}
+                                                    {v.name.length > 0
+                                                      ? v.name
+                                                      : "無題"}
                                                   </Link>
                                                 </Button>
                                               );
-                                            },
+                                            }
                                           )}
                                       </div>
                                     )}
@@ -266,7 +268,7 @@ export default function MeetList(props: Props) {
                                                 value: string;
                                                 name: string;
                                               },
-                                              i: number,
+                                              i: number
                                             ) => {
                                               return (
                                                 <Button
@@ -280,11 +282,13 @@ export default function MeetList(props: Props) {
                                                     target="_blank"
                                                     key={i}
                                                   >
-                                                    {v.name}
+                                                    {v.name.length > 0
+                                                      ? v.name
+                                                      : "無題"}
                                                   </Link>
                                                 </Button>
                                               );
-                                            },
+                                            }
                                           )}
                                       </div>
                                     )}
