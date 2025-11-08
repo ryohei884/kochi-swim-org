@@ -48,6 +48,7 @@ export default function LiveList(props: Props) {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(false);
     getLive(Number(page));
   }, [page]);

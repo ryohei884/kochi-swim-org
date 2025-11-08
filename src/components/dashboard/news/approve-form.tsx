@@ -43,16 +43,33 @@ import {
   newsWithUserSchemaDV,
 } from "@/lib/news/verification";
 import { newsLinkCategory } from "@/lib/utils";
+import { getApproverList } from "@/lib/permission/actions";
+import { auth } from "@/auth";
+import type { DefaultSession } from "@auth/core/types";
+
+interface Session {
+  user: {
+    role: "administrator" | "user";
+  } & DefaultSession["user"];
+}
 
 interface Props {
   id: string;
   fetchListData: () => Promise<void>;
 }
 
+type Approver = {
+  userId: string;
+  userDisplayName: string | null;
+  userName: string | null;
+}[];
+
 export default function NewsApproveForm(props: Props) {
   const { id, fetchListData } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
+  const [approver, setApprover] = useState<Approver>([]);
+
   const form = useForm<newsWithUserSchemaType>({
     resolver: zodResolver(newsWithUserSchema),
     defaultValues: newsWithUserSchemaDV,
@@ -60,6 +77,13 @@ export default function NewsApproveForm(props: Props) {
 
   const fetchData = async (id: string) => {
     setIsReady(false);
+    const resAvr = await getApproverList({ categoryLink: "news" });
+    if (resAvr !== null) {
+      setApprover(resAvr);
+    } else {
+      setApprover([]);
+    }
+
     const res = await getByIdAdmin({ id: id });
     if (res !== null) {
       form.reset(res);
@@ -68,13 +92,12 @@ export default function NewsApproveForm(props: Props) {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     dialogOpen && fetchData(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<newsWithUserSchemaType> = async (
-    data: newsApproveSchemaType
+    data: newsApproveSchemaType,
   ) => {
     await approve(data);
 

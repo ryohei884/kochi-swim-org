@@ -192,6 +192,18 @@ export async function getById(prop: meetGetByIdSchemaType) {
   return res;
 }
 
+export async function getByIdAdmin(prop: meetGetByIdSchemaType) {
+  const { id } = prop;
+
+  const res = await prisma.meet.findFirst({
+    where: {
+      id: id,
+    },
+    include: { createdUser: true, revisedUser: true, approvedUser: true },
+  });
+  return res;
+}
+
 export async function update(prop: meetUpdateSchemaType) {
   const data = prop;
   const session = await auth();

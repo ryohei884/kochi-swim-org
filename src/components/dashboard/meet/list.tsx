@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { CheckIcon, ExternalLink } from "lucide-react";
+import { CheckIcon, ExternalLink, Stamp } from "lucide-react";
 import Link from "next/link";
 
 import type { meetWithUserSchemaType } from "@/lib/meet/verification";
@@ -35,7 +35,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   getListPageAdmin,
-  getById,
+  getByIdAdmin,
   getListAdmin,
   getListNumAdmin,
 } from "@/lib/meet/actions";
@@ -66,7 +66,6 @@ export default function MeetList(props: Props) {
     page: number,
     id?: string,
   ) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     data && setCallbackData(id);
     const kindNum = meetKind.find((v) => v.href === kind)?.id || 0;
     const res = await getListAdmin(kindNum, year, page);
@@ -82,7 +81,7 @@ export default function MeetList(props: Props) {
   const fetchListData = async (id?: string) => {
     // data && setCallbackData(id);
     if (id !== undefined) {
-      const resMeet = await getById({ id: id });
+      const resMeet = await getByIdAdmin({ id: id });
       const resPage = await getListPageAdmin(id);
       if (resMeet !== null) {
         const resList = await getListAdmin(
@@ -180,7 +179,6 @@ export default function MeetList(props: Props) {
                   <TableHead>追加資料</TableHead>
                   <TableHead>作成者</TableHead>
                   <TableHead>更新者</TableHead>
-                  <TableHead>承認状態</TableHead>
                   <TableHead>承認者</TableHead>
                   <TableHead className="text-center">変更</TableHead>
                   <TableHead className="text-center">削除</TableHead>
@@ -194,9 +192,6 @@ export default function MeetList(props: Props) {
                       for (let i = 0; i < dataNum; i++) {
                         rows.push(
                           <TableRow key={i}>
-                            <TableCell>
-                              <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
-                            </TableCell>
                             <TableCell>
                               <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                             </TableCell>
@@ -305,9 +300,6 @@ export default function MeetList(props: Props) {
                             {d.revisedUser?.displayName || d.revisedUser?.name}
                           </TableCell>
                           <TableCell>
-                            {d.approved && <CheckIcon className="size-4" />}
-                          </TableCell>
-                          <TableCell>
                             {d.approvedUser?.displayName ||
                               d.approvedUser?.name}
                           </TableCell>
@@ -327,11 +319,17 @@ export default function MeetList(props: Props) {
                           </TableCell>
 
                           <TableCell className="flex-none text-center w-12">
-                            <ApproveForm
-                              key={d.id}
-                              id={d.id}
-                              fetchListData={fetchListData}
-                            />
+                            {d.approved ? (
+                              <Button variant="ghost" size="sm" disabled>
+                                <CheckIcon className="size-4" />
+                              </Button>
+                            ) : (
+                              <ApproveForm
+                                key={d.id}
+                                id={d.id}
+                                fetchListData={fetchListData}
+                              />
+                            )}
                           </TableCell>
                         </TableRow>
                       );

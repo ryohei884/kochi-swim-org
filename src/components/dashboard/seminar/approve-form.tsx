@@ -37,7 +37,7 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getById, approve } from "@/lib/seminar/actions";
+import { getByIdAdmin, approve } from "@/lib/seminar/actions";
 import {
   seminarWithUserSchemaDV,
   seminarWithUserSchema,
@@ -59,14 +59,13 @@ export default function SeminarApproveForm(props: Props) {
   });
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     dialogOpen && fetchData(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
 
   const fetchData = async (id: string) => {
     setIsReady(false);
-    const res = await getById({ id: id });
+    const res = await getByIdAdmin({ id: id });
     if (res !== null) {
       form.reset(res);
       setIsReady(true);

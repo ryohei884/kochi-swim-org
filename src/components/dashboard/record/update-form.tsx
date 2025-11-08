@@ -58,7 +58,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 
-import { getById, update } from "@/lib/record/actions";
+import { getByIdAdmin, update } from "@/lib/record/actions";
 import {
   recordUpdateSchemaDV,
   recordUpdateSchema,
@@ -102,7 +102,7 @@ export default function RecordUpdateForm(props: Props) {
 
   const fetchData = async (id: string) => {
     setIsReady(false);
-    const res = await getById(id);
+    const res = await getByIdAdmin(id);
     if (res !== null) {
       form.reset({
         ...res,
@@ -113,7 +113,6 @@ export default function RecordUpdateForm(props: Props) {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     dialogOpen && fetchData(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
@@ -697,7 +696,6 @@ export default function RecordUpdateForm(props: Props) {
               <FormField
                 control={form.control}
                 name="image"
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 render={({ field: { onChange, value, ...rest } }) => (
                   <>
                     {" "}

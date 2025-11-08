@@ -122,6 +122,7 @@ export async function create(prop: newsCreateSchemaType) {
         linkString: data.linkString,
         order: data.order,
         createdUserId: session?.user?.id,
+        approvedUserId: data.approvedUserId,
         approved: false,
       },
     });
@@ -165,6 +166,7 @@ export async function update(prop: newsUpdateSchemaType) {
     linkCategory,
     linkString,
     order,
+    approvedUserId,
   } = prop;
   const session = await auth();
   if (!session?.user?.id) {
@@ -195,7 +197,7 @@ export async function update(prop: newsUpdateSchemaType) {
           linkString: linkString,
           order: order,
           revisedUserId: session?.user?.id,
-          approvedUserId: null,
+          approvedUserId: approvedUserId,
           approved: false,
         },
       });

@@ -78,6 +78,7 @@ export default function MeetList(props: Props) {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(false);
     getMeet(kind, year, page);
   }, [kind, year, page]);

@@ -65,6 +65,7 @@ export default function SeminarList(props: Props) {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(false);
     getSeminar(Number(page));
   }, [page]);

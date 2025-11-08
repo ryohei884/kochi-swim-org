@@ -85,6 +85,18 @@ export async function getById(prop: seminarGetByIdSchemaType) {
   return res;
 }
 
+export async function getByIdAdmin(prop: seminarGetByIdSchemaType) {
+  const { id } = prop;
+
+  const res = await prisma.seminar.findFirst({
+    where: {
+      id: id,
+    },
+    include: { createdUser: true, revisedUser: true, approvedUser: true },
+  });
+  return res;
+}
+
 export async function update(prop: seminarUpdateSchemaType) {
   const data = prop;
   const session = await auth();

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   description: "一般社団法人 高知県水泳連盟",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

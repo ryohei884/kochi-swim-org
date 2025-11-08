@@ -129,7 +129,6 @@ export const newsCreateSchema = newsSchema.omit({
   revisedAt: true,
   approvedAt: true,
   revisedUserId: true,
-  approvedUserId: true,
   approved: true,
 });
 
@@ -145,6 +144,7 @@ export const newsCreateSchemaDV: newsCreateSchemaType = {
   linkString: newsSchemaDV.linkString,
   order: newsSchemaDV.order,
   createdUserId: newsSchemaDV.createdUserId,
+  approvedUserId: newsSchemaDV.approvedUserId,
 };
 
 // newsCreateOnSubmitSchema
@@ -156,7 +156,6 @@ export const newsCreateOnSubmitSchema = newsSchema
     revisedAt: true,
     approvedAt: true,
     revisedUserId: true,
-    approvedUserId: true,
     approved: true,
     image: true,
   })
@@ -200,6 +199,7 @@ export const newsCreateOnSubmitSchemaDV: newsCreateOnSubmitSchemaType = {
   linkString: newsSchemaDV.linkString,
   order: newsSchemaDV.order,
   createdUserId: newsSchemaDV.createdUserId,
+  approvedUserId: newsSchemaDV.approvedUserId,
 };
 
 // newsUpdateSchema
@@ -207,7 +207,6 @@ export const newsUpdateSchema = newsSchema
   .omit({
     createdUserId: true,
     revisedUserId: true,
-    approvedUserId: true,
     approved: true,
     revisedAt: true,
     approvedAt: true,
@@ -251,6 +250,7 @@ export const newsUpdateSchemaDV: newsUpdateSchemaType = {
   linkCategory: newsSchemaDV.linkCategory,
   linkString: newsSchemaDV.linkString,
   order: newsSchemaDV.order,
+  approvedUserId: newsSchemaDV.approvedUserId,
 };
 
 // newsUpdateOnSubmitSchema
@@ -258,7 +258,6 @@ export const newsUpdateOnSubmitSchema = newsSchema
   .omit({
     createdUserId: true,
     revisedUserId: true,
-    approvedUserId: true,
     approved: true,
     revisedAt: true,
     approvedAt: true,
@@ -306,6 +305,7 @@ export const newsUpdateOnSubmitSchemaDV: newsUpdateOnSubmitSchemaType = {
   linkCategory: String(newsSchemaDV.linkCategory),
   linkString: newsSchemaDV.linkString,
   order: newsSchemaDV.order,
+  approvedUserId: newsSchemaDV.approvedUserId,
 };
 
 // newsGetByIdSchema

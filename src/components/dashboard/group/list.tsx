@@ -35,7 +35,7 @@ export default function GroupList() {
 
   const fetchListData = async (data?: groupWithUserSchemaType) => {
     setIsReady(false);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
     data && setCallbackData(data);
     const res = await getList();
     if (res !== null) {
@@ -46,6 +46,7 @@ export default function GroupList() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchListData();
   }, []);
 

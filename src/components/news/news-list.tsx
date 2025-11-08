@@ -46,6 +46,7 @@ export default function NewsList(props: Props) {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     getNews(Number(page));
   }, [page]);
 

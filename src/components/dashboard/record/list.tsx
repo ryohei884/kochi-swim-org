@@ -24,7 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getById, getListAdmin } from "@/lib/record/actions";
+import { getByIdAdmin, getListAdmin } from "@/lib/record/actions";
 import {
   recordCategory,
   recordPoolsize,
@@ -58,7 +58,6 @@ export default function RecordList(props: Props) {
     sex: string,
     id?: string,
   ) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     data && setCallbackData(id);
     const categoryNum =
       recordCategory.find((v) => v.herf === category)?.id || 0;
@@ -78,7 +77,7 @@ export default function RecordList(props: Props) {
   const fetchListData = async (id?: string) => {
     // data && setCallbackData(id);
     if (id !== undefined) {
-      const resRecord = await getById(id);
+      const resRecord = await getByIdAdmin(id);
       if (resRecord !== null) {
         const resList = await getListAdmin(
           resRecord.category,
@@ -196,7 +195,6 @@ export default function RecordList(props: Props) {
                     <TableHead>場所</TableHead>
                     <TableHead>作成者</TableHead>
                     <TableHead>更新者</TableHead>
-                    <TableHead>承認状態</TableHead>
                     <TableHead>承認者</TableHead>
                     <TableHead className="text-center">変更</TableHead>
                     <TableHead className="text-center">削除</TableHead>
@@ -272,9 +270,6 @@ export default function RecordList(props: Props) {
                                 d.revisedUser?.name}
                             </TableCell>
                             <TableCell>
-                              {d.approved && <CheckIcon className="size-4" />}
-                            </TableCell>
-                            <TableCell>
                               {d.approvedUser?.displayName ||
                                 d.approvedUser?.name}
                             </TableCell>
@@ -294,11 +289,17 @@ export default function RecordList(props: Props) {
                               />
                             </TableCell>
                             <TableCell className="flex-none text-center w-12">
-                              <ApproveForm
-                                key={d.id}
-                                id={d.id}
-                                fetchListData={fetchListData}
-                              />
+                              {d.approved ? (
+                                <Button variant="ghost" size="sm" disabled>
+                                  <CheckIcon className="size-4" />
+                                </Button>
+                              ) : (
+                                <ApproveForm
+                                  key={d.id}
+                                  id={d.id}
+                                  fetchListData={fetchListData}
+                                />
+                              )}
                             </TableCell>
                           </TableRow>
                         );

@@ -67,7 +67,6 @@ export default function CategoryExcludeForm(props: Props) {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     dialogOpen && fetchData(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);

@@ -582,7 +582,6 @@ export default function RecordCreateForm(props: Props) {
               <FormField
                 control={form.control}
                 name="image"
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 render={({ field: { onChange, value, ...rest } }) => (
                   <FormItem>
                     <FormLabel>イメージ画像</FormLabel>

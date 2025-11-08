@@ -33,6 +33,7 @@ export default function Youtube() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(false);
     getLive();
   }, []);

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 "use client";
 
@@ -60,11 +59,18 @@ import {
   newsUpdateOnSubmitSchema,
 } from "@/lib/news/verification";
 import { cn, newsLinkCategory } from "@/lib/utils";
+import { getApproverList } from "@/lib/permission/actions";
 
 interface Props {
   id: string;
   fetchListData: (id: string) => Promise<void>;
 }
+
+type Approver = {
+  userId: string;
+  userDisplayName: string | null;
+  userName: string | null;
+}[];
 
 export default function NewsUpdateForm(props: Props) {
   const { id, fetchListData } = props;
@@ -75,6 +81,8 @@ export default function NewsUpdateForm(props: Props) {
   const [openToDate, setOpenToDate] = useState(false);
 
   const [isReady, setIsReady] = useState<boolean>(false);
+  const [approver, setApprover] = useState<Approver>([]);
+
   const form = useForm<newsUpdateOnSubmitSchemaType>({
     resolver: zodResolver(newsUpdateOnSubmitSchema),
     defaultValues: newsUpdateOnSubmitSchemaDV,
@@ -82,6 +90,13 @@ export default function NewsUpdateForm(props: Props) {
 
   const fetchData = async (id: string) => {
     setIsReady(false);
+    const resAvr = await getApproverList({ categoryLink: "news" });
+    if (resAvr !== null) {
+      setApprover(resAvr);
+    } else {
+      setApprover([]);
+    }
+
     const res = await getByIdAdmin({ id: id });
     if (res !== null) {
       form.reset({ ...res, linkCategory: String(res.linkCategory) });
@@ -90,13 +105,12 @@ export default function NewsUpdateForm(props: Props) {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     dialogOpen && fetchData(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<newsUpdateOnSubmitSchemaType> = async (
-    data: newsUpdateOnSubmitSchemaType
+    data: newsUpdateOnSubmitSchemaType,
   ) => {
     let newBlob: string | null = null;
     if (data.image !== null && typeof data.image !== "string") {
@@ -122,7 +136,7 @@ export default function NewsUpdateForm(props: Props) {
   };
 
   const onError: SubmitErrorHandler<newsUpdateOnSubmitSchemaType> = (
-    errors
+    errors,
   ) => {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
@@ -146,7 +160,7 @@ export default function NewsUpdateForm(props: Props) {
       {
         method: "POST",
         body: file,
-      }
+      },
     );
 
     const newBlob = (await response.json()) as PutBlobResult;
@@ -157,7 +171,7 @@ export default function NewsUpdateForm(props: Props) {
     const dataTransfer = new DataTransfer();
 
     Array.from(event.target.files!).forEach((image) =>
-      dataTransfer.items.add(image)
+      dataTransfer.items.add(image),
     );
 
     const files = dataTransfer.files;
@@ -301,7 +315,7 @@ export default function NewsUpdateForm(props: Props) {
                             variant={"outline"}
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                             onClick={(date) => {
                               field.onChange(date);
@@ -353,7 +367,7 @@ export default function NewsUpdateForm(props: Props) {
                             variant={"outline"}
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                             onClick={(date) => {
                               field.onChange(date);
@@ -453,6 +467,39 @@ export default function NewsUpdateForm(props: Props) {
                     <FormLabel>表示順</FormLabel>
                     <FormControl hidden={!isReady}>
                       <Input type="number" {...field} />
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="approvedUserId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>承認者</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={String(field.value)}
+                      >
+                        <SelectTrigger className="w-full" hidden={!isReady}>
+                          <SelectValue placeholder="承認者" {...field} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {approver.map((v) => (
+                            <SelectItem key={v.userId} value={v.userId}>
+                              {v.userDisplayName
+                                ? v.userDisplayName
+                                : v.userName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <Skeleton
                       hidden={isReady}

@@ -31,7 +31,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signOut: "/sign-out",
   },
   callbacks: {
-    async session({ session, user }) {
+    async session({ session, user, token }) {
       if (session?.user) {
         session.user.id = user.id;
       }

@@ -24,6 +24,7 @@ export default function News() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(false);
     getNews();
   }, []);
@@ -63,7 +64,7 @@ export default function News() {
                       <Skeleton className="w-[40%] h-6 mt-2" />
                     </div>
                   </div>
-                </article>
+                </article>,
               );
             }
             return <>{rows}</>;

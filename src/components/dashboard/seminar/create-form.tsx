@@ -86,6 +86,7 @@ export default function SeminarCreateForm(props: Props) {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(true);
   }, []);
 

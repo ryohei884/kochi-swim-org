@@ -54,22 +54,6 @@ const user: userType[] = [
     image: null,
     role: "administrator",
   },
-  {
-    name: "承認者",
-    displayName: "承認者",
-    email: process.env.PRISMA_APPROVER_EMAIL,
-    emailVerified: null,
-    image: null,
-    role: "approver",
-  },
-  {
-    name: "編集者",
-    displayName: "編集者",
-    email: process.env.PRISMA_EDITOR_EMAIL,
-    emailVerified: null,
-    image: null,
-    role: "editor",
-  },
 ];
 
 const category: categoryType[] = [

@@ -54,7 +54,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { getById, update } from "@/lib/meet/actions";
+import { getByIdAdmin, update } from "@/lib/meet/actions";
 import {
   meetUpdateOnSubmitSchemaDV,
   meetUpdateOnSubmitSchema,
@@ -100,14 +100,13 @@ export default function MeetUpdateForm(props: Props) {
   });
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     dialogOpen && fetchData(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
 
   const fetchData = async (id: string) => {
     setIsReady(false);
-    const res = await getById({ id: id });
+    const res = await getByIdAdmin({ id: id });
     if (res !== null) {
       reset({
         ...res,

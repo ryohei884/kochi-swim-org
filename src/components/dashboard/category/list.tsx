@@ -36,7 +36,7 @@ export default function CategoryList() {
 
   const fetchListData = async (data?: categoryWithUserSchemaType) => {
     setIsReady(false);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
     data && setCallbackData(data);
     const res = await getList();
     if (res !== null) {
@@ -49,6 +49,7 @@ export default function CategoryList() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchListData();
   }, []);
 

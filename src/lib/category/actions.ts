@@ -8,6 +8,7 @@ import type {
 
 import { auth } from "@/auth";
 import { prisma } from "@/prisma";
+import { cache } from "react";
 
 export async function getById(prop: categoryGetByIdSchemaType) {
   const { id } = prop;
@@ -114,8 +115,7 @@ export async function update(prop: categoryUpdateSchemaType) {
     }
   }
 }
-
-export async function getList() {
+export const getList = cache(async () => {
   const res = await prisma.category.findMany({
     include: { createdUser: true, updatedUser: true },
     orderBy: [
@@ -128,7 +128,7 @@ export async function getList() {
     ],
   });
   return res;
-}
+});
 
 export async function exclude(prop: categoryExcludeSchemaType) {
   const { id } = prop;

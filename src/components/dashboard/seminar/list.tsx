@@ -50,7 +50,7 @@ export default function SeminarList(props: Props) {
 
   const fetchListData = async (id?: string, page?: number) => {
     setIsReady(false);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
     data && setCallbackData(id);
     const res = await getList(page);
 
@@ -89,7 +89,6 @@ export default function SeminarList(props: Props) {
             <TableHead>追加資料</TableHead>
             <TableHead>作成者</TableHead>
             <TableHead>更新者</TableHead>
-            <TableHead>承認状態</TableHead>
             <TableHead>承認者</TableHead>
             <TableHead className="text-center">変更</TableHead>
             <TableHead className="text-center">削除</TableHead>
@@ -103,9 +102,6 @@ export default function SeminarList(props: Props) {
                 for (let i = 0; i < dataNum; i++) {
                   rows.push(
                     <TableRow key={i}>
-                      <TableCell>
-                        <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
-                      </TableCell>
                       <TableCell>
                         <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                       </TableCell>
@@ -189,9 +185,6 @@ export default function SeminarList(props: Props) {
                       {d.revisedUser?.displayName || d.revisedUser?.name}
                     </TableCell>
                     <TableCell>
-                      {d.approved && <CheckIcon className="size-4" />}
-                    </TableCell>
-                    <TableCell>
                       {d.approvedUser?.displayName || d.approvedUser?.name}
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
@@ -209,11 +202,17 @@ export default function SeminarList(props: Props) {
                       />
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      <ApproveForm
-                        key={d.id}
-                        id={d.id}
-                        fetchListData={fetchListData}
-                      />
+                      {d.approved ? (
+                        <Button variant="ghost" size="sm" disabled>
+                          <CheckIcon className="size-4" />
+                        </Button>
+                      ) : (
+                        <ApproveForm
+                          key={d.id}
+                          id={d.id}
+                          fetchListData={fetchListData}
+                        />
+                      )}
                     </TableCell>
                   </TableRow>
                 );

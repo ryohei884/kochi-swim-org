@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
-import { getById, approve } from "@/lib/meet/actions";
+import { getByIdAdmin, approve } from "@/lib/meet/actions";
 import {
   meetWithUserSchemaDV,
   meetWithUserSchema,
@@ -62,14 +62,13 @@ export default function MeetApproveForm(props: Props) {
   });
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     dialogOpen && fetchData(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
 
   const fetchData = async (id: string) => {
     setIsReady(false);
-    const res = await getById({ id: id });
+    const res = await getByIdAdmin({ id: id });
     if (res !== null) {
       form.reset(res);
       setIsReady(true);

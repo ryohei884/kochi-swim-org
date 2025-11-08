@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, Lock } from "lucide-react";
 
 import type { newsWithUserSchemaType } from "@/lib/news/verification";
 
@@ -32,26 +32,48 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import type { DefaultSession } from "@auth/core/types";
 
-interface Props {
-  page: string;
+interface Session {
+  user: {
+    role: "administrator" | "user";
+  } & DefaultSession["user"];
 }
 
+type Permission = {
+  categoryId: string;
+  categoryName: string;
+  categoryLink: string;
+  view: boolean;
+  submit: boolean;
+  revise: boolean;
+  exclude: boolean;
+  approve: boolean;
+}[];
+
+type Props = {
+  session: Session | null;
+  permission: Permission;
+  page: string;
+};
+
 export default function NewsList(props: Props) {
-  const { page } = props;
+  const { page, session, permission } = props;
   const [previousPage, setPreviousPage] = useState<number>(Number(page) - 1);
   const [nextPage, setNextPage] = useState<number>(Number(page) + 1);
   const [data, setData] = useState<newsWithUserSchemaType[]>([]);
   const [callbackData, setCallbackData] = useState<string | undefined>(
-    undefined
+    undefined,
   );
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(3);
   const [maxOrder, setMaxOrder] = useState<number>(0);
+  // const [session, setSsn] = useState<Session | null>(null);
+  const [pms, setPms] = useState<Permission>(
+    permission.filter((v) => v.categoryLink === "news"),
+  );
 
   const fetchListData = async (id?: string) => {
-    setIsReady(false);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     data && setCallbackData(id);
     const res = await getListAdmin();
     if (res !== null) {
@@ -75,15 +97,33 @@ export default function NewsList(props: Props) {
   };
 
   useEffect(() => {
+    setIsReady(false);
     fetchListData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (isReady) {
+    if (!session || !session.user.role) {
+      return null;
+    }
+
+    if (
+      pms.filter((v) => v.view === true).length === 0 &&
+      session.user.role !== "administrator"
+    ) {
+      return null;
+    }
+  }
 
   return (
     <>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight p-2 flex justify-between">
         ニュース{" "}
-        <CreateForm fetchListData={fetchListData} maxOrder={maxOrder} />
+        {isReady &&
+          (pms.filter((v) => v.submit === true).length > 0 ||
+            session?.user.role === "administrator") && (
+            <CreateForm fetchListData={fetchListData} maxOrder={maxOrder} />
+          )}
       </h4>
       <hr />
       <Table>
@@ -98,7 +138,6 @@ export default function NewsList(props: Props) {
             <TableHead>最終更新日</TableHead>
             <TableHead>作成者</TableHead>
             <TableHead>更新者</TableHead>
-            <TableHead>承認状態</TableHead>
             <TableHead>承認者</TableHead>
             <TableHead className="text-center">変更</TableHead>
             <TableHead className="text-center">削除</TableHead>
@@ -142,9 +181,6 @@ export default function NewsList(props: Props) {
                       <TableCell>
                         <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                       </TableCell>
-                      <TableCell>
-                        <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
-                      </TableCell>
                       <TableCell className="flex-none text-center w-12">
                         <Button variant="ghost">
                           <Skeleton className="size-6 border border-input file:border-0" />
@@ -160,7 +196,7 @@ export default function NewsList(props: Props) {
                           <Skeleton className="size-6 border border-input file:border-0" />
                         </Button>
                       </TableCell>
-                    </TableRow>
+                    </TableRow>,
                   );
                 }
                 return <>{rows}</>;
@@ -203,31 +239,54 @@ export default function NewsList(props: Props) {
                       {d.revisedUser?.displayName || d.revisedUser?.name}
                     </TableCell>
                     <TableCell>
-                      {d.approved && <CheckIcon className="size-4" />}
-                    </TableCell>
-                    <TableCell>
                       {d.approvedUser?.displayName || d.approvedUser?.name}
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      <UpdateForm
-                        key={d.id}
-                        id={d.id}
-                        fetchListData={fetchListData}
-                      />
+                      {pms.filter((v) => v.revise === true).length === 0 &&
+                      session?.user.role !== "administrator" ? (
+                        <Button variant="ghost" size="sm" disabled>
+                          <Lock className="size-4" />
+                        </Button>
+                      ) : (
+                        <UpdateForm
+                          key={d.id}
+                          id={d.id}
+                          fetchListData={fetchListData}
+                        />
+                      )}
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      <ExcludeForm
-                        key={d.id}
-                        id={d.id}
-                        fetchListData={fetchListData}
-                      />
+                      {pms.filter((v) => v.exclude === true).length === 0 &&
+                      session?.user.role !== "administrator" ? (
+                        <Button variant="ghost" size="sm" disabled>
+                          <Lock className="size-4" />
+                        </Button>
+                      ) : (
+                        <ExcludeForm
+                          key={d.id}
+                          id={d.id}
+                          fetchListData={fetchListData}
+                        />
+                      )}
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      <ApproveForm
-                        key={d.id}
-                        id={d.id}
-                        fetchListData={fetchListData}
-                      />
+                      {(pms.filter((v) => v.approve === true).length === 0 ||
+                        d.approvedUserId !== session?.user.id) &&
+                      session?.user.role !== "administrator" ? (
+                        <Button variant="ghost" size="sm" disabled>
+                          <Lock className="size-4" />
+                        </Button>
+                      ) : d.approved ? (
+                        <Button variant="ghost" size="sm" disabled>
+                          <CheckIcon className="size-4" />
+                        </Button>
+                      ) : (
+                        <ApproveForm
+                          key={d.id}
+                          id={d.id}
+                          fetchListData={fetchListData}
+                        />
+                      )}
                     </TableCell>
                   </TableRow>
                 );

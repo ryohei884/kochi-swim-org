@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 
 "use client";
@@ -60,11 +59,18 @@ import {
   newsCreateOnSubmitSchemaDV,
 } from "@/lib/news/verification";
 import { cn, newsLinkCategory } from "@/lib/utils";
+import { getApproverList } from "@/lib/permission/actions";
 
 interface Props {
   fetchListData: (id: string) => Promise<void>;
   maxOrder: number;
 }
+
+type Approver = {
+  userId: string;
+  userDisplayName: string | null;
+  userName: string | null;
+}[];
 
 export default function NewsCreateForm(props: Props) {
   const { fetchListData, maxOrder } = props;
@@ -75,6 +81,7 @@ export default function NewsCreateForm(props: Props) {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [openFromDate, setOpenFromDate] = useState(false);
   const [openToDate, setOpenToDate] = useState(false);
+  const [approver, setApprover] = useState<Approver>([]);
 
   const form = useForm<newsCreateOnSubmitSchemaType>({
     // @ts-expect-error React-Hook-Formのエラーだから無視
@@ -82,9 +89,21 @@ export default function NewsCreateForm(props: Props) {
     defaultValues: newsCreateOnSubmitSchemaDV,
   });
 
+  const fetchApproverData = async () => {
+    const res = await getApproverList({ categoryLink: "news" });
+    if (res !== null) {
+      setApprover(res);
+      setIsReady(true);
+    } else {
+      setApprover([]);
+      setIsReady(true);
+    }
+  };
+
   useEffect(() => {
+    setIsReady(false);
+    fetchApproverData();
     form.setValue("order", maxOrder);
-    setIsReady(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maxOrder]);
 
@@ -211,7 +230,6 @@ export default function NewsCreateForm(props: Props) {
               <FormField
                 control={form.control}
                 name="image"
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 render={({ field: { onChange, value, ...rest } }) => (
                   <FormItem>
                     <FormLabel>イメージ画像</FormLabel>
@@ -355,7 +373,10 @@ export default function NewsCreateForm(props: Props) {
                         </SelectTrigger>
                         <SelectContent>
                           {newsLinkCategory.map((value, index) => (
-                            <SelectItem key={index} value={String(value.id)}>
+                            <SelectItem
+                              key={`linkCategory_${index}`}
+                              value={String(value.id)}
+                            >
                               {value.name}
                             </SelectItem>
                           ))}
@@ -393,6 +414,39 @@ export default function NewsCreateForm(props: Props) {
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="approvedUserId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>承認者</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <Select onValueChange={field.onChange}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="承認者" {...field} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {approver.map((value, index) => (
+                            <SelectItem
+                              key={`approvedUserId_${index}`}
+                              value={String(value.userId)}
+                            >
+                              {value.userDisplayName
+                                ? value.userDisplayName
+                                : value.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

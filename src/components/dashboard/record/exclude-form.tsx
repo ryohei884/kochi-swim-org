@@ -36,7 +36,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ButtonGroup } from "@/components/ui/button-group";
 
-import { getById, exclude } from "@/lib/record/actions";
+import { getByIdAdmin, exclude } from "@/lib/record/actions";
 import { recordSchemaDV, recordSchema } from "@/lib/record/verification";
 import {
   intToTime,
@@ -63,7 +63,7 @@ export default function RecordExcludeForm(props: Props) {
 
   const fetchData = async (id: string) => {
     setIsReady(false);
-    const res = await getById(id);
+    const res = await getByIdAdmin(id);
     if (res !== null) {
       form.reset(res);
       setIsReady(true);
@@ -71,7 +71,6 @@ export default function RecordExcludeForm(props: Props) {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     dialogOpen && fetchData(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);

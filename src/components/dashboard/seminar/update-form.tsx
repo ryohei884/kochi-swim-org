@@ -45,7 +45,7 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { getById, update } from "@/lib/seminar/actions";
+import { getByIdAdmin, update } from "@/lib/seminar/actions";
 import {
   seminarUpdateOnSubmitSchemaDV,
   seminarUpdateOnSubmitSchema,
@@ -91,14 +91,13 @@ export default function SeminarUpdateForm(props: Props) {
   });
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     dialogOpen && fetchData(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
 
   const fetchData = async (id: string) => {
     setIsReady(false);
-    const res = await getById({ id: id });
+    const res = await getByIdAdmin({ id: id });
     if (res !== null) {
       reset({
         ...res,

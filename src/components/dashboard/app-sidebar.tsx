@@ -11,6 +11,7 @@ import {
   Timer,
   CalendarCheck2,
   MessageSquare,
+  Component,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,16 +24,26 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import type { DefaultSession } from "@auth/core/types";
 
 // This is sample data.
 const data = {
   navMain: [
     {
-      name: "ユーザー管理",
-      link: "user",
+      name: "カテゴリ管理",
+      link: "category",
+      order: 0,
+      role: 2,
+      icon: Component,
+      only: ["administrator"],
+    },
+    {
+      name: "グループ権限管理",
+      link: "group",
       order: 0,
       role: 2,
       icon: Users,
+      only: ["administrator"],
     },
     {
       name: "お知らせ",
@@ -40,6 +51,7 @@ const data = {
       order: 1,
       role: 4,
       icon: Megaphone,
+      only: [],
     },
     {
       name: "競技会情報",
@@ -47,6 +59,7 @@ const data = {
       order: 2,
       role: 4,
       icon: Trophy,
+      only: [],
     },
     {
       name: "ライブ配信",
@@ -54,6 +67,7 @@ const data = {
       order: 3,
       role: 4,
       icon: Video,
+      only: [],
     },
     {
       name: "県記録",
@@ -61,6 +75,7 @@ const data = {
       order: 4,
       role: 4,
       icon: Timer,
+      only: [],
     },
     {
       name: "講習会情報",
@@ -68,6 +83,7 @@ const data = {
       order: 5,
       role: 4,
       icon: CalendarCheck2,
+      only: [],
     },
   ],
   navSecondary: [
@@ -84,9 +100,33 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface Session {
+  user: {
+    role: "administrator" | "user";
+  } & DefaultSession["user"];
+}
+
+type Permission = {
+  categoryId: string;
+  categoryName: string;
+  categoryLink: string;
+  view: boolean;
+  submit: boolean;
+  revise: boolean;
+  exclude: boolean;
+  approve: boolean;
+}[];
+
+type Props = {
+  session: Session | null;
+  permission: Permission;
+};
+
+export function AppSidebar(props: Props) {
+  const { session, permission } = props;
+
   return (
-    <Sidebar className="border-r-0" {...props}>
+    <Sidebar className="border-r-0">
       <SidebarHeader>
         <Link href="/" className="-m-1.5 p-1.5 inline-flex" replace>
           <span className="sr-only">高知県水泳連盟</span>
@@ -106,7 +146,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           />
           <div className="px-4 text-2xl font-bold">高知県水泳連盟</div>
         </Link>
-        <NavMain items={data.navMain} />
+        <NavMain
+          items={data.navMain}
+          session={session}
+          permission={permission}
+        />
       </SidebarHeader>
       <SidebarContent>
         <NavSecondary items={data.navSecondary} className="mt-auto" />

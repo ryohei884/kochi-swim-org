@@ -76,6 +76,17 @@ export async function getById(id: string) {
   const res = await prisma.record.findFirst({
     where: {
       id: id,
+      approved: true,
+    },
+    include: { createdUser: true, revisedUser: true, approvedUser: true },
+  });
+  return res;
+}
+
+export async function getByIdAdmin(id: string) {
+  const res = await prisma.record.findFirst({
+    where: {
+      id: id,
     },
     include: { createdUser: true, revisedUser: true, approvedUser: true },
   });

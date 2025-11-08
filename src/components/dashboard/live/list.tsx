@@ -54,7 +54,7 @@ export default function LiveList(props: Props) {
 
   const fetchListData = async (id?: string) => {
     setIsReady(false);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
     data && setCallbackData(id);
     const res = await getList(Number(page));
     if (res !== null) {
