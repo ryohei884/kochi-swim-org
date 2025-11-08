@@ -11,7 +11,7 @@ import type {
 import { auth } from "@/auth";
 import { prisma } from "@/prisma";
 
-export async function getList(kind: number, year: number, page: number) {
+export async function getList(kind: number, year: number) {
   const nextYear: number = Number(year) + 1;
   const res = await prisma.meet.findMany({
     where: {
@@ -39,8 +39,6 @@ export async function getList(kind: number, year: number, page: number) {
         revisedAt: "asc",
       },
     ],
-    skip: page ? (page - 1) * 10 : undefined,
-    take: page ? 10 : undefined,
   });
   return res;
 }

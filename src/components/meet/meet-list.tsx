@@ -9,13 +9,6 @@ import Link from "next/link";
 import type { meetWithUserSchemaType } from "@/lib/meet/verification";
 
 import { Button } from "@/components/ui/button";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -34,7 +27,6 @@ import { useRouter } from "next/navigation";
 interface Props {
   kind: "swimming" | "diving" | "waterpolo" | "as" | "ow";
   year: number;
-  page: number;
 }
 
 type meetListWithOpenType = meetWithUserSchemaType & {
@@ -42,16 +34,14 @@ type meetListWithOpenType = meetWithUserSchemaType & {
 };
 export default function MeetList(props: Props) {
   const router = useRouter();
-  const { kind, year, page } = props;
-  const previousPage = Number(page) - 1;
-  const nextPage = Number(page) + 1;
+  const { kind, year } = props;
   const [meet, setMeet] = useState<meetListWithOpenType[]>([]);
   const [meetNum, setMeetNum] = useState<number>(3);
   const [isReady, setIsReady] = useState<boolean>(false);
 
-  const getMeet = async (kind: string, year: number, page: number) => {
+  const getMeet = async (kind: string, year: number) => {
     const kindNum = meetKind.find((v) => v.href === kind)?.id || 0;
-    const meetList = await getList(kindNum, year, page);
+    const meetList = await getList(kindNum, year);
     const meetListWithOpen = meetList.map((v) => {
       return { ...v, open: false };
     });
@@ -62,7 +52,7 @@ export default function MeetList(props: Props) {
   };
 
   const handleChange = (e: string) => {
-    router.push(`/meet/${e}/1`);
+    router.push(`/meet/${e}`);
     setIsReady(false);
   };
 
@@ -80,8 +70,8 @@ export default function MeetList(props: Props) {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(false);
-    getMeet(kind, year, page);
-  }, [kind, year, page]);
+    getMeet(kind, year);
+  }, [kind, year]);
 
   return (
     <div className="bg-white py-24 sm:py-32 dark:bg-gray-900">
@@ -311,23 +301,6 @@ export default function MeetList(props: Props) {
                     </TableBody>
                   </Table>
                   <hr />
-                  <Pagination className="mt-16 flex items-center justify-between">
-                    <PaginationContent className="-mt-px flex w-0 flex-1">
-                      <PaginationItem className="inline-flex items-center">
-                        <PaginationPrevious
-                          href={`/meet/${kind}/${year}/${previousPage}`}
-                          hidden={previousPage < 1}
-                        />
-                      </PaginationItem>
-                      <PaginationItem className="-mt-px flex w-0 flex-1 justify-end">
-                        <PaginationNext
-                          href={`/meet/${kind}/${year}/${nextPage}`}
-                          className="inline-flex items-center"
-                          hidden={meetNum <= page * 10}
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
                 </TabsContent>
               </Tabs>
             </Tabs>

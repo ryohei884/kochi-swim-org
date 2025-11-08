@@ -13,7 +13,7 @@ export default async function Page({
   return (
     <>
       <Header />
-      <MeetList kind={kind} year={thisYear} page={1} />
+      <MeetList kind={kind} year={thisYear} />
       <Footer />
     </>
   );

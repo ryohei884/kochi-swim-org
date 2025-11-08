@@ -10,7 +10,7 @@ export default function Page() {
   return (
     <>
       <Header />
-      <MeetList kind="swimming" year={thisYear} page={1} />
+      <MeetList kind="swimming" year={thisYear} />
       <Footer />
     </>
   );
