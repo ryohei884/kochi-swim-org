@@ -184,9 +184,9 @@ export default function MeetList(props: Props) {
                                   }
                                 </TableCell>
                                 <TableCell>
-                                  {m.description === null &&
-                                  m.detail === null &&
-                                  m.attachment === null ? null : (
+                                  {!m.description &&
+                                  !m.detail &&
+                                  !m.attachment ? null : (
                                     <Button
                                       onClick={() => handleOpen(m.id)}
                                       variant="ghost"
