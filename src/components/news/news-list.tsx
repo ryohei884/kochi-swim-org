@@ -87,7 +87,7 @@ export default function NewsList(props: Props) {
                             <Skeleton className="w-80 h-6 mt-5" />
                           </div>
                         </div>
-                      </article>,
+                      </article>
                     );
                   }
                   return <>{rows}</>;
@@ -104,9 +104,9 @@ export default function NewsList(props: Props) {
                         height={336}
                         priority={true}
                         src={post.image ? `${post.image}` : "/logo.svg"}
-                        className="absolute inset-0 size-full rounded-2xl bg-gray-50 object-cover dark:bg-gray-800"
+                        className="absolute inset-0 aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0 rounded-2xl bg-gray-50 object-cover dark:bg-gray-800"
                       />
-                      <div className="absolute inset-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
+                      <div className="absolute inset-0 aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
                     </div>
                     <div>
                       <div className="flex items-center gap-x-4 text-xs">
@@ -121,7 +121,7 @@ export default function NewsList(props: Props) {
                             href={
                               "/" +
                               (newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory,
+                                (v) => v.id === post.linkCategory
                               )?.href || "") +
                               "/" +
                               (post.linkString !== null ? post.linkString : "")
@@ -130,7 +130,7 @@ export default function NewsList(props: Props) {
                           >
                             {
                               newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory,
+                                (v) => v.id === post.linkCategory
                               )?.name
                             }
                           </Link>
@@ -145,7 +145,7 @@ export default function NewsList(props: Props) {
                           {post.detail}
                         </p>
                       </div>
-                      {post.linkCategory && post.linkString !== null && (
+                      {/* {post.linkCategory && post.linkString !== null && (
                         <div>
                           <Link
                             href={
@@ -162,7 +162,7 @@ export default function NewsList(props: Props) {
                             詳細へ <span aria-hidden="true">→</span>
                           </Link>
                         </div>
-                      )}
+                      )} */}
                     </div>
                   </article>
                 ))}
