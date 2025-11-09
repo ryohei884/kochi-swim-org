@@ -126,7 +126,7 @@ export default function MeetList(props: Props) {
                         <TableHead>会場</TableHead>
                         <TableHead>水路</TableHead>
                         <TableHead>詳細</TableHead>
-                        <TableHead>結果</TableHead>
+                        {kind === "swimming" && <TableHead>結果</TableHead>}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -151,9 +151,11 @@ export default function MeetList(props: Props) {
                                   <TableCell>
                                     <Skeleton className="w-16 h-5 my-2" />
                                   </TableCell>
-                                  <TableCell>
-                                    <Skeleton className="w-16 h-5 my-2" />
-                                  </TableCell>
+                                  {kind === "swimming" && (
+                                    <TableCell>
+                                      <Skeleton className="w-16 h-5 my-2" />
+                                    </TableCell>
+                                  )}
                                 </TableRow>
                               );
                             }
@@ -182,36 +184,42 @@ export default function MeetList(props: Props) {
                                   }
                                 </TableCell>
                                 <TableCell>
-                                  <Button
-                                    onClick={() => handleOpen(m.id)}
-                                    variant="ghost"
-                                  >
-                                    {m.open ? (
-                                      <ChevronsDownUp />
-                                    ) : (
-                                      <ChevronsUpDown />
-                                    )}
-                                  </Button>
-                                </TableCell>
-                                <TableCell>
-                                  {m.result ? (
-                                    <Button variant="ghost">
-                                      {m.code !== null ? (
-                                        <Link
-                                          href={`https://result.swim.or.jp/tournament/${m.code}`}
-                                          rel="noopener noreferrer"
-                                          target="_blank"
-                                        >
-                                          <Check />
-                                        </Link>
+                                  {m.description === null &&
+                                  m.detail === null &&
+                                  m.attachment === null ? null : (
+                                    <Button
+                                      onClick={() => handleOpen(m.id)}
+                                      variant="ghost"
+                                    >
+                                      {m.open ? (
+                                        <ChevronsDownUp />
                                       ) : (
-                                        <Check />
+                                        <ChevronsUpDown />
                                       )}
                                     </Button>
-                                  ) : (
-                                    ""
                                   )}
                                 </TableCell>
+                                {kind === "swimming" && (
+                                  <TableCell>
+                                    {m.result ? (
+                                      <Button variant="ghost">
+                                        {m.code !== null ? (
+                                          <Link
+                                            href={`https://result.swim.or.jp/tournament/${m.code}`}
+                                            rel="noopener noreferrer"
+                                            target="_blank"
+                                          >
+                                            <Check />
+                                          </Link>
+                                        ) : (
+                                          <Check />
+                                        )}
+                                      </Button>
+                                    ) : (
+                                      ""
+                                    )}
+                                  </TableCell>
+                                )}
                               </TableRow>
                               {m.open && (
                                 <TableRow className="bg-accent">
