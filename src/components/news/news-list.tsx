@@ -87,7 +87,7 @@ export default function NewsList(props: Props) {
                             <Skeleton className="w-80 h-6 mt-5" />
                           </div>
                         </div>
-                      </article>,
+                      </article>
                     );
                   }
                   return <>{rows}</>;
@@ -111,17 +111,17 @@ export default function NewsList(props: Props) {
                     <div>
                       <div className="flex items-center gap-x-4 text-xs">
                         <time
-                          dateTime={String(post.revisedAt)}
+                          dateTime={String(post.createdAt)}
                           className="text-gray-500 dark:text-gray-400"
                         >
-                          {format(post.revisedAt, "PPP", { locale: ja })}
+                          {format(post.createdAt, "PPP", { locale: ja })}
                         </time>
                         {post.linkCategory && (
                           <Link
                             href={
                               "/" +
                               (newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory,
+                                (v) => v.id === post.linkCategory
                               )?.href || "") +
                               "/" +
                               (post.linkString !== null ? post.linkString : "")
@@ -130,7 +130,7 @@ export default function NewsList(props: Props) {
                           >
                             {
                               newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory,
+                                (v) => v.id === post.linkCategory
                               )?.name
                             }
                           </Link>
