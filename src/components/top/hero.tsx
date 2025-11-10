@@ -58,7 +58,26 @@ export default function Hero() {
                             aria-hidden="true"
                             className="absolute inset-0"
                           />
-                          ライブ中継へ <span aria-hidden="true">&rarr;</span>
+                          ライブ配信へ <span aria-hidden="true">&rarr;</span>
+                        </Link>
+                      </div>
+                    )}
+                </div>
+                <div className="flex mb-10 sm:hidden">
+                  {live.url !== null &&
+                    live.meet !== null &&
+                    isReady &&
+                    live.meet?.title !== "" && (
+                      <div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-500 ring-1 ring-gray-900/10 hover:ring-gray-900/20 dark:text-gray-400 dark:ring-white/10 dark:hover:ring-white/20">
+                        <Link
+                          href="/live"
+                          className="animate-pulse font-semibold whitespace-nowrap text-indigo-600 dark:text-indigo-400"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="absolute inset-0"
+                          />
+                          ライブ配信中 <span aria-hidden="true">&rarr;</span>
                         </Link>
                       </div>
                     )}

@@ -60,14 +60,22 @@ import {
   meetUpdateOnSubmitSchema,
 } from "@/lib/meet/verification";
 import { cn, meetKind, poolSize } from "@/lib/utils";
+import { getApproverList } from "@/lib/permission/actions";
+
+type Approver = {
+  userId: string;
+  userDisplayName: string | null;
+  userName: string | null;
+}[];
 
 interface Props {
   id: string;
   fetchListData: (id: string) => Promise<void>;
+  approver: Approver;
 }
 
 export default function MeetUpdateForm(props: Props) {
-  const { id, fetchListData } = props;
+  const { id, fetchListData, approver } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [openFromDate, setOpenFromDate] = useState(false);
@@ -106,6 +114,7 @@ export default function MeetUpdateForm(props: Props) {
 
   const fetchData = async (id: string) => {
     setIsReady(false);
+
     const res = await getByIdAdmin({ id: id });
     if (res !== null) {
       reset({
@@ -666,7 +675,7 @@ export default function MeetUpdateForm(props: Props) {
                 </div>
               </FormItem>
               <FormField
-                control={form.control}
+                control={control}
                 name="result"
                 render={({ field }) => (
                   <FormItem>
@@ -684,6 +693,39 @@ export default function MeetUpdateForm(props: Props) {
                             : "結果未掲載"}
                         </Label>
                       </div>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="approvedUserId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>承認者</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={String(field.value)}
+                      >
+                        <SelectTrigger className="w-full" hidden={!isReady}>
+                          <SelectValue placeholder="承認者" {...field} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {approver.map((v) => (
+                            <SelectItem key={v.userId} value={v.userId}>
+                              {v.userDisplayName
+                                ? v.userDisplayName
+                                : v.userName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <Skeleton
                       hidden={isReady}

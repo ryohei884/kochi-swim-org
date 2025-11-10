@@ -16,7 +16,7 @@ export async function getList(page?: number) {
     include: { createdUser: true, meet: true },
     orderBy: [
       {
-        order: "asc",
+        order: "desc",
       },
       {
         createdAt: "asc",
@@ -33,7 +33,7 @@ export async function getListAdmin(page?: number) {
     include: { createdUser: true, meet: true },
     orderBy: [
       {
-        order: "asc",
+        order: "desc",
       },
       {
         createdAt: "asc",
@@ -167,41 +167,37 @@ export async function getLiveNow() {
 }
 
 export async function reOrder() {
-  await prisma.$transaction(async (prisma) => {
-    const list = await prisma.live.findMany({
-      where: {
-        order: { gt: 0 },
+  const list = await prisma.live.findMany({
+    where: {
+      order: { gt: 0 },
+    },
+    orderBy: [
+      {
+        order: "desc",
       },
-      orderBy: [
-        {
-          order: "asc",
-        },
-        {
-          onAir: "asc",
-        },
-        {
-          finished: "asc",
-        },
-        {
-          fromDate: "asc",
-        },
-        {
-          createdAt: "asc",
-        },
-      ],
-    });
-
-    if (!list) throw Error("There is no live data.");
-
-    for (let i = 0; i < list.length; i++) {
-      await prisma.live.update({
-        where: {
-          id: list[i].id,
-        },
-        data: {
-          order: i + 1,
-        },
-      });
-    }
+      {
+        fromDate: "asc",
+      },
+      {
+        createdAt: "asc",
+      },
+    ],
   });
+
+  if (!list) throw Error("There is no live data.");
+
+  await Promise.all(
+    list.map(async (l, index) => {
+      if (l.order !== index + 1) {
+        await prisma.live.update({
+          where: {
+            id: l.id,
+          },
+          data: {
+            order: index + 1,
+          },
+        });
+      }
+    }),
+  );
 }

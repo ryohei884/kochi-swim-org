@@ -11,7 +11,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SquareCheck, Square } from "lucide-react";
+import { SquareCheck, Minus } from "lucide-react";
 
 // import type { DefaultSession } from "@auth/core/types";
 
@@ -98,7 +98,7 @@ export default function PC(props: Props) {
                         </Button>
                       ) : (
                         <Button variant="ghost" size="sm" disabled>
-                          <Square className="size-4" />
+                          <Minus className="size-4" />
                         </Button>
                       )}
                     </TableCell>
@@ -109,7 +109,7 @@ export default function PC(props: Props) {
                         </Button>
                       ) : (
                         <Button variant="ghost" size="sm" disabled>
-                          <Square className="size-4" />
+                          <Minus className="size-4" />
                         </Button>
                       )}
                     </TableCell>
@@ -120,7 +120,7 @@ export default function PC(props: Props) {
                         </Button>
                       ) : (
                         <Button variant="ghost" size="sm" disabled>
-                          <Square className="size-4" />
+                          <Minus className="size-4" />
                         </Button>
                       )}
                     </TableCell>
@@ -131,7 +131,7 @@ export default function PC(props: Props) {
                         </Button>
                       ) : (
                         <Button variant="ghost" size="sm" disabled>
-                          <Square className="size-4" />
+                          <Minus className="size-4" />
                         </Button>
                       )}
                     </TableCell>
@@ -142,7 +142,7 @@ export default function PC(props: Props) {
                         </Button>
                       ) : (
                         <Button variant="ghost" size="sm" disabled>
-                          <Square className="size-4" />
+                          <Minus className="size-4" />
                         </Button>
                       )}
                     </TableCell>

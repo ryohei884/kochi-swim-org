@@ -42,7 +42,7 @@ export default function LiveList(props: Props) {
   const [data, setData] = useState<liveWithUserSchemaType[]>([]);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [callbackData, setCallbackData] = useState<string | undefined>(
-    undefined
+    undefined,
   );
   const [dataNum, setDataNum] = useState<number>(3);
   const [maxOrder, setMaxOrder] = useState<number>(0);
@@ -62,7 +62,7 @@ export default function LiveList(props: Props) {
       const listNum = await getListAdminNum();
       setDataNum(listNum);
       const orders = res.map((value) => value.order);
-      setMaxOrder(Math.max(...orders) + 1);
+      setMaxOrder(listNum + 1);
       if (page !== undefined) {
         setPreviousPage(Number(page) - 1);
         setNextPage(Number(page) + 1);
@@ -141,7 +141,7 @@ export default function LiveList(props: Props) {
                           <Skeleton className="size-6 border border-input file:border-0" />
                         </Button>
                       </TableCell>
-                    </TableRow>
+                    </TableRow>,
                   );
                 }
                 return <>{rows}</>;
@@ -158,7 +158,8 @@ export default function LiveList(props: Props) {
                       {d.title.length > 10 && "..."}
                     </TableCell>
                     <TableCell>
-                      {d.fromDate && format(d.fromDate, "PPP", { locale: ja })}{" "}
+                      {d.fromDate &&
+                        format(d.fromDate, "PPP", { locale: ja })}{" "}
                     </TableCell>
                     <TableCell>
                       {d.meet && d.meet.title.substring(0, 10)}
@@ -184,13 +185,6 @@ export default function LiveList(props: Props) {
                         id={d.id}
                         fetchListData={fetchListData}
                       />
-                    </TableCell>
-                    <TableCell className="flex-none text-center w-12">
-                      {/* <ApproveForm
-                        key={d.id}
-                        id={d.id}
-                        fetchListData={fetchListData}
-                      /> */}
                     </TableCell>
                   </TableRow>
                 );

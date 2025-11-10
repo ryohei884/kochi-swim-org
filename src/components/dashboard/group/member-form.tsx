@@ -109,7 +109,7 @@ export default function MemberForm(props: Props) {
         })
         .map((user) => {
           return {
-            name: user.name ? user.name : "",
+            name: user.displayName ? user.displayName : (user.name ?? ""),
             id: user.id,
           };
         });

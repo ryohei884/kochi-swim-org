@@ -106,7 +106,6 @@ export const meetCreateSchema = meetSchema.omit({
   id: true,
   createdUserId: true,
   revisedUserId: true,
-  approvedUserId: true,
   createdAt: true,
   revisedAt: true,
   approvedAt: true,
@@ -128,6 +127,7 @@ export const meetCreateSchemaDV: meetCreateSchemaType = {
   poolsize: meetSchemaDV.poolsize,
   detail: meetSchemaDV.detail,
   attachment: meetSchemaDV.attachment,
+  approvedUserId: meetSchemaDV.approvedUserId,
 };
 
 // meetCreateOnSubmitSchema
@@ -136,7 +136,6 @@ export const meetCreateOnSubmitSchema = meetSchema
     id: true,
     createdUserId: true,
     revisedUserId: true,
-    approvedUserId: true,
     createdAt: true,
     revisedAt: true,
     approvedAt: true,
@@ -184,6 +183,7 @@ export const meetCreateOnSubmitSchemaDV: meetCreateOnSubmitSchemaType = {
   description: meetSchemaDV.description,
   detail: [{ value: "", name: "" }],
   attachment: [{ value: "", name: "" }],
+  approvedUserId: meetSchemaDV.approvedUserId,
 };
 
 // meetUpdateOnSubmitSchema
@@ -191,7 +191,6 @@ export const meetUpdateOnSubmitSchema = meetSchema
   .omit({
     createdUserId: true,
     revisedUserId: true,
-    approvedUserId: true,
     createdAt: true,
     revisedAt: true,
     approvedAt: true,
@@ -242,6 +241,7 @@ export const meetUpdateOnSubmitSchemaDV: meetUpdateOnSubmitSchemaType = {
   description: meetSchemaDV.description,
   detail: [{ value: "", name: "" }],
   attachment: [{ value: "", name: "" }],
+  approvedUserId: meetSchemaDV.approvedUserId,
 };
 
 // meetGetByIdSchema
@@ -277,7 +277,6 @@ export const meetGetByIdSchemaDV: meetGetByIdSchemaType = {
 export const meetUpdateSchema = meetSchema.omit({
   createdUserId: true,
   revisedUserId: true,
-  approvedUserId: true,
   createdAt: true,
   revisedAt: true,
   approvedAt: true,
@@ -300,6 +299,7 @@ export const meetUpdateSchemaDV: meetUpdateSchemaType = {
   poolsize: meetSchemaDV.poolsize,
   detail: meetSchemaDV.detail,
   attachment: meetSchemaDV.attachment,
+  approvedUserId: meetSchemaDV.approvedUserId,
 };
 
 // meetExcludeSchema

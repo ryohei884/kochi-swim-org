@@ -59,8 +59,8 @@ type Props = {
 
 export default function NewsList(props: Props) {
   const { page, session, permission } = props;
-  const [previousPage, setPreviousPage] = useState<number>(Number(page) - 1);
-  const [nextPage, setNextPage] = useState<number>(Number(page) + 1);
+  const previousPage = Number(page) - 1;
+  const nextPage = Number(page) + 1;
   const [data, setData] = useState<newsWithUserSchemaType[]>([]);
   const [callbackData, setCallbackData] = useState<string | undefined>(
     undefined,
@@ -69,19 +69,12 @@ export default function NewsList(props: Props) {
   const [dataNum, setDataNum] = useState<number>(3);
   const [maxOrder, setMaxOrder] = useState<number>(0);
   // const [session, setSsn] = useState<Session | null>(null);
-  const [pms, setPms] = useState<Permission>(
-    permission.filter((v) => v.categoryLink === "news"),
-  );
+  const pms: Permission = permission.filter((v) => v.categoryLink === "news");
 
   const fetchListData = async (id?: string) => {
     data && setCallbackData(id);
     const res = await getListAdmin();
     if (res !== null) {
-      if (page !== undefined) {
-        setPreviousPage(Number(page) - 1);
-        setNextPage(Number(page) + 1);
-      }
-
       setData(res);
       const newsNum = await getListNumAdmin();
       setDataNum(newsNum);
@@ -242,7 +235,10 @@ export default function NewsList(props: Props) {
                       {d.approvedUser?.displayName || d.approvedUser?.name}
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      {pms.filter((v) => v.revise === true).length === 0 &&
+                      {(pms.filter((v) => v.revise === true).length === 0 ||
+                        (d.approved === true &&
+                          d.createdUserId !== session?.user.id &&
+                          d.revisedUserId !== session?.user.id)) &&
                       session?.user.role !== "administrator" ? (
                         <Button variant="ghost" size="sm" disabled>
                           <Lock className="size-4" />
@@ -256,7 +252,8 @@ export default function NewsList(props: Props) {
                       )}
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      {pms.filter((v) => v.exclude === true).length === 0 &&
+                      {(pms.filter((v) => v.exclude === true).length === 0 ||
+                        d.createdUserId !== session?.user.id) &&
                       session?.user.role !== "administrator" ? (
                         <Button variant="ghost" size="sm" disabled>
                           <Lock className="size-4" />
@@ -270,15 +267,15 @@ export default function NewsList(props: Props) {
                       )}
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      {(pms.filter((v) => v.approve === true).length === 0 ||
-                        d.approvedUserId !== session?.user.id) &&
-                      session?.user.role !== "administrator" ? (
-                        <Button variant="ghost" size="sm" disabled>
-                          <Lock className="size-4" />
-                        </Button>
-                      ) : d.approved ? (
+                      {d.approved ? (
                         <Button variant="ghost" size="sm" disabled>
                           <CheckIcon className="size-4" />
+                        </Button>
+                      ) : (pms.filter((v) => v.approve === true).length === 0 ||
+                          d.approvedUserId !== session?.user.id) &&
+                        session?.user.role !== "administrator" ? (
+                        <Button variant="ghost" size="sm" disabled>
+                          <Lock className="size-4" />
                         </Button>
                       ) : (
                         <ApproveForm

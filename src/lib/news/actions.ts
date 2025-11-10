@@ -276,15 +276,19 @@ export async function reOrder() {
 
     if (!list) throw Error("There is no news data.");
 
-    for (let i = 0; i < list.length; i++) {
-      await prisma.news.update({
-        where: {
-          id: list[i].id,
-        },
-        data: {
-          order: i + 1,
-        },
-      });
-    }
+    await Promise.all(
+      list.map(async (l, index) => {
+        if (l.order !== index + 1) {
+          await prisma.news.update({
+            where: {
+              id: l.id,
+            },
+            data: {
+              order: index + 1,
+            },
+          });
+        }
+      }),
+    );
   });
 }

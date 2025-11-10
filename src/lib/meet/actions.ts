@@ -137,6 +137,7 @@ export async function create(prop: meetCreateSchemaType) {
         detail: data.detail !== "[]" ? data.detail : null,
         attachment: data.attachment !== "[]" ? data.attachment : null,
         createdUserId: session?.user?.id,
+        approvedUserId: data.approvedUserId,
         approved: false,
       },
     });
@@ -228,7 +229,7 @@ export async function update(prop: meetUpdateSchemaType) {
         detail: data.detail !== "[]" ? data.detail : null,
         attachment: data.attachment !== "[]" ? data.attachment : null,
         revisedUserId: session?.user?.id,
-        approvedUserId: null,
+        approvedUserId: data.approvedUserId,
         approved: false,
       },
     });

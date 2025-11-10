@@ -12,6 +12,7 @@ import {
   CalendarCheck2,
   MessageSquare,
   Component,
+  LogOut,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -96,6 +97,11 @@ const data = {
       title: "お問い合わせ",
       url: "../contact",
       icon: MessageSquare,
+    },
+    {
+      title: "サインアウト",
+      url: "sign-out",
+      icon: LogOut,
     },
   ],
 };

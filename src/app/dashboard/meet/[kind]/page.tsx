@@ -1,11 +1,52 @@
 import MeetList from "@/components/dashboard/meet/list";
+import { getPermissionList, getApproverList } from "@/lib/permission/actions";
+
+import { auth } from "@/auth";
+
+type Permission = {
+  categoryId: string;
+  categoryName: string;
+  categoryLink: string;
+  view: boolean;
+  submit: boolean;
+  revise: boolean;
+  exclude: boolean;
+  approve: boolean;
+}[];
+
+type Approver = {
+  userId: string;
+  userDisplayName: string | null;
+  userName: string | null;
+}[];
+
 export default async function Page({
   params,
 }: {
   params: Promise<{ kind: "swimming" | "diving" | "waterpolo" | "as" | "ow" }>;
 }) {
   const { kind } = await params;
+  const session = await auth();
+  let permission: Permission = [];
+
+  if (!session?.user.id) {
+    return null;
+  } else {
+    permission = await getPermissionList();
+  }
+
+  const approver: Approver = await getApproverList({ categoryLink: "meet" });
+
   const dt = new Date();
   const thisYear = dt.getFullYear();
-  return <MeetList kind={kind} year={thisYear} page={1} />;
+  return (
+    <MeetList
+      kind={kind}
+      year={thisYear}
+      page={1}
+      session={session}
+      permission={permission}
+      approver={approver}
+    />
+  );
 }

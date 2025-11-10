@@ -1,11 +1,10 @@
 "use client";
 
-// import ReOrder from "@/components/dashboard/news/reorder";
 import { useEffect, useState } from "react";
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { CheckIcon, ExternalLink, Stamp } from "lucide-react";
+import { CheckIcon, ExternalLink, Lock, Copy } from "lucide-react";
 import Link from "next/link";
 
 import type { meetWithUserSchemaType } from "@/lib/meet/verification";
@@ -41,16 +40,49 @@ import {
 } from "@/lib/meet/actions";
 import { meetKind, poolSize } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+import type { DefaultSession } from "@auth/core/types";
+
+interface Session {
+  user: {
+    role: "administrator" | "user";
+  } & DefaultSession["user"];
+}
+
+type Permission = {
+  categoryId: string;
+  categoryName: string;
+  categoryLink: string;
+  view: boolean;
+  submit: boolean;
+  revise: boolean;
+  exclude: boolean;
+  approve: boolean;
+}[];
+
+type Approver = {
+  userId: string;
+  userDisplayName: string | null;
+  userName: string | null;
+}[];
 
 interface Props {
   kind: "swimming" | "diving" | "waterpolo" | "as" | "ow";
   year: number;
   page: number;
+  session: Session | null;
+  permission: Permission;
+  approver: Approver;
 }
 
 export default function MeetList(props: Props) {
   const router = useRouter();
-  const { kind, year, page } = props;
+  const { kind, year, page, session, permission, approver } = props;
   const previousPage = Number(page) - 1;
   const nextPage = Number(page) + 1;
   const [data, setData] = useState<meetWithUserSchemaType[]>([]);
@@ -59,6 +91,8 @@ export default function MeetList(props: Props) {
   );
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(3);
+
+  const pms: Permission = permission.filter((v) => v.categoryLink === "meet");
 
   const fetchData = async (
     kind: string,
@@ -131,10 +165,32 @@ export default function MeetList(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kind, year, page]);
 
+  if (isReady) {
+    if (!session || !session.user.role) {
+      return null;
+    }
+
+    if (
+      pms.filter((v) => v.view === true).length === 0 &&
+      session.user.role !== "administrator"
+    ) {
+      return null;
+    }
+  }
+
+  const copyToClipboard = async (meetId: string) => {
+    await global.navigator.clipboard.writeText(meetId);
+  };
+
   return (
     <>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight p-2 flex justify-between">
-        競技会情報 <CreateForm fetchListData={fetchListData} />
+        競技会情報{" "}
+        {isReady &&
+          (pms.filter((v) => v.submit === true).length > 0 ||
+            session?.user.role === "administrator") && (
+            <CreateForm fetchListData={fetchListData} approver={approver} />
+          )}
       </h4>
       <Tabs
         defaultValue={`${kind}/${year}`}
@@ -168,13 +224,12 @@ export default function MeetList(props: Props) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>大会コード</TableHead>
+                  <TableHead>ID</TableHead>
+                  {kind === "swimming" && <TableHead>大会コード</TableHead>}
                   <TableHead>大会名</TableHead>
-                  <TableHead>競技種別</TableHead>
                   <TableHead>開催期間</TableHead>
                   <TableHead>会場</TableHead>
                   <TableHead>水路</TableHead>
-                  <TableHead>申込締切</TableHead>
                   <TableHead>要項</TableHead>
                   <TableHead>追加資料</TableHead>
                   <TableHead>作成者</TableHead>
@@ -195,6 +250,11 @@ export default function MeetList(props: Props) {
                             <TableCell>
                               <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                             </TableCell>
+                            {kind === "swimming" && (
+                              <TableCell>
+                                <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                              </TableCell>
+                            )}
                             <TableCell>
                               <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                             </TableCell>
@@ -248,26 +308,41 @@ export default function MeetList(props: Props) {
                           key={d.id}
                           className={callbackData === d.id ? "bg-muted" : ""}
                         >
-                          <TableCell className="flex justify-between">
-                            {d.code && d.kind === 1 && (
-                              <>
-                                {d.code}
-                                <Link
-                                  href={`https://result.swim.or.jp/tournament/${d.code}`}
-                                  rel="noopener noreferrer"
-                                  target="_blank"
+                          <TableCell>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  onClick={() => copyToClipboard(d.id)}
                                 >
-                                  <ExternalLink className="size-4" />
-                                </Link>
-                              </>
-                            )}
+                                  <Copy className="size-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>コピー</p>
+                              </TooltipContent>
+                            </Tooltip>
                           </TableCell>
+                          {kind === "swimming" && (
+                            <TableCell className="flex items-center-safe">
+                              {d.code && (
+                                <Button variant="link" className="pl-0">
+                                  <Link
+                                    href={`https://result.swim.or.jp/tournament/${d.code}`}
+                                    rel="noopener noreferrer"
+                                    target="_blank"
+                                    className="flex  items-center-safe"
+                                  >
+                                    {d.code}
+                                    <ExternalLink className="size-4 ml-2" />
+                                  </Link>
+                                </Button>
+                              )}
+                            </TableCell>
+                          )}
                           <TableCell>
                             {d.title.substring(0, 10)}
                             {d.title.length > 10 && "..."}
-                          </TableCell>
-                          <TableCell>
-                            {meetKind.find((v) => v.id === d.kind)?.kind}
                           </TableCell>
                           <TableCell>
                             {d.fromDate &&
@@ -278,10 +353,6 @@ export default function MeetList(props: Props) {
                           <TableCell>{d.place}</TableCell>
                           <TableCell>
                             {poolSize.find((v) => v.id === d.poolsize)?.size}
-                          </TableCell>
-                          <TableCell>
-                            {d.deadline &&
-                              format(d.deadline, "PPP", { locale: ja })}
                           </TableCell>
                           <TableCell>
                             {d.detail && d.detail !== "[]" && (
@@ -304,24 +375,52 @@ export default function MeetList(props: Props) {
                               d.approvedUser?.name}
                           </TableCell>
                           <TableCell className="flex-none text-center w-12">
-                            <UpdateForm
-                              key={d.id}
-                              id={d.id}
-                              fetchListData={fetchListData}
-                            />
+                            {(pms.filter((v) => v.revise === true).length ===
+                              0 ||
+                              (d.approved === true &&
+                                d.createdUserId !== session?.user.id &&
+                                d.revisedUserId !== session?.user.id)) &&
+                            session?.user.role !== "administrator" ? (
+                              <Button variant="ghost" size="sm" disabled>
+                                <Lock className="size-4" />
+                              </Button>
+                            ) : (
+                              <UpdateForm
+                                key={d.id}
+                                id={d.id}
+                                fetchListData={fetchListData}
+                                approver={approver}
+                              />
+                            )}
                           </TableCell>
                           <TableCell className="flex-none text-center w-12">
-                            <ExcludeForm
-                              key={d.id}
-                              id={d.id}
-                              fetchListData={fetchListData}
-                            />
+                            {(pms.filter((v) => v.exclude === true).length ===
+                              0 ||
+                              d.createdUserId !== session?.user.id) &&
+                            session?.user.role !== "administrator" ? (
+                              <Button variant="ghost" size="sm" disabled>
+                                <Lock className="size-4" />
+                              </Button>
+                            ) : (
+                              <ExcludeForm
+                                key={d.id}
+                                id={d.id}
+                                fetchListData={fetchListData}
+                              />
+                            )}
                           </TableCell>
 
                           <TableCell className="flex-none text-center w-12">
                             {d.approved ? (
                               <Button variant="ghost" size="sm" disabled>
                                 <CheckIcon className="size-4" />
+                              </Button>
+                            ) : (pms.filter((v) => v.approve === true)
+                                .length === 0 ||
+                                d.approvedUserId !== session?.user.id) &&
+                              session?.user.role !== "administrator" ? (
+                              <Button variant="ghost" size="sm" disabled>
+                                <Lock className="size-4" />
                               </Button>
                             ) : (
                               <ApproveForm
@@ -357,7 +456,6 @@ export default function MeetList(props: Props) {
           </TabsContent>
         </Tabs>
       </Tabs>
-      {/* <ReOrder fetchListData={fetchListData} /> */}
     </>
   );
 }

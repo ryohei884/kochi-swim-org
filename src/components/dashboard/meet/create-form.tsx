@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -57,13 +58,21 @@ import {
 } from "@/lib/meet/verification";
 import { cn, meetKind, poolSize } from "@/lib/utils";
 
+type Approver = {
+  userId: string;
+  userDisplayName: string | null;
+  userName: string | null;
+}[];
+
 interface Props {
   fetchListData: (id?: string) => Promise<void>;
+  approver: Approver;
 }
 
 export default function MeetCreateForm(props: Props) {
-  const { fetchListData } = props;
-  const [isReady, setIsReady] = useState<boolean>(false);
+  const { fetchListData, approver } = props;
+  const [isReady, setIsReady] = useState<boolean>(true);
+
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [openFromDate, setOpenFromDate] = useState(false);
   const [openToDate, setOpenToDate] = useState(false);
@@ -93,11 +102,6 @@ export default function MeetCreateForm(props: Props) {
     control,
     name: "attachment",
   });
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsReady(true);
-  }, []);
 
   type UploadFileProps = {
     value?: string | FileList;
@@ -137,6 +141,7 @@ export default function MeetCreateForm(props: Props) {
   const onSubmit: SubmitHandler<meetCreateOnSubmitSchemaType> = async (
     data: meetCreateOnSubmitSchemaType,
   ) => {
+    setIsReady(false);
     const detailBlob = await uploadFile(data.detail);
     const attachmentBlob = await uploadFile(data.attachment);
 
@@ -157,6 +162,7 @@ export default function MeetCreateForm(props: Props) {
     fetchListData(res.id);
     setDialogOpen(false);
     reset();
+    setIsReady(true);
   };
 
   const onError: SubmitErrorHandler<meetCreateOnSubmitSchemaType> = (
@@ -173,6 +179,7 @@ export default function MeetCreateForm(props: Props) {
         },
       },
     });
+    setIsReady(true);
   };
 
   const dt = new Date();
@@ -573,6 +580,39 @@ export default function MeetCreateForm(props: Props) {
                         </Label>
                       </div>
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="approvedUserId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>承認者</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <Select onValueChange={field.onChange}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="承認者" {...field} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {approver.map((value, index) => (
+                            <SelectItem
+                              key={`approvedUserId_${index}`}
+                              value={String(value.userId)}
+                            >
+                              {value.userDisplayName
+                                ? value.userDisplayName
+                                : value.userName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
