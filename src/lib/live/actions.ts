@@ -28,7 +28,31 @@ export async function getList(page?: number) {
   return res;
 }
 
+export async function getListAdmin(page?: number) {
+  const res = await prisma.live.findMany({
+    include: { createdUser: true, meet: true },
+    orderBy: [
+      {
+        order: "asc",
+      },
+      {
+        createdAt: "asc",
+      },
+    ],
+    skip: page ? (page - 1) * 10 : undefined,
+    take: page ? 10 : undefined,
+  });
+  return res;
+}
+
 export async function getListNum() {
+  const res = await prisma.live.count({
+    where: { OR: [{ onAir: true }, { finished: true }] },
+  });
+  return res;
+}
+
+export async function getListAdminNum() {
   const res = await prisma.live.count();
   return res;
 }
@@ -151,6 +175,12 @@ export async function reOrder() {
       orderBy: [
         {
           order: "asc",
+        },
+        {
+          onAir: "asc",
+        },
+        {
+          finished: "asc",
         },
         {
           fromDate: "asc",

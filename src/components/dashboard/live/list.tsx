@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getList, getListNum } from "@/lib/live/actions";
+import { getListAdmin, getListAdminNum } from "@/lib/live/actions";
 import ReOrder from "@/components/dashboard/live/reorder";
 
 interface Props {
@@ -42,7 +42,7 @@ export default function LiveList(props: Props) {
   const [data, setData] = useState<liveWithUserSchemaType[]>([]);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [callbackData, setCallbackData] = useState<string | undefined>(
-    undefined,
+    undefined
   );
   const [dataNum, setDataNum] = useState<number>(3);
   const [maxOrder, setMaxOrder] = useState<number>(0);
@@ -56,10 +56,10 @@ export default function LiveList(props: Props) {
     setIsReady(false);
 
     data && setCallbackData(id);
-    const res = await getList(Number(page));
+    const res = await getListAdmin(Number(page));
     if (res !== null) {
       setData(res);
-      const listNum = await getListNum();
+      const listNum = await getListAdminNum();
       setDataNum(listNum);
       const orders = res.map((value) => value.order);
       setMaxOrder(Math.max(...orders) + 1);
@@ -141,7 +141,7 @@ export default function LiveList(props: Props) {
                           <Skeleton className="size-6 border border-input file:border-0" />
                         </Button>
                       </TableCell>
-                    </TableRow>,
+                    </TableRow>
                   );
                 }
                 return <>{rows}</>;
@@ -158,8 +158,7 @@ export default function LiveList(props: Props) {
                       {d.title.length > 10 && "..."}
                     </TableCell>
                     <TableCell>
-                      {d.fromDate &&
-                        format(d.fromDate, "PPP", { locale: ja })}{" "}
+                      {d.fromDate && format(d.fromDate, "PPP", { locale: ja })}{" "}
                     </TableCell>
                     <TableCell>
                       {d.meet && d.meet.title.substring(0, 10)}

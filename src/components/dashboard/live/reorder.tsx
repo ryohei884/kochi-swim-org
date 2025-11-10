@@ -3,7 +3,7 @@
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { reOrder } from "@/lib/news/actions";
+import { reOrder } from "@/lib/live/actions";
 
 interface Props {
   fetchListData: () => Promise<void>;
