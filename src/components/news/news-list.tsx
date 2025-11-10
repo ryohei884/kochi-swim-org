@@ -87,7 +87,7 @@ export default function NewsList(props: Props) {
                             <Skeleton className="w-80 h-6 mt-5" />
                           </div>
                         </div>
-                      </article>
+                      </article>,
                     );
                   }
                   return <>{rows}</>;
@@ -121,7 +121,7 @@ export default function NewsList(props: Props) {
                             href={
                               "/" +
                               (newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory
+                                (v) => v.id === post.linkCategory,
                               )?.href || "") +
                               "/" +
                               (post.linkString !== null ? post.linkString : "")
@@ -130,7 +130,7 @@ export default function NewsList(props: Props) {
                           >
                             {
                               newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory
+                                (v) => v.id === post.linkCategory,
                               )?.name
                             }
                           </Link>

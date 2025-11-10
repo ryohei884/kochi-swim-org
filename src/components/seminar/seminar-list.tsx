@@ -109,7 +109,7 @@ export default function SeminarList(props: Props) {
                             <TableCell>
                               <Skeleton className="w-16 h-5 my-2" />
                             </TableCell>
-                          </TableRow>
+                          </TableRow>,
                         );
                       }
                       return <>{rows}</>;
@@ -163,7 +163,7 @@ export default function SeminarList(props: Props) {
                                     JSON.parse(m.detail!).map(
                                       (
                                         v: { value: string; name: string },
-                                        i: number
+                                        i: number,
                                       ) => {
                                         return (
                                           <Button
@@ -181,7 +181,7 @@ export default function SeminarList(props: Props) {
                                             </Link>
                                           </Button>
                                         );
-                                      }
+                                      },
                                     )}
                                 </div>
                               )}
@@ -192,7 +192,7 @@ export default function SeminarList(props: Props) {
                                     JSON.parse(m.attachment!).map(
                                       (
                                         v: { value: string; name: string },
-                                        i: number
+                                        i: number,
                                       ) => {
                                         return (
                                           <Button
@@ -210,7 +210,7 @@ export default function SeminarList(props: Props) {
                                             </Link>
                                           </Button>
                                         );
-                                      }
+                                      },
                                     )}
                                 </div>
                               )}

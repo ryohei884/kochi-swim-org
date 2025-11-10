@@ -30,13 +30,13 @@ const link = [
   {
     categoryId: 1,
     title: "日本水泳連盟",
-    href: "http://www.swim.or.jp/",
+    href: "https://aquatics.or.jp/",
     order: 1,
   },
   {
     categoryId: 2,
     title: "日本スイミングクラブ協会",
-    href: "http://www.sc-net.or.jp/",
+    href: "https://www.sc-net.or.jp/",
     order: 2,
   },
   {
@@ -48,7 +48,7 @@ const link = [
   {
     categoryId: 2,
     title: "四国スイミングクラブ協会  四国支部",
-    href: "http://sc-shikoku.net/",
+    href: "https://sc-shikoku.net/",
     order: 3,
   },
   {
@@ -72,13 +72,13 @@ const link = [
   {
     categoryId: 1,
     title: "徳島県水泳連盟",
-    href: "http://tokushima.swim.or.jp/",
+    href: "https://tokushima-swim.jp/",
     order: 8,
   },
   {
     categoryId: 2,
     title: "高知県スイミングクラブ協会",
-    href: "http://sc-shikoku.net/kochi/",
+    href: "https://sc-shikoku.net/kochi/",
     order: 4,
   },
 ];

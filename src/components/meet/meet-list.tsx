@@ -156,7 +156,7 @@ export default function MeetList(props: Props) {
                                       <Skeleton className="w-16 h-5 my-2" />
                                     </TableCell>
                                   )}
-                                </TableRow>
+                                </TableRow>,
                               );
                             }
                             return <>{rows}</>;
@@ -242,7 +242,7 @@ export default function MeetList(props: Props) {
                                                 value: string;
                                                 name: string;
                                               },
-                                              i: number
+                                              i: number,
                                             ) => {
                                               return (
                                                 <Button
@@ -262,7 +262,7 @@ export default function MeetList(props: Props) {
                                                   </Link>
                                                 </Button>
                                               );
-                                            }
+                                            },
                                           )}
                                       </div>
                                     )}
@@ -276,7 +276,7 @@ export default function MeetList(props: Props) {
                                                 value: string;
                                                 name: string;
                                               },
-                                              i: number
+                                              i: number,
                                             ) => {
                                               return (
                                                 <Button
@@ -296,7 +296,7 @@ export default function MeetList(props: Props) {
                                                   </Link>
                                                 </Button>
                                               );
-                                            }
+                                            },
                                           )}
                                       </div>
                                     )}
