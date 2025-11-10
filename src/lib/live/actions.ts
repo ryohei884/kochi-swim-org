@@ -12,6 +12,7 @@ import { prisma } from "@/prisma";
 
 export async function getList(page?: number) {
   const res = await prisma.live.findMany({
+    where: { OR: [{ onAir: true }, { finished: true }] },
     include: { createdUser: true, meet: true },
     orderBy: [
       {

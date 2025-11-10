@@ -47,7 +47,7 @@ const link = [
   },
   {
     categoryId: 2,
-    title: "四国スイミングクラブ協会  四国支部",
+    title: "日本スイミングクラブ協会 四国支部",
     href: "https://sc-shikoku.net/",
     order: 3,
   },
