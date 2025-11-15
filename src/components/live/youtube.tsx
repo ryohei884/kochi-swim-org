@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   MediaController,
@@ -16,7 +16,7 @@ import {
 } from "media-chrome/react";
 import ReactPlayer from "react-player";
 
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { getLiveNow } from "@/lib/live/actions";
 
