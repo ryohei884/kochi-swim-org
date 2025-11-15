@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
+  pool: true,
   host: process.env.EMAIL_CONTACT_HOST,
   port: 465,
   secure: true, // true for 465, false for other ports
@@ -9,9 +10,9 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_CONTACT_PASS,
   },
   dkim: {
-    domainName: process.env.EMAIL_CONTACT_DOMAIN,
-    keySelector: "2017",
-    privateKey: process.env.EMAIL_PRIVATE_KEY,
+    domainName: process.env.EMAIL_CONTACT_DOMAIN ?? "",
+    keySelector: process.env.EMAIL_KEY_SELECTOR ?? "",
+    privateKey: process.env.EMAIL_PRIVATE_KEY ?? "",
   },
 });
 
