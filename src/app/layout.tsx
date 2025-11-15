@@ -1,6 +1,7 @@
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
+import { Analytics } from "@vercel/analytics/next";
 
 import type { Metadata } from "next";
 
@@ -42,7 +43,10 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProvider>{children}</SessionProvider>
+        <SessionProvider>
+          {children}
+          <Analytics />
+        </SessionProvider>
         <Toaster position="bottom-center" />
         <SpeedInsights />
       </body>
