@@ -1,9 +1,9 @@
 import { type LineProfile } from "@auth/core/providers/line";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import type { PrismaClient } from "@prisma/client";
 import NextAuth from "next-auth";
 import LINE from "next-auth/providers/line";
 
+import type { PrismaClient } from "@/app/generated/prisma/client";
 import { prisma } from "@/prisma";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({

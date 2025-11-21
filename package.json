@@ -2,12 +2,11 @@
   "name": "swim-kochi-org",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "postinstall": "prisma generate --no-engine",
+    "postinstall": "prisma generate",
     "lint": "npx eslint --fix src/ --ignore-pattern 'src/app/generated/**/*'",
     "format": "npx prettier --write src && npx prisma format",
     "reset": "rm -rf ./prisma/migrations && prisma migrate reset",
