@@ -8,17 +8,16 @@ const navigation = {
     { name: "県記録", href: "record" },
     { name: "講習会情報", href: "seminar" },
   ],
-  //   recruitment: [
-  //     { name: "スポンサー募集", href: "#" },
-  //     { name: "競技役員募集", href: "#" },
-  //     { name: "指導者募集", href: "#" },
-  //     { name: "クラブ員募集", href: "#" },
-  //   ],
+  recruitment: [
+    //     { name: "スポンサー募集", href: "#" },
+    //     { name: "競技役員募集", href: "#" },
+    //     { name: "指導者募集", href: "#" },
+    { name: "直営クラブ", href: "club" },
+  ],
   association: [
     { name: "ご挨拶", href: "greetings" },
     { name: "法人概要", href: "overview" },
     { name: "関連団体", href: "link" },
-    // { name: "関連団体", href: "#" },
   ],
   //   legal: [
   //     { name: "利用規約", href: "#" },
@@ -116,7 +115,7 @@ export default function Footer() {
                   ))}
                 </ul>
               </div>
-              {/* <div className="mt-10 md:mt-0">
+              <div className="mt-10 md:mt-0">
                 <h3 className="text-sm/6 font-semibold text-gray-900 dark:text-white">
                   活動に参加したい方
                 </h3>
@@ -132,7 +131,7 @@ export default function Footer() {
                     </li>
                   ))}
                 </ul>
-              </div> */}
+              </div>
             </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
