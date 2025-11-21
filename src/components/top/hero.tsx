@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
-
 import Image from "next/image";
 import Link from "next/link";
-
-import type { liveWithUserSchemaType } from "@/lib/live/verification";
+import { useEffect, useState } from "react";
 
 import { getLiveNow } from "@/lib/live/actions";
+import type { liveWithUserSchemaType } from "@/lib/live/verification";
 import { liveWithUserSchemaDV } from "@/lib/live/verification";
 
 export default function Hero() {

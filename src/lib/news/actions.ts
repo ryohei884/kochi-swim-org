@@ -1,13 +1,12 @@
 "use server";
+import { auth } from "@/auth";
 import type {
+  newsApproveSchemaType,
   newsCreateSchemaType,
+  newsExcludeSchemaType,
   newsGetByIdSchemaType,
   newsUpdateSchemaType,
-  newsExcludeSchemaType,
-  newsApproveSchemaType,
 } from "@/lib/news/verification";
-
-import { auth } from "@/auth";
 import { prisma } from "@/prisma";
 
 export async function getList(page?: number) {

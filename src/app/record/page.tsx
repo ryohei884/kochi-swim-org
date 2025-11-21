@@ -1,9 +1,10 @@
 "use client";
 
 // import RecordTable from "@/components/record/record-table";
+import Link from "next/link";
+
 import Footer from "@/components/top/footer";
 import Header from "@/components/top/header";
-import Link from "next/link";
 export default function Page() {
   return (
     <>

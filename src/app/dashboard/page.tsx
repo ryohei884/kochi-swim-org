@@ -1,8 +1,7 @@
+import { auth } from "@/auth";
 import Account from "@/components/dashboard/account/account";
 import PC from "@/components/dashboard/account/permission-control";
 import { getPermissionList } from "@/lib/permission/actions";
-
-import { auth } from "@/auth";
 
 type Permission = {
   categoryId: string;

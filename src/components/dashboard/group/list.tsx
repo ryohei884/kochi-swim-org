@@ -1,11 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-
-import type { groupWithUserSchemaType } from "@/lib/group/verification";
+import { useEffect, useState } from "react";
 
 import CreateForm from "@/components/dashboard/group/create-form";
 import ExcludeForm from "@/components/dashboard/group/exclude-form";
@@ -24,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getList } from "@/lib/group/actions";
+import type { groupWithUserSchemaType } from "@/lib/group/verification";
 
 export default function GroupList() {
   const [data, setData] = useState<groupWithUserSchemaType[]>([]);

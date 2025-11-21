@@ -1,20 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { ExternalLink, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-import type {
-  seminarExcludeSchemaType,
-  seminarWithUserSchemaType,
-} from "@/lib/seminar/verification";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,24 +22,28 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
-  SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getByIdAdmin, exclude } from "@/lib/seminar/actions";
+import { exclude, getByIdAdmin } from "@/lib/seminar/actions";
+import type {
+  seminarExcludeSchemaType,
+  seminarWithUserSchemaType,
+} from "@/lib/seminar/verification";
 import {
-  seminarWithUserSchemaDV,
   seminarWithUserSchema,
+  seminarWithUserSchemaDV,
 } from "@/lib/seminar/verification";
 
 interface Props {
   id: string;
-  fetchListData: () => Promise<void>;
+  fetchListData: (id: string) => Promise<void>;
 }
 
 export default function SeminarExcludeForm(props: Props) {
@@ -84,7 +82,7 @@ export default function SeminarExcludeForm(props: Props) {
         onClick: () => console.log("Undo"),
       },
     });
-    fetchListData();
+    fetchListData(data.id);
     setDialogOpen(false);
   };
 

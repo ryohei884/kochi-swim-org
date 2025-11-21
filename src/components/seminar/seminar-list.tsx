@@ -1,12 +1,9 @@
 "use client";
-import { useState, useEffect, Fragment } from "react";
-
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { ChevronsUpDown, ChevronsDownUp } from "lucide-react";
+import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import Link from "next/link";
-
-import type { seminarWithUserSchemaType } from "@/lib/seminar/verification";
+import { Fragment, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +13,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -25,7 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getList, getListNum } from "@/lib/seminar/actions";
-import { Skeleton } from "@/components/ui/skeleton";
+import type { seminarWithUserSchemaType } from "@/lib/seminar/verification";
 
 interface Props {
   page: string;

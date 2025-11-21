@@ -1,12 +1,11 @@
 "use server";
-import type {
-  recordCreateSchemaType,
-  recordUpdateSchemaType,
-  recordExcludeSchemaType,
-  recordApproveSchemaType,
-} from "@/lib/record/verification";
-
 import { auth } from "@/auth";
+import type {
+  recordApproveSchemaType,
+  recordCreateSchemaType,
+  recordExcludeSchemaType,
+  recordUpdateSchemaType,
+} from "@/lib/record/verification";
 import { prisma } from "@/prisma";
 
 export async function getList(page?: number) {

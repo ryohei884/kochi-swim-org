@@ -1,18 +1,17 @@
 "use client";
 
-import * as React from "react";
-
+import type { DefaultSession } from "@auth/core/types";
 import {
-  UserRoundCog,
-  Users,
-  Megaphone,
-  Trophy,
-  Video,
-  Timer,
   CalendarCheck2,
-  MessageSquare,
   Component,
   LogOut,
+  Megaphone,
+  MessageSquare,
+  Timer,
+  Trophy,
+  UserRoundCog,
+  Users,
+  Video,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,7 +24,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import type { DefaultSession } from "@auth/core/types";
 
 // This is sample data.
 const data = {

@@ -1,12 +1,10 @@
 "use client";
 
-// import ReOrder from "@/components/dashboard/news/reorder";
-import { useEffect, useState } from "react";
-
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-
-import type { recordWithUserSchemaType } from "@/lib/record/verification";
+import { CheckIcon, Copy } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import ApproveForm from "@/components/dashboard/record/approve-form";
 import CreateForm from "@/components/dashboard/record/create-form";
@@ -24,17 +22,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getByIdAdmin, getListAdmin } from "@/lib/record/actions";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { getByIdAdmin, getListAdmin } from "@/lib/record/actions";
+import type { recordWithUserSchemaType } from "@/lib/record/verification";
+import {
+  copyToClipboard,
+  intToTime,
   recordCategory,
+  recordDistance,
   recordPoolsize,
   recordSex,
   recordStyle,
-  recordDistance,
-  intToTime,
 } from "@/lib/utils";
-import { useRouter } from "next/navigation";
-import { CheckIcon } from "lucide-react";
 
 interface Props {
   category: "prefecture" | "high" | "junior_high" | "elementary";
@@ -185,6 +188,7 @@ export default function RecordList(props: Props) {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>ID</TableHead>
                     <TableHead>種目</TableHead>
                     <TableHead>距離</TableHead>
                     <TableHead>タイム</TableHead>
@@ -210,7 +214,7 @@ export default function RecordList(props: Props) {
                             <TableRow key={i}>
                               {(function () {
                                 const cols = [];
-                                for (let j = 0; j < 12; j++) {
+                                for (let j = 0; j < 13; j++) {
                                   cols.push(
                                     <TableCell key={`${i}_${j}`}>
                                       <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
@@ -245,6 +249,21 @@ export default function RecordList(props: Props) {
                             key={d.id}
                             className={callbackData === d.id ? "bg-muted" : ""}
                           >
+                            <TableCell>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    onClick={() => copyToClipboard(d.id)}
+                                  >
+                                    <Copy className="size-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>コピー</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TableCell>
                             <TableCell>
                               {recordStyle.find((v) => v.id === d.style)?.label}
                             </TableCell>

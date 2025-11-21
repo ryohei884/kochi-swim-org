@@ -1,21 +1,18 @@
 // @ts-nocheck
 
 "use client";
-import { useState, useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { init } from "@paralleldrive/cuid2";
+import type { PutBlobResult } from "@vercel/blob";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { CalendarIcon } from "lucide-react";
-import { Plus } from "lucide-react";
+import { CalendarIcon, Plus } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-import type { newsCreateOnSubmitSchemaType } from "@/lib/news/verification";
-import type { PutBlobResult } from "@vercel/blob";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -43,28 +40,23 @@ import {
 } from "@/components/ui/select";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
-  SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { create } from "@/lib/news/actions";
+import type { newsCreateOnSubmitSchemaType } from "@/lib/news/verification";
 import {
   newsCreateOnSubmitSchema,
   newsCreateOnSubmitSchemaDV,
 } from "@/lib/news/verification";
 import { cn, newsLinkCategory } from "@/lib/utils";
-import { getApproverList } from "@/lib/permission/actions";
-
-interface Props {
-  fetchListData: (id: string) => Promise<void>;
-  maxOrder: number;
-}
 
 type Approver = {
   userId: string;
@@ -72,8 +64,14 @@ type Approver = {
   userName: string | null;
 }[];
 
+interface Props {
+  fetchListData: (id: string) => Promise<void>;
+  maxOrder: number;
+  approver: Approver;
+}
+
 export default function NewsCreateForm(props: Props) {
-  const { fetchListData, maxOrder } = props;
+  const { fetchListData, maxOrder, approver } = props;
 
   const [preview, setPreview] = useState("");
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -81,7 +79,6 @@ export default function NewsCreateForm(props: Props) {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [openFromDate, setOpenFromDate] = useState(false);
   const [openToDate, setOpenToDate] = useState(false);
-  const [approver, setApprover] = useState<Approver>([]);
 
   const form = useForm<newsCreateOnSubmitSchemaType>({
     // @ts-expect-error React-Hook-Formのエラーだから無視
@@ -89,21 +86,10 @@ export default function NewsCreateForm(props: Props) {
     defaultValues: newsCreateOnSubmitSchemaDV,
   });
 
-  const fetchApproverData = async () => {
-    const res = await getApproverList({ categoryLink: "news" });
-    if (res !== null) {
-      setApprover(res);
-      setIsReady(true);
-    } else {
-      setApprover([]);
-      setIsReady(true);
-    }
-  };
-
   useEffect(() => {
     setIsReady(false);
-    fetchApproverData();
     form.setValue("order", maxOrder);
+    setIsReady(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maxOrder]);
 

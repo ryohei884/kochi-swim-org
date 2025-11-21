@@ -1,12 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import Link from "next/link";
-
-import type { categoryWithUserSchemaType } from "@/lib/category/verification";
+import { useEffect, useState } from "react";
 
 import CreateForm from "@/components/dashboard/category/create-form";
 import ExcludeForm from "@/components/dashboard/category/exclude-form";
@@ -24,6 +21,7 @@ import {
 } from "@/components/ui/table";
 import { getList } from "@/lib/category/actions";
 import { categoryDisplay } from "@/lib/category/role";
+import type { categoryWithUserSchemaType } from "@/lib/category/verification";
 
 export default function CategoryList() {
   const [data, setData] = useState<categoryWithUserSchemaType[]>([]);

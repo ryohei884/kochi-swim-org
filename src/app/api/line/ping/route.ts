@@ -1,8 +1,7 @@
 // PING
+import type { ClientConfig } from "@line/bot-sdk";
 import { messagingApi } from "@line/bot-sdk";
 import { NextResponse } from "next/server";
-
-import type { ClientConfig } from "@line/bot-sdk";
 
 const clientConfig: ClientConfig = {
   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || "",
@@ -34,8 +33,8 @@ export async function POST(request: Request) {
             });
           }
         }
-      })()
-    )
+      })(),
+    ),
   );
 
   return NextResponse.json({ method: "POST" });

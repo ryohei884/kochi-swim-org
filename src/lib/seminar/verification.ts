@@ -98,7 +98,6 @@ export const seminarCreateSchema = seminarSchema.omit({
   id: true,
   createdUserId: true,
   revisedUserId: true,
-  approvedUserId: true,
   createdAt: true,
   revisedAt: true,
   approvedAt: true,
@@ -116,6 +115,7 @@ export const seminarCreateSchemaDV: seminarCreateSchemaType = {
   place: seminarSchemaDV.place,
   detail: seminarSchemaDV.detail,
   attachment: seminarSchemaDV.attachment,
+  approvedUserId: seminarSchemaDV.approvedUserId,
 };
 
 // seminarCreateOnSubmitSchema
@@ -124,7 +124,6 @@ export const seminarCreateOnSubmitSchema = seminarSchema
     id: true,
     createdUserId: true,
     revisedUserId: true,
-    approvedUserId: true,
     createdAt: true,
     revisedAt: true,
     approvedAt: true,
@@ -164,6 +163,7 @@ export const seminarCreateOnSubmitSchemaDV: seminarCreateOnSubmitSchemaType = {
   description: seminarSchemaDV.description,
   detail: [{ value: "", name: "" }],
   attachment: [{ value: "", name: "" }],
+  approvedUserId: seminarSchemaDV.approvedUserId,
 };
 
 // seminarUpdateOnSubmitSchema
@@ -171,7 +171,6 @@ export const seminarUpdateOnSubmitSchema = seminarSchema
   .omit({
     createdUserId: true,
     revisedUserId: true,
-    approvedUserId: true,
     createdAt: true,
     revisedAt: true,
     approvedAt: true,
@@ -214,6 +213,7 @@ export const seminarUpdateOnSubmitSchemaDV: seminarUpdateOnSubmitSchemaType = {
   description: seminarSchemaDV.description,
   detail: [{ value: "", name: "" }],
   attachment: [{ value: "", name: "" }],
+  approvedUserId: seminarSchemaDV.approvedUserId,
 };
 
 // seminarGetByIdSchema
@@ -245,7 +245,6 @@ export const seminarGetByIdSchemaDV: seminarGetByIdSchemaType = {
 export const seminarUpdateSchema = seminarSchema.omit({
   createdUserId: true,
   revisedUserId: true,
-  approvedUserId: true,
   createdAt: true,
   revisedAt: true,
   approvedAt: true,
@@ -264,6 +263,7 @@ export const seminarUpdateSchemaDV: seminarUpdateSchemaType = {
   place: seminarSchemaDV.place,
   detail: seminarSchemaDV.detail,
   attachment: seminarSchemaDV.attachment,
+  approvedUserId: seminarSchemaDV.approvedUserId,
 };
 
 // seminarExcludeSchema

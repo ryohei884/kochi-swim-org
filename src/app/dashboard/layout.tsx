@@ -1,11 +1,10 @@
+import { auth } from "@/auth";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-
-import { auth } from "@/auth";
 import { getPermissionList } from "@/lib/permission/actions";
 
 // import type { DefaultSession } from "@auth/core/types";

@@ -1,7 +1,6 @@
-import MeetList from "@/components/dashboard/meet/list";
-import { getPermissionList, getApproverList } from "@/lib/permission/actions";
-
 import { auth } from "@/auth";
+import MeetList from "@/components/dashboard/meet/list";
+import { getApproverList, getPermissionList } from "@/lib/permission/actions";
 
 type Permission = {
   categoryId: string;

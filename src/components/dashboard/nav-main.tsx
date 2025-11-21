@@ -1,5 +1,6 @@
 "use client";
 
+import type { DefaultSession } from "@auth/core/types";
 import { type LucideIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -8,8 +9,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-
-import type { DefaultSession } from "@auth/core/types";
 
 interface Session {
   user: {

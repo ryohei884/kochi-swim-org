@@ -1,16 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-import type { userSchemaType } from "@/lib/account/verification";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,8 +21,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { update } from "@/lib/account/actions";
-import { getUser } from "@/lib/account/actions";
+import { getUser, update } from "@/lib/account/actions";
+import type { userSchemaType } from "@/lib/account/verification";
 import { userSchema, userSchemaDV } from "@/lib/account/verification";
 
 export default function Account() {

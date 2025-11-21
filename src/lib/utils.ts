@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -108,4 +108,8 @@ export const timeToInt = (time: number) => {
   } else {
     return time;
   }
+};
+
+export const copyToClipboard = async (meetId: string) => {
+  await global.navigator.clipboard.writeText(meetId);
 };

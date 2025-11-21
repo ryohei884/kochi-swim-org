@@ -1,19 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import type { recordSchemaType } from "@/lib/record/verification";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
-
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import {
   Form,
   FormControl,
@@ -25,25 +23,24 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
-  SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ButtonGroup } from "@/components/ui/button-group";
-
-import { getByIdAdmin, exclude } from "@/lib/record/actions";
-import { recordSchemaDV, recordSchema } from "@/lib/record/verification";
+import { exclude, getByIdAdmin } from "@/lib/record/actions";
+import type { recordSchemaType } from "@/lib/record/verification";
+import { recordSchema, recordSchemaDV } from "@/lib/record/verification";
 import {
   intToTime,
   recordCategory,
+  recordDistance,
   recordPoolsize,
   recordSex,
-  recordDistance,
   recordStyle,
 } from "@/lib/utils";
 

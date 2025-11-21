@@ -1,7 +1,7 @@
 "use server";
-import type { userSchemaType } from "@/lib/group/verification";
 
 import { auth } from "@/auth";
+import type { userSchemaType } from "@/lib/group/verification";
 import { prisma } from "@/prisma";
 
 export async function getUser() {

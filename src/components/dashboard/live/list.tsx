@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-
-import type { liveWithUserSchemaType } from "@/lib/live/verification";
+import { Copy } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import CreateForm from "@/components/dashboard/live/create-form";
 import ExcludeForm from "@/components/dashboard/live/exclude-form";
+import ReOrder from "@/components/dashboard/live/reorder";
 import UpdateForm from "@/components/dashboard/live/update-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,8 +26,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { getListAdmin, getListAdminNum } from "@/lib/live/actions";
-import ReOrder from "@/components/dashboard/live/reorder";
+import type { liveWithUserSchemaType } from "@/lib/live/verification";
 
 interface Props {
   page: string;
@@ -76,6 +80,10 @@ export default function LiveList(props: Props) {
     }
   };
 
+  const copyToClipboard = async (meetId: string) => {
+    await global.navigator.clipboard.writeText(meetId);
+  };
+
   return (
     <>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight p-2 flex justify-between">
@@ -86,6 +94,7 @@ export default function LiveList(props: Props) {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>ID</TableHead>
             <TableHead>表示順</TableHead>
             <TableHead>タイトル</TableHead>
             <TableHead>配信開始日</TableHead>
@@ -104,6 +113,9 @@ export default function LiveList(props: Props) {
                 for (let i = 0; i < dataNum; i++) {
                   rows.push(
                     <TableRow key={i}>
+                      <TableCell>
+                        <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                      </TableCell>
                       <TableCell>
                         <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                       </TableCell>
@@ -152,6 +164,21 @@ export default function LiveList(props: Props) {
                     key={d.id}
                     className={callbackData === d.id ? "bg-muted" : ""}
                   >
+                    <TableCell>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            onClick={() => copyToClipboard(d.id)}
+                          >
+                            <Copy className="size-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>コピー</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TableCell>
                     <TableCell>{d.order}</TableCell>
                     <TableCell>
                       {d.title.substring(0, 10)}

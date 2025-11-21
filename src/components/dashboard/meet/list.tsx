@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
+import type { DefaultSession } from "@auth/core/types";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { CheckIcon, ExternalLink, Lock, Copy } from "lucide-react";
+import { CheckIcon, Copy, ExternalLink, Lock } from "lucide-react";
 import Link from "next/link";
-
-import type { meetWithUserSchemaType } from "@/lib/meet/verification";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import ApproveForm from "@/components/dashboard/meet/approve-form";
 import CreateForm from "@/components/dashboard/meet/create-form";
@@ -33,20 +32,18 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  getListPageAdmin,
-  getByIdAdmin,
-  getListAdmin,
-  getListNumAdmin,
-} from "@/lib/meet/actions";
-import { meetKind, poolSize } from "@/lib/utils";
-import { useRouter } from "next/navigation";
-import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-import type { DefaultSession } from "@auth/core/types";
+import {
+  getByIdAdmin,
+  getListAdmin,
+  getListNumAdmin,
+  getListPageAdmin,
+} from "@/lib/meet/actions";
+import type { meetWithUserSchemaType } from "@/lib/meet/verification";
+import { copyToClipboard, meetKind, poolSize } from "@/lib/utils";
 
 interface Session {
   user: {
@@ -177,10 +174,6 @@ export default function MeetList(props: Props) {
       return null;
     }
   }
-
-  const copyToClipboard = async (meetId: string) => {
-    await global.navigator.clipboard.writeText(meetId);
-  };
 
   return (
     <>

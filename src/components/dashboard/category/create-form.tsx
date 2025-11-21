@@ -1,17 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-import type {
-  categoryWithUserSchemaType,
-  categoryCreateSchemaType,
-} from "@/lib/category/verification";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -33,16 +27,20 @@ import {
 } from "@/components/ui/select";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
-  SheetFooter,
 } from "@/components/ui/sheet";
 import { create } from "@/lib/category/actions";
 import { categoryDisplay } from "@/lib/category/role";
+import type {
+  categoryCreateSchemaType,
+  categoryWithUserSchemaType,
+} from "@/lib/category/verification";
 import {
   categoryCreateSchema,
   categoryCreateSchemaDV,

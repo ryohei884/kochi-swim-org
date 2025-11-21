@@ -13,6 +13,40 @@ const eslintConfig = defineConfig([
     "src/app/generated/**",
     "node_modules/**",
   ]),
+  {
+    // plugins: ["import"],
+    rules: {
+      // "sort-imports": [
+      //   "error",
+      //   {
+      //     ignoreCase: false,
+      //     ignoreDeclarationSort: false,
+      //     ignoreMemberSort: false,
+      //     memberSyntaxSortOrder: ["none", "all", "multiple", "single"],
+      //     allowSeparatedGroups: false,
+      //   },
+      // ],
+      "import/order": [
+        "error",
+        {
+          groups: [
+            "builtin",
+            "external",
+            "internal",
+            "parent",
+            "sibling",
+            "index",
+          ],
+          "newlines-between": "always",
+          alphabetize: {
+            order: "asc",
+            caseInsensitive: true,
+          },
+        },
+      ],
+      "sort-vars": "error",
+    },
+  },
 ]);
 
 export default eslintConfig;

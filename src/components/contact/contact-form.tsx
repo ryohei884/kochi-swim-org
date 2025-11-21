@@ -2,11 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-import type { contactSchemaType } from "@/lib/contact/verification";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +17,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { contactSchemaDV, contactSchema } from "@/lib/contact/verification";
+import type { contactSchemaType } from "@/lib/contact/verification";
+import { contactSchema, contactSchemaDV } from "@/lib/contact/verification";
 
 export default function ContactForm() {
   const sendMessageViaLine = async (data: contactSchemaType) => {

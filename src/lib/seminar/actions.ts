@@ -1,14 +1,13 @@
 "use server";
 
+import { auth } from "@/auth";
 import type {
+  seminarApproveSchemaType,
   seminarCreateSchemaType,
+  seminarExcludeSchemaType,
   seminarGetByIdSchemaType,
   seminarUpdateSchemaType,
-  seminarExcludeSchemaType,
-  seminarApproveSchemaType,
 } from "@/lib/seminar/verification";
-
-import { auth } from "@/auth";
 import { prisma } from "@/prisma";
 
 export async function getList(page?: number) {
@@ -37,6 +36,36 @@ export async function getList(page?: number) {
   return res;
 }
 
+export async function getListAdmin(year?: number) {
+  const nextYear = year ? Number(year) + 1 : 0;
+  const res = await prisma.seminar.findMany({
+    include: { createdUser: true, revisedUser: true, approvedUser: true },
+    where: year
+      ? {
+          fromDate: {
+            gte: new Date(`${year}/4/1`),
+            lte: new Date(`${nextYear}/3/31`),
+          },
+        }
+      : undefined,
+    orderBy: [
+      {
+        fromDate: "asc",
+      },
+      {
+        toDate: "asc",
+      },
+      {
+        createdAt: "asc",
+      },
+      {
+        revisedAt: "asc",
+      },
+    ],
+  });
+  return res;
+}
+
 export async function create(prop: seminarCreateSchemaType) {
   const data = prop;
   const session = await auth();
@@ -57,6 +86,7 @@ export async function create(prop: seminarCreateSchemaType) {
         attachment: data.attachment !== "[]" ? data.attachment : null,
         createdUserId: session?.user?.id,
         approved: false,
+        approvedUserId: data.approvedUserId,
       },
     });
     return res;
@@ -68,6 +98,21 @@ export async function getListNum() {
     where: {
       approved: true,
     },
+  });
+  return res;
+}
+
+export async function getListNumAdmin(year?: number) {
+  const nextYear = year ? Number(year) + 1 : 0;
+  const res = await prisma.seminar.count({
+    where: year
+      ? {
+          fromDate: {
+            gte: new Date(`${year}/4/1`),
+            lte: new Date(`${nextYear}/3/31`),
+          },
+        }
+      : undefined,
   });
   return res;
 }
@@ -119,7 +164,7 @@ export async function update(prop: seminarUpdateSchemaType) {
         detail: data.detail !== "[]" ? data.detail : null,
         attachment: data.attachment !== "[]" ? data.attachment : null,
         revisedUserId: session?.user?.id,
-        approvedUserId: null,
+        approvedUserId: data.approvedUserId,
         approved: false,
       },
     });

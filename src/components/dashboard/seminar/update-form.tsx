@@ -1,20 +1,16 @@
 "use client";
 
-import { useState, useEffect, Fragment } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { init } from "@paralleldrive/cuid2";
+import type { PutBlobResult } from "@vercel/blob";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { PencilLine } from "lucide-react";
-import { CalendarIcon, Plus, X, ExternalLink } from "lucide-react";
+import { CalendarIcon, ExternalLink, PencilLine, Plus, X } from "lucide-react";
 import Link from "next/link";
-import { useForm, useFieldArray } from "react-hook-form";
+import { Fragment, useEffect, useState } from "react";
+import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-import type { seminarUpdateOnSubmitSchemaType } from "@/lib/seminar/verification";
-import type { PutBlobResult } from "@vercel/blob";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -34,31 +30,46 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
-  SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { getByIdAdmin, update } from "@/lib/seminar/actions";
+import type { seminarUpdateOnSubmitSchemaType } from "@/lib/seminar/verification";
 import {
-  seminarUpdateOnSubmitSchemaDV,
   seminarUpdateOnSubmitSchema,
+  seminarUpdateOnSubmitSchemaDV,
 } from "@/lib/seminar/verification";
 import { cn } from "@/lib/utils";
+
+type Approver = {
+  userId: string;
+  userDisplayName: string | null;
+  userName: string | null;
+}[];
 
 interface Props {
   id: string;
   fetchListData: (id: string) => Promise<void>;
+  approver: Approver;
 }
 
 export default function SeminarUpdateForm(props: Props) {
-  const { id, fetchListData } = props;
+  const { id, fetchListData, approver } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [openFromDate, setOpenFromDate] = useState(false);
@@ -565,6 +576,39 @@ export default function SeminarUpdateForm(props: Props) {
                   </Button>
                 </div>
               </FormItem>
+              <FormField
+                control={control}
+                name="approvedUserId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>承認者</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={String(field.value)}
+                      >
+                        <SelectTrigger className="w-full" hidden={!isReady}>
+                          <SelectValue placeholder="承認者" {...field} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {approver.map((v) => (
+                            <SelectItem key={v.userId} value={v.userId}>
+                              {v.userDisplayName
+                                ? v.userDisplayName
+                                : v.userName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <SheetFooter className="p-0">
                 <Button
                   type="submit"

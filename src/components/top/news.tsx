@@ -1,17 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-import type { newsSchemaType } from "@/lib/news/verification";
-
-import { getList3 } from "@/lib/news/actions";
-import { newsLinkCategory } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getList3 } from "@/lib/news/actions";
+import type { newsSchemaType } from "@/lib/news/verification";
+import { newsLinkCategory } from "@/lib/utils";
 
 export default function News() {
   const [isReady, setIsReady] = useState<boolean>(false);

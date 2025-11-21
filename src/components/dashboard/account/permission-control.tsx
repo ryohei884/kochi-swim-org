@@ -1,5 +1,9 @@
 "use client";
 
+import { Minus, SquareCheck } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -8,10 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { SquareCheck, Minus } from "lucide-react";
 
 // import type { DefaultSession } from "@auth/core/types";
 

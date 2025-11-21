@@ -1,21 +1,17 @@
 // @ts-nocheck
 "use client";
 
-import { useState, useEffect } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { init } from "@paralleldrive/cuid2";
+import type { PutBlobResult } from "@vercel/blob";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { PencilLine } from "lucide-react";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, PencilLine } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-import type { newsUpdateOnSubmitSchemaType } from "@/lib/news/verification";
-import type { PutBlobResult } from "@vercel/blob";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -43,28 +39,23 @@ import {
 } from "@/components/ui/select";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
-  SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { getByIdAdmin, update } from "@/lib/news/actions";
+import type { newsUpdateOnSubmitSchemaType } from "@/lib/news/verification";
 import {
-  newsUpdateOnSubmitSchemaDV,
   newsUpdateOnSubmitSchema,
+  newsUpdateOnSubmitSchemaDV,
 } from "@/lib/news/verification";
 import { cn, newsLinkCategory } from "@/lib/utils";
-import { getApproverList } from "@/lib/permission/actions";
-
-interface Props {
-  id: string;
-  fetchListData: (id: string) => Promise<void>;
-}
 
 type Approver = {
   userId: string;
@@ -72,8 +63,14 @@ type Approver = {
   userName: string | null;
 }[];
 
+interface Props {
+  id: string;
+  fetchListData: (id: string) => Promise<void>;
+  approver: Approver;
+}
+
 export default function NewsUpdateForm(props: Props) {
-  const { id, fetchListData } = props;
+  const { id, fetchListData, approver } = props;
   const [preview, setPreview] = useState("");
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -81,7 +78,6 @@ export default function NewsUpdateForm(props: Props) {
   const [openToDate, setOpenToDate] = useState(false);
 
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [approver, setApprover] = useState<Approver>([]);
 
   const form = useForm<newsUpdateOnSubmitSchemaType>({
     resolver: zodResolver(newsUpdateOnSubmitSchema),
@@ -90,18 +86,14 @@ export default function NewsUpdateForm(props: Props) {
 
   const fetchData = async (id: string) => {
     setIsReady(false);
-    const resAvr = await getApproverList({ categoryLink: "news" });
-    if (resAvr !== null) {
-      setApprover(resAvr);
-    } else {
-      setApprover([]);
-    }
 
     const res = await getByIdAdmin({ id: id });
     if (res !== null) {
       form.reset({ ...res, linkCategory: String(res.linkCategory) });
       setIsReady(true);
     }
+
+    setIsReady(true);
   };
 
   useEffect(() => {

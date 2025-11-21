@@ -1,17 +1,15 @@
 "use client";
-import { useState, useEffect, Fragment } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { init } from "@paralleldrive/cuid2";
+import type { PutBlobResult } from "@vercel/blob";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { CalendarIcon, Plus, X } from "lucide-react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { Fragment, useEffect, useState } from "react";
+import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-import type { seminarCreateOnSubmitSchemaType } from "@/lib/seminar/verification";
-import type { PutBlobResult } from "@vercel/blob";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -31,29 +29,45 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
-  SheetFooter,
 } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { create } from "@/lib/seminar/actions";
+import type { seminarCreateOnSubmitSchemaType } from "@/lib/seminar/verification";
 import {
   seminarCreateOnSubmitSchema,
   seminarCreateOnSubmitSchemaDV,
 } from "@/lib/seminar/verification";
 import { cn } from "@/lib/utils";
 
+type Approver = {
+  userId: string;
+  userDisplayName: string | null;
+  userName: string | null;
+}[];
+
 interface Props {
   fetchListData: (id: string) => Promise<void>;
+  approver: Approver;
 }
 
 export default function SeminarCreateForm(props: Props) {
-  const { fetchListData } = props;
+  const { fetchListData, approver } = props;
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [openFromDate, setOpenFromDate] = useState(false);
@@ -473,6 +487,39 @@ export default function SeminarCreateForm(props: Props) {
                   </Button>
                 </div>
               </FormItem>
+              <FormField
+                control={form.control}
+                name="approvedUserId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>承認者</FormLabel>
+                    <FormControl hidden={!isReady}>
+                      <Select onValueChange={field.onChange}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="承認者" {...field} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {approver.map((value, index) => (
+                            <SelectItem
+                              key={`approvedUserId_${index}`}
+                              value={String(value.userId)}
+                            >
+                              {value.userDisplayName
+                                ? value.userDisplayName
+                                : value.userName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <Skeleton
+                      hidden={isReady}
+                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <SheetFooter className="p-0">
                 <Button
                   type="submit"

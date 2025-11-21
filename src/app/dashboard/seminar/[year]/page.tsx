@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import NewsList from "@/components/dashboard/news/list";
+import SeminarList from "@/components/dashboard/seminar/list";
 import { getApproverList, getPermissionList } from "@/lib/permission/actions";
 
 type Permission = {
@@ -22,9 +22,11 @@ type Approver = {
 export default async function Page({
   params,
 }: {
-  params: Promise<{ page: string }>;
+  params: Promise<{
+    year: number;
+  }>;
 }) {
-  const { page } = await params;
+  const { year } = await params;
   const session = await auth();
   let permission: Permission = [];
 
@@ -37,8 +39,8 @@ export default async function Page({
   const approver: Approver = await getApproverList({ categoryLink: "seminar" });
 
   return (
-    <NewsList
-      page={page}
+    <SeminarList
+      year={year}
       session={session}
       permission={permission}
       approver={approver}

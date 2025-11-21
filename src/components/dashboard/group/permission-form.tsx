@@ -1,15 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FolderKey } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-import type { categoryWithUserSchemaType } from "@/lib/category/verification";
-import type { permissionUpdateSchemaType } from "@/lib/group/verification";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 import type { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -26,13 +22,13 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
-  SheetFooter,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -44,10 +40,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getList } from "@/lib/category/actions";
+import type { categoryWithUserSchemaType } from "@/lib/category/verification";
 import { get_permission, update_permission } from "@/lib/group/actions";
+import type { permissionUpdateSchemaType } from "@/lib/group/verification";
 import {
-  permissionUpdateSchemaDV,
   permissionUpdateSchema,
+  permissionUpdateSchemaDV,
 } from "@/lib/group/verification";
 
 interface Props {

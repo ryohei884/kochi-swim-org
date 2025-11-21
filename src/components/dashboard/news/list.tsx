@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
+import type { DefaultSession } from "@auth/core/types";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { CheckIcon, Lock } from "lucide-react";
-
-import type { newsWithUserSchemaType } from "@/lib/news/verification";
+import { CheckIcon, Copy, Lock } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import ApproveForm from "@/components/dashboard/news/approve-form";
 import CreateForm from "@/components/dashboard/news/create-form";
@@ -14,6 +12,13 @@ import ExcludeForm from "@/components/dashboard/news/exclude-form";
 import ReOrder from "@/components/dashboard/news/reorder";
 import UpdateForm from "@/components/dashboard/news/update-form";
 import { Button } from "@/components/ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -23,16 +28,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getListAdmin, getListNumAdmin } from "@/lib/news/actions";
-import { newsLinkCategory } from "@/lib/utils";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import type { DefaultSession } from "@auth/core/types";
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { getListAdmin, getListNumAdmin } from "@/lib/news/actions";
+import type { newsWithUserSchemaType } from "@/lib/news/verification";
+import { copyToClipboard, newsLinkCategory } from "@/lib/utils";
 
 interface Session {
   user: {
@@ -51,14 +54,21 @@ type Permission = {
   approve: boolean;
 }[];
 
+type Approver = {
+  userId: string;
+  userDisplayName: string | null;
+  userName: string | null;
+}[];
+
 type Props = {
   session: Session | null;
   permission: Permission;
   page: string;
+  approver: Approver;
 };
 
 export default function NewsList(props: Props) {
-  const { page, session, permission } = props;
+  const { page, session, permission, approver } = props;
   const previousPage = Number(page) - 1;
   const nextPage = Number(page) + 1;
   const [data, setData] = useState<newsWithUserSchemaType[]>([]);
@@ -115,13 +125,18 @@ export default function NewsList(props: Props) {
         {isReady &&
           (pms.filter((v) => v.submit === true).length > 0 ||
             session?.user.role === "administrator") && (
-            <CreateForm fetchListData={fetchListData} maxOrder={maxOrder} />
+            <CreateForm
+              fetchListData={fetchListData}
+              maxOrder={maxOrder}
+              approver={approver}
+            />
           )}
       </h4>
       <hr />
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>ID</TableHead>
             <TableHead>表示順</TableHead>
             <TableHead>タイトル</TableHead>
             <TableHead>本文</TableHead>
@@ -144,6 +159,9 @@ export default function NewsList(props: Props) {
                 for (let i = 0; i < dataNum; i++) {
                   rows.push(
                     <TableRow key={i}>
+                      <TableCell>
+                        <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                      </TableCell>
                       <TableCell>
                         <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
                       </TableCell>
@@ -200,6 +218,21 @@ export default function NewsList(props: Props) {
                     key={d.id}
                     className={callbackData === d.id ? "bg-muted" : ""}
                   >
+                    <TableCell>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            onClick={() => copyToClipboard(d.id)}
+                          >
+                            <Copy className="size-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>コピー</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TableCell>
                     <TableCell>{d.order}</TableCell>
                     <TableCell>
                       {d.title.substring(0, 10)}
@@ -248,6 +281,7 @@ export default function NewsList(props: Props) {
                           key={d.id}
                           id={d.id}
                           fetchListData={fetchListData}
+                          approver={approver}
                         />
                       )}
                     </TableCell>

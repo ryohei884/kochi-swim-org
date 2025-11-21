@@ -1,13 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import Image from "next/image";
 import Link from "next/link";
-
-import type { newsWithUserSchemaType } from "@/lib/news/verification";
+import { useEffect, useState } from "react";
 
 import {
   Pagination,
@@ -18,6 +15,7 @@ import {
 } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getList, getListNum } from "@/lib/news/actions";
+import type { newsWithUserSchemaType } from "@/lib/news/verification";
 import { newsLinkCategory } from "@/lib/utils";
 
 interface Props {

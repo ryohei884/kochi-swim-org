@@ -1,7 +1,6 @@
-import NewsList from "@/components/dashboard/news/list";
-import { getPermissionList } from "@/lib/permission/actions";
-
 import { auth } from "@/auth";
+import NewsList from "@/components/dashboard/news/list";
+import { getApproverList, getPermissionList } from "@/lib/permission/actions";
 
 type Permission = {
   categoryId: string;
@@ -14,6 +13,12 @@ type Permission = {
   approve: boolean;
 }[];
 
+type Approver = {
+  userId: string;
+  userDisplayName: string | null;
+  userName: string | null;
+}[];
+
 export default async function Page() {
   const session = await auth();
   let permission: Permission = [];
@@ -24,5 +29,14 @@ export default async function Page() {
     permission = await getPermissionList();
   }
 
-  return <NewsList page="1" session={session} permission={permission} />;
+  const approver: Approver = await getApproverList({ categoryLink: "seminar" });
+
+  return (
+    <NewsList
+      page="1"
+      session={session}
+      permission={permission}
+      approver={approver}
+    />
+  );
 }

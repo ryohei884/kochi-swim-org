@@ -1,9 +1,10 @@
 "use server";
 
-import { auth } from "@/auth";
-import { prisma } from "@/prisma";
-import { getList as getCategoryList } from "@/lib/category/actions";
 import { cache } from "react";
+
+import { auth } from "@/auth";
+import { getList as getCategoryList } from "@/lib/category/actions";
+import { prisma } from "@/prisma";
 
 export const getPermissionListAll = cache(async () => {
   const session = await auth();

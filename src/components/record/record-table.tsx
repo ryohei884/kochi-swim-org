@@ -1,8 +1,8 @@
 "use client";
-import { useState, Fragment } from "react";
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
+import { Fragment, useState } from "react";
 
 import { record } from "@/components/record/record-list";
 import { Separator } from "@/components/ui/separator";

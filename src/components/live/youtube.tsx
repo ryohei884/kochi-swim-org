@@ -1,23 +1,21 @@
 "use client";
-import { useEffect, useState } from "react";
-
 import {
-  MediaController,
   MediaControlBar,
-  MediaTimeRange,
-  MediaTimeDisplay,
-  MediaVolumeRange,
-  MediaPlaybackRateButton,
+  MediaController,
+  MediaFullscreenButton,
+  MediaMuteButton,
   MediaPlayButton,
+  MediaPlaybackRateButton,
   MediaSeekBackwardButton,
   MediaSeekForwardButton,
-  MediaMuteButton,
-  MediaFullscreenButton,
+  MediaTimeDisplay,
+  MediaTimeRange,
+  MediaVolumeRange,
 } from "media-chrome/react";
+import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 
 import { Skeleton } from "@/components/ui/skeleton";
-
 import { getLiveNow } from "@/lib/live/actions";
 
 export default function Youtube() {
