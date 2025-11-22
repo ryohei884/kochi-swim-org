@@ -1,18 +1,15 @@
 "use client";
+
+import axios from "axios";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -22,33 +19,44 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getList, getListNum } from "@/lib/seminar/actions";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getList } from "@/lib/seminar/actions";
 import type { seminarWithUserSchemaType } from "@/lib/seminar/verification";
 
 interface Props {
-  page: string;
+  year: string;
 }
 
 type seminarListWithOpenType = seminarWithUserSchemaType & {
   open: boolean;
 };
 export default function SeminarList(props: Props) {
-  const { page } = props;
-  const previousPage = Number(page) - 1;
-  const nextPage = Number(page) + 1;
+  const router = useRouter();
+  const { year } = props;
   const [seminar, setSeminar] = useState<seminarListWithOpenType[]>([]);
-  const [seminarNum, setSeminarNum] = useState<number>(0);
   const [isReady, setIsReady] = useState<boolean>(false);
 
-  const getSeminar = async (page: number) => {
-    const seminarList = await getList(page);
-    const seminarListWithOpen = seminarList.map((v) => {
-      return { ...v, open: false };
-    });
-    setSeminar(seminarListWithOpen);
-    const seminarListNum = await getListNum();
-    setSeminarNum(seminarListNum);
-    setIsReady(true);
+  const getSeminar = async (year: number) => {
+    if (year === 2025) {
+      const seminarList = await axios.get("/seminar_list_top");
+      console.log(seminarList);
+      if (seminarList.status === 200) {
+        const seminarListWithOpen = seminarList.data.map(
+          (v: seminarWithUserSchemaType) => {
+            return { ...JSON.parse(JSON.stringify(v)), open: false };
+          },
+        );
+        setSeminar(seminarList.data ? seminarListWithOpen : []);
+        setIsReady(true);
+      }
+    } else {
+      const seminarList = await getList(year);
+      const seminarListWithOpen = seminarList.map((v) => {
+        return { ...v, open: false };
+      });
+      setSeminar(seminarListWithOpen);
+      setIsReady(true);
+    }
   };
 
   const handleOpen = (id: string) => {
@@ -62,11 +70,15 @@ export default function SeminarList(props: Props) {
     setSeminar(seminarListWithOpen);
   };
 
+  const handleChange = (e: string) => {
+    router.push(`/seminar/${e}`);
+    setIsReady(false);
+  };
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsReady(false);
-    getSeminar(Number(page));
-  }, [page]);
+    getSeminar(Number(year));
+  }, [year]);
 
   return (
     <div className="bg-white py-24 sm:py-32 dark:bg-gray-900">
@@ -79,167 +91,164 @@ export default function SeminarList(props: Props) {
             詳細は各リンク先からご覧ください。
           </p>
           <div className="mt-16 lg:mt-20">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>開催日</TableHead>
-                  <TableHead>講習会名</TableHead>
-                  <TableHead>会場</TableHead>
-                  <TableHead>詳細</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {!isReady
-                  ? (function () {
-                      const rows = [];
-                      for (let i = 0; i < 10; i++) {
-                        rows.push(
-                          <TableRow key={i}>
-                            <TableCell>
-                              <Skeleton className="w-48 h-5 my-2" />
-                            </TableCell>
-                            <TableCell>
-                              <Skeleton className="w-96 h-5 my-2" />
-                            </TableCell>
-                            <TableCell>
-                              <Skeleton className="w-36 h-5 my-2" />
-                            </TableCell>
-                            <TableCell>
-                              <Skeleton className="w-16 h-5 my-2" />
-                            </TableCell>
-                          </TableRow>,
-                        );
-                      }
-                      return <>{rows}</>;
-                    })()
-                  : seminar.map((m) => (
-                      <Fragment key={m.id}>
-                        <TableRow>
-                          <TableCell>
-                            {m.fromDate &&
-                              format(m.fromDate, "PPP", {
-                                locale: ja,
-                              })}
-                            {m.toDate && "〜"}
-                            {m.toDate &&
-                              format(m.toDate, "M月d日", { locale: ja })}
-                          </TableCell>
-                          <TableCell>{m.title}</TableCell>
-                          <TableCell>{m.place}</TableCell>
-                          <TableCell>
-                            {!m.description &&
-                            !m.detail &&
-                            !m.attachment ? null : (
-                              <Button
-                                onClick={() => handleOpen(m.id)}
-                                variant="ghost"
-                              >
-                                {m.open ? (
-                                  <ChevronsDownUp />
-                                ) : (
-                                  <ChevronsUpDown />
+            <Tabs
+              defaultValue={`${year}`}
+              onValueChange={(e) => handleChange(e)}
+            >
+              <TabsList>
+                <TabsTrigger value="2025">2025</TabsTrigger>
+                <Separator orientation="vertical" />
+                <TabsTrigger value="2026">2026</TabsTrigger>
+              </TabsList>
+              <TabsContent value={`${year}`}>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>開催日</TableHead>
+                      <TableHead>講習会名</TableHead>
+                      <TableHead>会場</TableHead>
+                      <TableHead>詳細</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {!isReady
+                      ? (function () {
+                          const rows = [];
+                          for (let i = 0; i < 10; i++) {
+                            rows.push(
+                              <TableRow key={i}>
+                                <TableCell>
+                                  <Skeleton className="w-48 h-5 my-2" />
+                                </TableCell>
+                                <TableCell>
+                                  <Skeleton className="w-96 h-5 my-2" />
+                                </TableCell>
+                                <TableCell>
+                                  <Skeleton className="w-36 h-5 my-2" />
+                                </TableCell>
+                                <TableCell>
+                                  <Skeleton className="w-16 h-5 my-2" />
+                                </TableCell>
+                              </TableRow>,
+                            );
+                          }
+                          return <>{rows}</>;
+                        })()
+                      : seminar.map((m) => (
+                          <Fragment key={m.id}>
+                            <TableRow>
+                              <TableCell>
+                                {m.fromDate &&
+                                  format(m.fromDate, "PPP", {
+                                    locale: ja,
+                                  })}
+                                {m.toDate && "〜"}
+                                {m.toDate &&
+                                  format(m.toDate, "M月d日", { locale: ja })}
+                              </TableCell>
+                              <TableCell>{m.title}</TableCell>
+                              <TableCell>{m.place}</TableCell>
+                              <TableCell>
+                                {!m.description &&
+                                !m.detail &&
+                                !m.attachment ? null : (
+                                  <Button
+                                    onClick={() => handleOpen(m.id)}
+                                    variant="ghost"
+                                  >
+                                    {m.open ? (
+                                      <ChevronsDownUp />
+                                    ) : (
+                                      <ChevronsUpDown />
+                                    )}
+                                  </Button>
                                 )}
-                              </Button>
+                              </TableCell>
+                            </TableRow>
+                            {m.open && (
+                              <TableRow className="bg-accent">
+                                <TableCell colSpan={6}>
+                                  {m.description && (
+                                    <div className="grid justify-start">
+                                      [詳細情報]
+                                      <div className="whitespace-pre-wrap p-4">
+                                        {m.description}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {m.detail && (
+                                    <div className="grid justify-start">
+                                      [要項ファイル]
+                                      {JSON.parse(m.detail!) &&
+                                        JSON.parse(m.detail!).map(
+                                          (
+                                            v: { value: string; name: string },
+                                            i: number,
+                                          ) => {
+                                            return (
+                                              <Button
+                                                variant="link"
+                                                key={i}
+                                                className="w-fit"
+                                              >
+                                                <Link
+                                                  href={`${v.value}`}
+                                                  rel="noopener noreferrer"
+                                                  target="_blank"
+                                                  key={i}
+                                                >
+                                                  {v.name}
+                                                </Link>
+                                              </Button>
+                                            );
+                                          },
+                                        )}
+                                    </div>
+                                  )}
+                                  {m.attachment && (
+                                    <div className="grid justify-start">
+                                      [添付ファイル]
+                                      {JSON.parse(m.attachment!) &&
+                                        JSON.parse(m.attachment!).map(
+                                          (
+                                            v: { value: string; name: string },
+                                            i: number,
+                                          ) => {
+                                            return (
+                                              <Button
+                                                variant="link"
+                                                key={i}
+                                                className="w-fit"
+                                              >
+                                                <Link
+                                                  href={`${v.value}`}
+                                                  rel="noopener noreferrer"
+                                                  target="_blank"
+                                                  key={i}
+                                                >
+                                                  {v.name}
+                                                </Link>
+                                              </Button>
+                                            );
+                                          },
+                                        )}
+                                    </div>
+                                  )}
+                                  {!m.description &&
+                                    !m.detail &&
+                                    !m.attachment && (
+                                      <div>詳細情報はありません。</div>
+                                    )}
+                                </TableCell>
+                              </TableRow>
                             )}
-                          </TableCell>
-                        </TableRow>
-                        {m.open && (
-                          <TableRow className="bg-accent">
-                            <TableCell colSpan={6}>
-                              {m.description && (
-                                <div className="grid justify-start">
-                                  [詳細情報]
-                                  <div className="whitespace-pre-wrap p-4">
-                                    {m.description}
-                                  </div>
-                                </div>
-                              )}
-                              {m.detail && (
-                                <div className="grid justify-start">
-                                  [要項ファイル]
-                                  {JSON.parse(m.detail!) &&
-                                    JSON.parse(m.detail!).map(
-                                      (
-                                        v: { value: string; name: string },
-                                        i: number,
-                                      ) => {
-                                        return (
-                                          <Button
-                                            variant="link"
-                                            key={i}
-                                            className="w-fit"
-                                          >
-                                            <Link
-                                              href={`${v.value}`}
-                                              rel="noopener noreferrer"
-                                              target="_blank"
-                                              key={i}
-                                            >
-                                              {v.name}
-                                            </Link>
-                                          </Button>
-                                        );
-                                      },
-                                    )}
-                                </div>
-                              )}
-                              {m.attachment && (
-                                <div className="grid justify-start">
-                                  [添付ファイル]
-                                  {JSON.parse(m.attachment!) &&
-                                    JSON.parse(m.attachment!).map(
-                                      (
-                                        v: { value: string; name: string },
-                                        i: number,
-                                      ) => {
-                                        return (
-                                          <Button
-                                            variant="link"
-                                            key={i}
-                                            className="w-fit"
-                                          >
-                                            <Link
-                                              href={`${v.value}`}
-                                              rel="noopener noreferrer"
-                                              target="_blank"
-                                              key={i}
-                                            >
-                                              {v.name}
-                                            </Link>
-                                          </Button>
-                                        );
-                                      },
-                                    )}
-                                </div>
-                              )}
-                              {!m.description && !m.detail && !m.attachment && (
-                                <div>詳細情報はありません。</div>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </Fragment>
-                    ))}
-              </TableBody>
-            </Table>
+                          </Fragment>
+                        ))}
+                  </TableBody>
+                </Table>
+              </TabsContent>
+            </Tabs>
             <hr />
-            <Pagination className="mt-16 flex items-center justify-between">
-              <PaginationContent className="-mt-px flex w-0 flex-1">
-                <PaginationItem className="inline-flex items-center">
-                  <PaginationPrevious
-                    href={`/seminar/${previousPage}`}
-                    hidden={previousPage < 1}
-                  />
-                </PaginationItem>
-                <PaginationItem className="-mt-px flex w-0 flex-1 justify-end">
-                  <PaginationNext
-                    href={`/seminar/${nextPage}`}
-                    className="inline-flex items-center"
-                    hidden={seminarNum <= Number(page) * 10}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
           </div>
         </div>
       </div>

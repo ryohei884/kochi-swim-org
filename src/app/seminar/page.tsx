@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <>
       <Header />
-      <SeminarList page="1" />
+      <SeminarList year="2025" />
       <Footer />
     </>
   );

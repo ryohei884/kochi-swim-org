@@ -200,6 +200,7 @@ export async function update(prop: newsUpdateSchemaType) {
           approved: false,
         },
       });
+      edgeUpdate();
       return res;
     }
   }
@@ -223,6 +224,8 @@ export async function exclude(prop: newsExcludeSchemaType) {
           id: id,
         },
       });
+
+      edgeUpdate();
     }
   }
 }
@@ -250,6 +253,8 @@ export async function approve(prop: newsApproveSchemaType) {
           approvedAt: new Date(),
         },
       });
+
+      edgeUpdate();
     }
   }
 }
@@ -290,4 +295,68 @@ export async function reOrder() {
       }),
     );
   });
+
+  edgeUpdate();
+}
+
+export async function edgeUpdate() {
+  const res_list = await getList(1);
+  const num = await getListNum();
+
+  try {
+    const updateEdgeConfig = await fetch(
+      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              operation: "update",
+              key: "news_list_top",
+              value: res_list,
+            },
+            {
+              operation: "update",
+              key: "news_list_top_num",
+              value: num,
+            },
+          ],
+        }),
+      },
+    );
+    const result = await updateEdgeConfig.json();
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+    const createEdgeConfig = await fetch(
+      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              operation: "create",
+              key: "news_list_top",
+              value: res_list,
+            },
+            {
+              operation: "create",
+              key: "news_list_top_num",
+              value: num,
+            },
+          ],
+        }),
+      },
+    );
+    const result = await createEdgeConfig.json();
+    console.log(result);
+  }
 }

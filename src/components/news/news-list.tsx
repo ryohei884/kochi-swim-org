@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import Image from "next/image";
@@ -33,13 +34,26 @@ export default function NewsList(props: Props) {
 
   const getNews = async (page: number) => {
     setIsReady(false);
-    const newsList = await getList(page);
-    if (newsList !== null) {
-      setNews(newsList);
-      setDataNum(newsList.length);
-      const newsListNum = await getListNum();
-      setNewsNum(newsListNum);
-      setIsReady(true);
+    if (page === 1) {
+      const newsList = await axios.get("/news_list_top");
+      const newsListNum = await axios.get("/news_list_top_num");
+      console.log(newsList, newsListNum);
+      if (newsList.status === 200 && newsListNum.status === 200) {
+        setNews(newsList.data ? JSON.parse(JSON.stringify(newsList.data)) : []);
+        setNewsNum(
+          newsListNum.data ? JSON.parse(JSON.stringify(newsListNum.data)) : [],
+        );
+        setIsReady(true);
+      }
+    } else {
+      const newsList = await getList(page);
+      if (newsList !== null) {
+        setNews(newsList);
+        setDataNum(newsList.length);
+        const newsListNum = await getListNum();
+        setNewsNum(newsListNum);
+        setIsReady(true);
+      }
     }
   };
 

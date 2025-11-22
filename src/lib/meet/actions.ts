@@ -232,6 +232,7 @@ export async function update(prop: meetUpdateSchemaType) {
         approved: false,
       },
     });
+    edgeUpdate();
     return res;
   }
 }
@@ -254,6 +255,7 @@ export async function exclude(prop: meetExcludeSchemaType) {
           id: id,
         },
       });
+      edgeUpdate();
     }
   }
 }
@@ -281,6 +283,63 @@ export async function approve(prop: meetApproveSchemaType) {
           approvedAt: new Date(),
         },
       });
+      edgeUpdate();
     }
+  }
+}
+
+export async function edgeUpdate() {
+  const now = new Date();
+  const year =
+    now.getMonth() <= 3 && now.getDate() <= 31
+      ? now.getFullYear() - 1
+      : now.getFullYear();
+  const res = await getList(1, year);
+
+  try {
+    const updateEdgeConfig = await fetch(
+      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              operation: "update",
+              key: "meet_list_top",
+              value: res,
+            },
+          ],
+        }),
+      },
+    );
+    const result = await updateEdgeConfig.json();
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+    const createEdgeConfig = await fetch(
+      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              operation: "create",
+              key: "meet_list_top",
+              value: res,
+            },
+          ],
+        }),
+      },
+    );
+    const result = await createEdgeConfig.json();
+    console.log(result);
   }
 }

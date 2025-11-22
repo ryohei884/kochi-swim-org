@@ -5,13 +5,13 @@ import Header from "@/components/top/header";
 export default async function Page({
   params,
 }: {
-  params: Promise<{ page: string }>;
+  params: Promise<{ year: string }>;
 }) {
-  const { page } = await params;
+  const { year } = await params;
   return (
     <>
       <Header />
-      <SeminarList page={page} />
+      <SeminarList year={year} />
       <Footer />
     </>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { Check, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
@@ -19,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getList, getListNum } from "@/lib/meet/actions";
+import { getList } from "@/lib/meet/actions";
 import type { meetWithUserSchemaType } from "@/lib/meet/verification";
 import { meetKind, poolSize } from "@/lib/utils";
 
@@ -35,18 +36,34 @@ export default function MeetList(props: Props) {
   const router = useRouter();
   const { kind, year } = props;
   const [meet, setMeet] = useState<meetListWithOpenType[]>([]);
-  const [meetNum, setMeetNum] = useState<number>(3);
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const getMeet = async (kind: string, year: number) => {
-    const kindNum = meetKind.find((v) => v.href === kind)?.id || 0;
-    const meetList = await getList(kindNum, year);
-    const meetListWithOpen = meetList.map((v) => {
-      return { ...v, open: false };
-    });
-    setMeet(meetListWithOpen);
-    const meetListNum = await getListNum(kindNum, year);
-    setMeetNum(meetListNum);
+    const now = new Date();
+    const thisYear =
+      now.getMonth() <= 3 && now.getDate() <= 31
+        ? now.getFullYear() - 1
+        : now.getFullYear();
+
+    if (kind === "swimming" && year === thisYear) {
+      const meetList = await axios.get("/meet_list_top");
+      const meetListNum = await axios.get("/meet_list_top_num");
+      if (meetList.status === 200 && meetListNum.status === 200) {
+        const meetListWithOpen = meetList.data.map(
+          (v: meetWithUserSchemaType) => {
+            return { ...JSON.parse(JSON.stringify(v)), open: false };
+          },
+        );
+        setMeet(meetListWithOpen);
+      }
+    } else {
+      const kindNum = meetKind.find((v) => v.href === kind)?.id || 0;
+      const meetList = await getList(kindNum, year);
+      const meetListWithOpen = meetList.map((v) => {
+        return { ...v, open: false };
+      });
+      setMeet(meetListWithOpen);
+    }
     setIsReady(true);
   };
 
