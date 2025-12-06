@@ -45,6 +45,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tanstack/react-table": "^8.21.3",
     "@types/node": "^24.4.0",
+    "@types/react": "^19.2.7",
     "@vercel/analytics": "^1.5.0",
     "@vercel/blob": "^2.0.0",
     "@vercel/edge-config": "^1.4.3",
@@ -55,17 +56,17 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
     "input-otp": "^1.4.2",
-    "lucide-react": "^0.554.0",
+    "lucide-react": "^0.556.0",
     "media-chrome": "^4.15.1",
     "motion": "^12.23.22",
     "next": "^16.0.3",
     "next-auth": "^5.0.0-beta.29",
     "next-themes": "^0.4.6",
-    "nodemailer": "^7.0.10",
+    "nodemailer": "^7.0.11",
     "postcss": "^8.5.6",
-    "react": "19.2.0",
+    "react": "^19.2.1",
     "react-day-picker": "^9.10.0",
-    "react-dom": "19.2.0",
+    "react-dom": "^19.2.1",
     "react-hook-form": "^7.62.0",
     "react-player": "^3.3.3",
     "sonner": "^2.0.7",
@@ -77,8 +78,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@next/eslint-plugin-next": "^16.0.3",
     "@tailwindcss/postcss": "^4.1.14",
-    "@types/nodemailer": "^7.0.3",
-    "@types/react": "19.2.6",
+    "@types/nodemailer": "^7.0.4",
     "@types/react-dom": "19.2.3",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.1",
@@ -93,8 +93,6 @@
     "typescript": "^5"
   },
   "overrides": {
-    "nodemailer": "^7.0.10",
-    "@types/react": "19.2.6",
-    "@types/react-dom": "19.2.3"
+    "nodemailer": "^7.0.11"
   }
 }
