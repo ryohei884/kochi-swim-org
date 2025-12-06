@@ -1,6 +1,5 @@
 "use client";
 
-import axios from "axios";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { Check, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
@@ -39,25 +38,24 @@ export default function MeetList(props: Props) {
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const getMeet = async (kind: string, year: number) => {
-    const now = new Date();
-    const thisYear =
-      now.getMonth() <= 3 && now.getDate() <= 31
-        ? now.getFullYear() - 1
-        : now.getFullYear();
+    const kindNum = meetKind.find((v) => v.href === kind)?.id || 0;
+    try {
+      const fetchURL = await fetch(`/meet_${year}_${kindNum}`);
+      const URL = await fetchURL.json();
+      const response = await fetch(`${URL}`);
+      // const response = await fetch(`${URL}/data/meet_${year}_${kindNum}.json`);
 
-    if (kind === "swimming" && year === thisYear) {
-      const meetList = await axios.get("/meet_list_top");
-      const meetListNum = await axios.get("/meet_list_top_num");
-      if (meetList.status === 200 && meetListNum.status === 200) {
-        const meetListWithOpen = meetList.data.map(
-          (v: meetWithUserSchemaType) => {
-            return { ...JSON.parse(JSON.stringify(v)), open: false };
-          },
-        );
-        setMeet(meetListWithOpen);
+      if (!response.ok) {
+        console.log("JSON file doesn't exist.");
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    } else {
-      const kindNum = meetKind.find((v) => v.href === kind)?.id || 0;
+
+      const meetList = await response.json();
+      const meetListWithOpen = meetList.map((v: meetWithUserSchemaType) => {
+        return { ...v, open: false };
+      });
+      setMeet(meetListWithOpen);
+    } catch (error) {
       const meetList = await getList(kindNum, year);
       const meetListWithOpen = meetList.map((v) => {
         return { ...v, open: false };
@@ -84,7 +82,6 @@ export default function MeetList(props: Props) {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(false);
     getMeet(kind, year);
   }, [kind, year]);

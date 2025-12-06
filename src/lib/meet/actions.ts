@@ -1,5 +1,7 @@
 "use server";
 
+import { put } from "@vercel/blob";
+
 import { auth } from "@/auth";
 import type {
   meetApproveSchemaType,
@@ -119,7 +121,6 @@ export async function create(prop: meetCreateSchemaType) {
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
   } else {
-    console.log(data);
     const res = await prisma.meet.create({
       include: { createdUser: true, revisedUser: true, approvedUser: true },
       data: {
@@ -208,7 +209,6 @@ export async function update(prop: meetUpdateSchemaType) {
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
   } else {
-    console.log(data);
     const res = await prisma.meet.update({
       where: {
         id: data.id,
@@ -232,7 +232,12 @@ export async function update(prop: meetUpdateSchemaType) {
         approved: false,
       },
     });
-    edgeUpdate();
+    const now = new Date(res.fromDate);
+    const year =
+      now.getMonth() <= 3 && now.getDate() <= 31
+        ? now.getFullYear() - 1
+        : now.getFullYear();
+    await blobUpdate(res.kind, year);
     return res;
   }
 }
@@ -250,12 +255,17 @@ export async function exclude(prop: meetExcludeSchemaType) {
     if (!contest) {
       throw new Error("Meet ID does not exist.");
     } else {
-      await prisma.meet.delete({
+      const updated = await prisma.meet.delete({
         where: {
           id: id,
         },
       });
-      edgeUpdate();
+      const now = new Date(updated.fromDate);
+      const year =
+        now.getMonth() <= 3 && now.getDate() <= 31
+          ? now.getFullYear() - 1
+          : now.getFullYear();
+      await blobUpdate(updated.kind, year);
     }
   }
 }
@@ -273,7 +283,7 @@ export async function approve(prop: meetApproveSchemaType) {
     if (!contest) {
       throw new Error("Meet ID does not exist.");
     } else {
-      await prisma.meet.update({
+      const updated = await prisma.meet.update({
         where: {
           id: id,
         },
@@ -283,20 +293,29 @@ export async function approve(prop: meetApproveSchemaType) {
           approvedAt: new Date(),
         },
       });
-      edgeUpdate();
+      const now = new Date(updated.fromDate);
+      const year =
+        now.getMonth() <= 3 && now.getDate() <= 31
+          ? now.getFullYear() - 1
+          : now.getFullYear();
+      await blobUpdate(updated.kind, year);
     }
   }
 }
 
-export async function edgeUpdate() {
-  const now = new Date();
-  const year =
-    now.getMonth() <= 3 && now.getDate() <= 31
-      ? now.getFullYear() - 1
-      : now.getFullYear();
-  const res = await getList(1, year);
+export async function blobUpdate(kind: number, year: number) {
+  const res = await getList(kind, year);
 
   try {
+    const blob = await put(
+      `data/meet_${year}_${kind}.json`,
+      JSON.stringify(res),
+      {
+        access: "public",
+        allowOverwrite: true,
+        addRandomSuffix: true,
+      },
+    );
     const updateEdgeConfig = await fetch(
       `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
       {
@@ -309,18 +328,25 @@ export async function edgeUpdate() {
           items: [
             {
               operation: "update",
-              key: "meet_list_top",
-              value: res,
+              key: `meet_${year}_${kind}`,
+              value: blob.url,
             },
           ],
         }),
       },
     );
-    const result = await updateEdgeConfig.json();
-    console.log(result);
   } catch (error) {
-    console.log(error);
-    const createEdgeConfig = await fetch(
+    const blob = await put(
+      `data/meet_${year}_${kind}.json`,
+      JSON.stringify(res),
+      {
+        access: "public",
+        allowOverwrite: true,
+        addRandomSuffix: true,
+      },
+    );
+
+    const updateEdgeConfig = await fetch(
       `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
       {
         method: "PATCH",
@@ -332,14 +358,13 @@ export async function edgeUpdate() {
           items: [
             {
               operation: "create",
-              key: "meet_list_top",
-              value: res,
+              key: `meet_${year}_${kind}`,
+              value: blob.url,
             },
           ],
         }),
       },
     );
-    const result = await createEdgeConfig.json();
-    console.log(result);
+    console.log(error);
   }
 }

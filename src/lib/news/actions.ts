@@ -1,4 +1,6 @@
 "use server";
+import { put } from "@vercel/blob";
+
 import { auth } from "@/auth";
 import type {
   newsApproveSchemaType,
@@ -59,9 +61,14 @@ export async function getListNum() {
       fromDate: {
         lt: new Date(),
       },
-      toDate: {
-        gte: new Date(),
-      },
+      OR: [
+        {
+          toDate: {
+            gte: new Date(),
+          },
+        },
+        { toDate: null },
+      ],
     },
   });
   return res;
@@ -69,14 +76,14 @@ export async function getListNum() {
 
 export async function getListNumAdmin() {
   const res = await prisma.news.count({
-    where: {
-      fromDate: {
-        lt: new Date(),
-      },
-      toDate: {
-        gte: new Date(),
-      },
-    },
+    // where: {
+    //   fromDate: {
+    //     lt: new Date(),
+    //   },
+    //   toDate: {
+    //     gte: new Date(),
+    //   },
+    // },
   });
   return res;
 }
@@ -108,7 +115,6 @@ export async function create(prop: newsCreateSchemaType) {
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
   } else {
-    console.log(data);
     const res = await prisma.news.create({
       include: { createdUser: true, revisedUser: true, approvedUser: true },
       data: {
@@ -200,7 +206,7 @@ export async function update(prop: newsUpdateSchemaType) {
           approved: false,
         },
       });
-      edgeUpdate();
+      await blobUpdate(-1);
       return res;
     }
   }
@@ -225,7 +231,7 @@ export async function exclude(prop: newsExcludeSchemaType) {
         },
       });
 
-      edgeUpdate();
+      await blobUpdate(-1);
     }
   }
 }
@@ -254,7 +260,7 @@ export async function approve(prop: newsApproveSchemaType) {
         },
       });
 
-      edgeUpdate();
+      await blobUpdate(1);
     }
   }
 }
@@ -296,14 +302,43 @@ export async function reOrder() {
     );
   });
 
-  edgeUpdate();
+  await blobUpdate(0);
 }
 
-export async function edgeUpdate() {
-  const res_list = await getList(1);
+export async function blobUpdate(num_fix: number) {
+  const res_list_top = await getList(1);
+  const res_list_3 = await getList3();
   const num = await getListNum();
 
   try {
+    const blob_top = await put(
+      `data/news_list_top.json`,
+      JSON.stringify(res_list_top),
+      {
+        access: "public",
+        allowOverwrite: true,
+      },
+    );
+
+    const blob_3 = await put(
+      `data/news_list_3.json`,
+      JSON.stringify(res_list_3),
+      {
+        access: "public",
+        allowOverwrite: true,
+      },
+    );
+
+    const entry_num = num + num_fix;
+    const blob_num = await put(
+      `data/news_list_top_num.json`,
+      JSON.stringify(entry_num),
+      {
+        access: "public",
+        allowOverwrite: true,
+        addRandomSuffix: true,
+      },
+    );
     const updateEdgeConfig = await fetch(
       `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
       {
@@ -317,46 +352,85 @@ export async function edgeUpdate() {
             {
               operation: "update",
               key: "news_list_top",
-              value: res_list,
+              value: blob_top.url,
+            },
+            {
+              operation: "update",
+              key: "news_list_3",
+              value: blob_3.url,
             },
             {
               operation: "update",
               key: "news_list_top_num",
-              value: num,
+              value: blob_num.url,
             },
           ],
         }),
       },
     );
-    const result = await updateEdgeConfig.json();
-    console.log(result);
   } catch (error) {
     console.log(error);
-    const createEdgeConfig = await fetch(
-      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          items: [
-            {
-              operation: "create",
-              key: "news_list_top",
-              value: res_list,
-            },
-            {
-              operation: "create",
-              key: "news_list_top_num",
-              value: num,
-            },
-          ],
-        }),
-      },
-    );
-    const result = await createEdgeConfig.json();
-    console.log(result);
   }
 }
+
+// export async function edgeUpdate() {
+//   const res_list = await getList(1);
+//   const num = await getListNum();
+
+//   try {
+//     const updateEdgeConfig = await fetch(
+//       `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+//       {
+//         method: "PATCH",
+//         headers: {
+//           Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           items: [
+//             {
+//               operation: "update",
+//               key: "news_list_top",
+//               value: res_list,
+//             },
+//             {
+//               operation: "update",
+//               key: "news_list_top_num",
+//               value: num,
+//             },
+//           ],
+//         }),
+//       },
+//     );
+//     const result = await updateEdgeConfig.json();
+//     console.log(result);
+//   } catch (error) {
+//     console.log(error);
+//     const createEdgeConfig = await fetch(
+//       `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+//       {
+//         method: "PATCH",
+//         headers: {
+//           Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           items: [
+//             {
+//               operation: "create",
+//               key: "news_list_top",
+//               value: res_list,
+//             },
+//             {
+//               operation: "create",
+//               key: "news_list_top_num",
+//               value: num,
+//             },
+//           ],
+//         }),
+//       },
+//     );
+//     const result = await createEdgeConfig.json();
+//     console.log(result);
+//   }
+// }

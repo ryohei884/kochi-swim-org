@@ -24,13 +24,11 @@ export default auth(async (req) => {
     return NextResponse.json(res);
   }
 
-  if (req.nextUrl.pathname.includes("meet_list_top")) {
-    const res = await get("meet_list_top");
-    return NextResponse.json(res);
-  }
-
-  if (req.nextUrl.pathname.includes("meet_list_num")) {
-    const res = await get("meet_list_top_num");
+  const regex = /meet_\d{4}_\d/g;
+  const url = req.nextUrl.pathname.match(regex);
+  if (url !== null) {
+    console.log(url[0]);
+    const res = await get(`${url[0]}`);
     return NextResponse.json(res);
   }
 
@@ -46,8 +44,7 @@ export const config = {
     "/news_list3",
     "/news_list_top",
     "/news_list_top_num",
-    "/meet_list_top",
-    "/meet_list_top_num",
+    "/meet_\d{4}_\d",
     "/seminar_list_top",
   ],
 };

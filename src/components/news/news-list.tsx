@@ -33,17 +33,36 @@ export default function NewsList(props: Props) {
   const [dataNum, setDataNum] = useState<number>(10);
 
   const getNews = async (page: number) => {
-    setIsReady(false);
     if (page === 1) {
-      const newsList = await axios.get("/news_list_top");
-      const newsListNum = await axios.get("/news_list_top_num");
-      console.log(newsList, newsListNum);
-      if (newsList.status === 200 && newsListNum.status === 200) {
-        setNews(newsList.data ? JSON.parse(JSON.stringify(newsList.data)) : []);
-        setNewsNum(
-          newsListNum.data ? JSON.parse(JSON.stringify(newsListNum.data)) : [],
-        );
+      try {
+        const fetchURLTop = await fetch("/news_list_top");
+        const URLTop = await fetchURLTop.json();
+        const response_top = await fetch(`${URLTop}`);
+
+        const fetchURLTopNum = await fetch("/news_list_top_num");
+        const URLTopNum = await fetchURLTopNum.json();
+        const response_num = await fetch(`${URLTopNum}`);
+
+        if (!response_top.ok || !response_num.ok) {
+          console.log("JSON file doesn't exist.");
+          throw new Error(`HTTP error! status: ${response_top.status}`);
+        }
+
+        const newsList = await response_top.json();
+        setNews(newsList);
+        setDataNum(newsList.length);
+        const newsListNum = await response_num.json();
+        setNewsNum(newsListNum);
         setIsReady(true);
+      } catch (error) {
+        const newsList = await getList(page);
+        if (newsList !== null) {
+          setNews(newsList);
+          setDataNum(newsList.length);
+          const newsListNum = await getListNum();
+          setNewsNum(newsListNum);
+          setIsReady(true);
+        }
       }
     } else {
       const newsList = await getList(page);
@@ -58,7 +77,7 @@ export default function NewsList(props: Props) {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsReady(false);
     getNews(Number(page));
   }, [page]);
 

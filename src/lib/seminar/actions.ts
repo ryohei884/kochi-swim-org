@@ -1,5 +1,7 @@
 "use server";
 
+import { put } from "@vercel/blob";
+
 import { auth } from "@/auth";
 import type {
   seminarApproveSchemaType,
@@ -177,7 +179,12 @@ export async function update(prop: seminarUpdateSchemaType) {
         approved: false,
       },
     });
-    edgeUpdate();
+    const now = new Date(res.fromDate);
+    const year =
+      now.getMonth() <= 3 && now.getDate() <= 31
+        ? now.getFullYear() - 1
+        : now.getFullYear();
+    await blobUpdate(year);
     return res;
   }
 }
@@ -195,12 +202,17 @@ export async function exclude(prop: seminarExcludeSchemaType) {
     if (!contest) {
       throw new Error("Seminar ID does not exist.");
     } else {
-      await prisma.seminar.delete({
+      const res = await prisma.seminar.delete({
         where: {
           id: id,
         },
       });
-      edgeUpdate();
+      const now = new Date(res.fromDate);
+      const year =
+        now.getMonth() <= 3 && now.getDate() <= 31
+          ? now.getFullYear() - 1
+          : now.getFullYear();
+      await blobUpdate(year);
     }
   }
 }
@@ -218,7 +230,7 @@ export async function approve(prop: seminarApproveSchemaType) {
     if (!contest) {
       throw new Error("Seminar ID does not exist.");
     } else {
-      await prisma.seminar.update({
+      const res = await prisma.seminar.update({
         where: {
           id: id,
         },
@@ -228,20 +240,25 @@ export async function approve(prop: seminarApproveSchemaType) {
           approvedAt: new Date(),
         },
       });
-      edgeUpdate();
+      const now = new Date(res.fromDate);
+      const year =
+        now.getMonth() <= 3 && now.getDate() <= 31
+          ? now.getFullYear() - 1
+          : now.getFullYear();
+      await blobUpdate(year);
     }
   }
 }
 
-export async function edgeUpdate() {
-  const now = new Date();
-  const year =
-    now.getMonth() <= 3 && now.getDate() <= 31
-      ? now.getFullYear() - 1
-      : now.getFullYear();
+export async function blobUpdate(year: number) {
   const res = await getList(year);
 
   try {
+    const blob = await put(`data/seminar_${year}.json`, JSON.stringify(res), {
+      access: "public",
+      allowOverwrite: true,
+      addRandomSuffix: true,
+    });
     const updateEdgeConfig = await fetch(
       `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
       {
@@ -255,36 +272,69 @@ export async function edgeUpdate() {
             {
               operation: "update",
               key: "seminar_list_top",
-              value: res,
+              value: blob.url,
             },
           ],
         }),
       },
     );
-    const result = await updateEdgeConfig.json();
-    console.log(result);
   } catch (error) {
     console.log(error);
-    const createEdgeConfig = await fetch(
-      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          items: [
-            {
-              operation: "create",
-              key: "seminar_list_top",
-              value: res,
-            },
-          ],
-        }),
-      },
-    );
-    const result = await createEdgeConfig.json();
-    console.log(result);
   }
 }
+
+// export async function edgeUpdate() {
+//   const now = new Date();
+//   const year =
+//     now.getMonth() <= 3 && now.getDate() <= 31
+//       ? now.getFullYear() - 1
+//       : now.getFullYear();
+//   const res = await getList(year);
+
+//   try {
+//     const updateEdgeConfig = await fetch(
+//       `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+//       {
+//         method: "PATCH",
+//         headers: {
+//           Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           items: [
+//             {
+//               operation: "update",
+//               key: "seminar_list_top",
+//               value: res,
+//             },
+//           ],
+//         }),
+//       },
+//     );
+//     const result = await updateEdgeConfig.json();
+//     console.log(result);
+//   } catch (error) {
+//     console.log(error);
+//     const createEdgeConfig = await fetch(
+//       `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+//       {
+//         method: "PATCH",
+//         headers: {
+//           Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           items: [
+//             {
+//               operation: "create",
+//               key: "seminar_list_top",
+//               value: res,
+//             },
+//           ],
+//         }),
+//       },
+//     );
+//     const result = await createEdgeConfig.json();
+//     console.log(result);
+//   }
+// }

@@ -1,6 +1,5 @@
 "use client";
 
-import axios from "axios";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
@@ -38,15 +37,30 @@ export default function SeminarList(props: Props) {
 
   const getSeminar = async (year: number) => {
     if (year === 2025) {
-      const seminarList = await axios.get("/seminar_list_top");
-      console.log(seminarList);
-      if (seminarList.status === 200) {
-        const seminarListWithOpen = seminarList.data.map(
+      try {
+        const fetchURL = await fetch("/seminar_list_top");
+        const URL = await fetchURL.json();
+        const response = await fetch(`${URL}`);
+
+        if (!response.ok) {
+          console.log("JSON file doesn't exist.");
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const seminarList = await response.json();
+        const seminarListWithOpen = seminarList.map(
           (v: seminarWithUserSchemaType) => {
-            return { ...JSON.parse(JSON.stringify(v)), open: false };
+            return { ...v, open: false };
           },
         );
-        setSeminar(seminarList.data ? seminarListWithOpen : []);
+        setSeminar(seminarListWithOpen);
+        setIsReady(true);
+      } catch (error) {
+        const seminarList = await getList(year);
+        const seminarListWithOpen = seminarList.map((v) => {
+          return { ...v, open: false };
+        });
+        setSeminar(seminarListWithOpen);
         setIsReady(true);
       }
     } else {
@@ -76,7 +90,7 @@ export default function SeminarList(props: Props) {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     getSeminar(Number(year));
   }, [year]);
 

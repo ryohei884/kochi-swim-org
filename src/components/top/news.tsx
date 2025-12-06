@@ -1,6 +1,5 @@
 "use client";
 
-import axios from "axios";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import Image from "next/image";
@@ -8,6 +7,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { getList3 } from "@/lib/news/actions";
 import type { newsSchemaType } from "@/lib/news/verification";
 import { newsLinkCategory } from "@/lib/utils";
 
@@ -16,16 +16,28 @@ export default function News() {
   const [news, setNews] = useState<newsSchemaType[]>([]);
 
   const getNews = async () => {
-    const newsList = await axios.get("/news_list_top");
-    console.log(newsList);
-    if (newsList.status === 200) {
-      setNews(newsList.data ? JSON.parse(JSON.stringify(newsList.data)) : []);
+    const URL =
+      process.env.NEXT_BLOB_URL ||
+      "https://nzprheefai1ubld0.public.blob.vercel-storage.com";
+    try {
+      const response = await fetch(`${URL}/data/news_list_3.json`);
+
+      if (!response.ok) {
+        console.log("JSON file doesn't exist.");
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const newsList = await response.json();
+      setNews(newsList);
+    } catch (error) {
+      const newsList = await getList3();
+      setNews(newsList);
     }
     setIsReady(true);
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setIsReady(false);
     getNews();
   }, []);
