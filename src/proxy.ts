@@ -9,8 +9,8 @@ export default auth(async (req) => {
     return Response.redirect(newUrl);
   }
 
-  if (req.nextUrl.pathname.includes("news_list3")) {
-    const res = await get("news_list3");
+  if (req.nextUrl.pathname.includes("news_list_3")) {
+    const res = await get("news_list_3");
     return NextResponse.json(res);
   }
 
@@ -41,7 +41,7 @@ export default auth(async (req) => {
 export const config = {
   matcher: [
     "/((?!api|_next/static|_next/image|favicon.ico).*)",
-    "/news_list3",
+    "/news_list_3",
     "/news_list_top",
     "/news_list_top_num",
     "/meet_\d{4}_\d",

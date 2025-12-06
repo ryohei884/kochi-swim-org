@@ -16,11 +16,10 @@ export default function News() {
   const [news, setNews] = useState<newsSchemaType[]>([]);
 
   const getNews = async () => {
-    const URL =
-      process.env.NEXT_BLOB_URL ||
-      "https://nzprheefai1ubld0.public.blob.vercel-storage.com";
     try {
-      const response = await fetch(`${URL}/data/news_list_3.json`);
+      const fetchURL = await fetch("/news_list_3");
+      const URL = await fetchURL.json();
+      const response = await fetch(`${URL}`);
 
       if (!response.ok) {
         console.log("JSON file doesn't exist.");
@@ -37,7 +36,6 @@ export default function News() {
   };
 
   useEffect(() => {
-     
     setIsReady(false);
     getNews();
   }, []);

@@ -317,6 +317,7 @@ export async function blobUpdate(num_fix: number) {
       {
         access: "public",
         allowOverwrite: true,
+        addRandomSuffix: true,
       },
     );
 
@@ -326,6 +327,7 @@ export async function blobUpdate(num_fix: number) {
       {
         access: "public",
         allowOverwrite: true,
+        addRandomSuffix: true,
       },
     );
 
