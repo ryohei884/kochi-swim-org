@@ -29,11 +29,11 @@ export default async function Page() {
     permission = await getPermissionList();
   }
 
-  const approver: Approver = await getApproverList({ categoryLink: "seminar" });
+  const approver: Approver = await getApproverList({ categoryLink: "news" });
 
   return (
     <NewsList
-      page="1"
+      page={1}
       session={session}
       permission={permission}
       approver={approver}

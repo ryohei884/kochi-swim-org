@@ -5,7 +5,7 @@ import Header from "@/components/top/header";
 export default async function Page({
   params,
 }: {
-  params: Promise<{ year: string }>;
+  params: Promise<{ year: number }>;
 }) {
   const { year } = await params;
   return (

@@ -13,7 +13,6 @@ import { prisma } from "@/prisma";
 
 export async function getList(page?: number) {
   const res = await prisma.news.findMany({
-    include: { createdUser: true, revisedUser: true, approvedUser: true },
     orderBy: [
       {
         order: "desc",
@@ -49,7 +48,7 @@ export async function getListAdmin(page?: number) {
       },
     ],
     skip: page ? (page - 1) * 10 : undefined,
-    take: page ? 10 : undefined,
+    take: 10,
   });
   return res;
 }

@@ -171,15 +171,15 @@ export default function NewsCreateForm(props: Props) {
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
         <Button variant="outline" size="sm">
-          <Plus /> ニュース作成
+          <Plus /> お知らせ作成
         </Button>
       </SheetTrigger>
       <SheetContent>
         <ScrollArea className="h-dvh pr-2">
           <SheetHeader>
-            <SheetTitle>ニュース作成</SheetTitle>
+            <SheetTitle>お知らせ作成</SheetTitle>
             <SheetDescription className="sr-only">
-              ニュース作成画面
+              お知らせ作成画面
             </SheetDescription>
           </SheetHeader>
           <Form {...form}>

@@ -20,13 +20,13 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getList } from "@/lib/seminar/actions";
-import type { seminarWithUserSchemaType } from "@/lib/seminar/verification";
+import type { seminarSchemaType } from "@/lib/seminar/verification";
 
 interface Props {
-  year: string;
+  year: number;
 }
 
-type seminarListWithOpenType = seminarWithUserSchemaType & {
+type seminarListWithOpenType = seminarSchemaType & {
   open: boolean;
 };
 export default function SeminarList(props: Props) {
@@ -48,11 +48,9 @@ export default function SeminarList(props: Props) {
         }
 
         const seminarList = await response.json();
-        const seminarListWithOpen = seminarList.map(
-          (v: seminarWithUserSchemaType) => {
-            return { ...v, open: false };
-          },
-        );
+        const seminarListWithOpen = seminarList.map((v: seminarSchemaType) => {
+          return { ...v, open: false };
+        });
         setSeminar(seminarListWithOpen);
         setIsReady(true);
       } catch (error) {
@@ -90,8 +88,7 @@ export default function SeminarList(props: Props) {
   };
 
   useEffect(() => {
-     
-    getSeminar(Number(year));
+    getSeminar(year);
   }, [year]);
 
   return (

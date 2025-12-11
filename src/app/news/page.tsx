@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <>
       <Header />
-      <NewsList page="1" />
+      <NewsList page={1} />
       <Footer />
     </>
   );

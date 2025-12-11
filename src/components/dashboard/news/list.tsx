@@ -63,7 +63,7 @@ type Approver = {
 type Props = {
   session: Session | null;
   permission: Permission;
-  page: string;
+  page: number;
   approver: Approver;
 };
 
@@ -83,7 +83,7 @@ export default function NewsList(props: Props) {
 
   const fetchListData = async (id?: string) => {
     data && setCallbackData(id);
-    const res = await getListAdmin();
+    const res = await getListAdmin(page);
     if (res !== null) {
       setData(res);
       const newsNum = await getListNumAdmin();
@@ -121,7 +121,7 @@ export default function NewsList(props: Props) {
   return (
     <>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight p-2 flex justify-between">
-        ニュース{" "}
+        お知らせ{" "}
         {isReady &&
           (pms.filter((v) => v.submit === true).length > 0 ||
             session?.user.role === "administrator") && (
@@ -268,11 +268,12 @@ export default function NewsList(props: Props) {
                       {d.approvedUser?.displayName || d.approvedUser?.name}
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      {(pms.filter((v) => v.revise === true).length === 0 ||
+                      {pms.filter((v) => v.revise === true).length === 0 &&
+                      /* ||
                         (d.approved === true &&
                           d.createdUserId !== session?.user.id &&
-                          d.revisedUserId !== session?.user.id)) &&
-                      session?.user.role !== "administrator" ? (
+                          d.revisedUserId !== session?.user.id) */ session?.user
+                        .role !== "administrator" ? (
                         <Button variant="ghost" size="sm" disabled>
                           <Lock className="size-4" />
                         </Button>
@@ -286,8 +287,8 @@ export default function NewsList(props: Props) {
                       )}
                     </TableCell>
                     <TableCell className="flex-none text-center w-12">
-                      {(pms.filter((v) => v.exclude === true).length === 0 ||
-                        d.createdUserId !== session?.user.id) &&
+                      {pms.filter((v) => v.exclude === true).length === 0 /* ||
+                        d.createdUserId !== session?.user.id */ &&
                       session?.user.role !== "administrator" ? (
                         <Button variant="ghost" size="sm" disabled>
                           <Lock className="size-4" />
@@ -305,8 +306,9 @@ export default function NewsList(props: Props) {
                         <Button variant="ghost" size="sm" disabled>
                           <CheckIcon className="size-4" />
                         </Button>
-                      ) : (pms.filter((v) => v.approve === true).length === 0 ||
-                          d.approvedUserId !== session?.user.id) &&
+                      ) : pms.filter((v) => v.approve === true).length ===
+                          0 /*||
+                          d.approvedUserId !== session?.user.id */ &&
                         session?.user.role !== "administrator" ? (
                         <Button variant="ghost" size="sm" disabled>
                           <Lock className="size-4" />
@@ -330,13 +332,13 @@ export default function NewsList(props: Props) {
         <PaginationContent className="-mt-px flex w-0 flex-1">
           <PaginationItem className="inline-flex items-center">
             <PaginationPrevious
-              href={`/dashboard/meet/${previousPage}`}
+              href={`/dashboard/news/${previousPage}`}
               hidden={previousPage < 1}
             />
           </PaginationItem>
           <PaginationItem className="-mt-px flex w-0 flex-1 justify-end">
             <PaginationNext
-              href={`/dashboard/meet/${nextPage}`}
+              href={`/dashboard/news/${nextPage}`}
               className="inline-flex items-center"
               hidden={dataNum <= Number(page) * 10}
             />

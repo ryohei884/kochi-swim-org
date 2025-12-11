@@ -1,6 +1,5 @@
 "use client";
 
-import axios from "axios";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import Image from "next/image";
@@ -16,18 +15,18 @@ import {
 } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getList, getListNum } from "@/lib/news/actions";
-import type { newsWithUserSchemaType } from "@/lib/news/verification";
+import type { newsSchemaType } from "@/lib/news/verification";
 import { newsLinkCategory } from "@/lib/utils";
 
 interface Props {
-  page: string;
+  page: number;
 }
 
 export default function NewsList(props: Props) {
   const { page } = props;
   const previousPage = Number(page) - 1;
   const nextPage = Number(page) + 1;
-  const [news, setNews] = useState<newsWithUserSchemaType[]>([]);
+  const [news, setNews] = useState<newsSchemaType[]>([]);
   const [newsNum, setNewsNum] = useState<number>(0);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(10);

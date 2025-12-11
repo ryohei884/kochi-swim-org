@@ -210,11 +210,11 @@ export default function MeetCreateForm(props: Props) {
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>大会コード</FormLabel>
+                    <FormLabel>競技会コード</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
-                        placeholder="大会コード"
+                        placeholder="競技会コード"
                         {...field}
                         value={field.value || ""}
                       />
@@ -252,9 +252,9 @@ export default function MeetCreateForm(props: Props) {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>大会名</FormLabel>
+                    <FormLabel>競技会名</FormLabel>
                     <FormControl>
-                      <Input type="text" placeholder="大会名" {...field} />
+                      <Input type="text" placeholder="競技会名" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

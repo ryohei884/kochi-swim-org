@@ -105,9 +105,9 @@ export default function NewsExcludeForm(props: Props) {
       <SheetContent>
         <ScrollArea className="h-dvh pr-2">
           <SheetHeader>
-            <SheetTitle>ニュース削除</SheetTitle>
+            <SheetTitle>お知らせ削除</SheetTitle>
             <SheetDescription className="sr-only">
-              ニュース削除画面
+              お知らせ削除画面
             </SheetDescription>
           </SheetHeader>
           <Form {...form}>
@@ -120,7 +120,7 @@ export default function NewsExcludeForm(props: Props) {
                 name="id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>ニュースID</FormLabel>
+                    <FormLabel>お知らせID</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}

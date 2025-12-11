@@ -128,7 +128,7 @@ export default function MeetApproveForm(props: Props) {
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>大会コード</FormLabel>
+                    <FormLabel>競技会コード</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}
@@ -166,7 +166,7 @@ export default function MeetApproveForm(props: Props) {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>大会名</FormLabel>
+                    <FormLabel>競技会名</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                         {field.value}

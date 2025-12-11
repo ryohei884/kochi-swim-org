@@ -280,10 +280,11 @@ export default function SeminarList(props: Props) {
                           {d.approvedUser?.displayName || d.approvedUser?.name}
                         </TableCell>
                         <TableCell className="flex-none text-center w-12">
-                          {(pms.filter((v) => v.revise === true).length === 0 ||
+                          {pms.filter((v) => v.revise === true).length ===
+                            0 /*||
                             (d.approved === true &&
                               d.createdUserId !== session?.user.id &&
-                              d.revisedUserId !== session?.user.id)) &&
+                              d.revisedUserId !== session?.user.id)*/ &&
                           session?.user.role !== "administrator" ? (
                             <Button variant="ghost" size="sm" disabled>
                               <Lock className="size-4" />
@@ -298,9 +299,9 @@ export default function SeminarList(props: Props) {
                           )}
                         </TableCell>
                         <TableCell className="flex-none text-center w-12">
-                          {(pms.filter((v) => v.exclude === true).length ===
-                            0 ||
-                            d.createdUserId !== session?.user.id) &&
+                          {pms.filter((v) => v.exclude === true).length ===
+                            0 /*||
+                            d.createdUserId !== session?.user.id */ &&
                           session?.user.role !== "administrator" ? (
                             <Button variant="ghost" size="sm" disabled>
                               <Lock className="size-4" />
@@ -318,9 +319,9 @@ export default function SeminarList(props: Props) {
                             <Button variant="ghost" size="sm" disabled>
                               <CheckIcon className="size-4" />
                             </Button>
-                          ) : (pms.filter((v) => v.approve === true).length ===
-                              0 ||
-                              d.approvedUserId !== session?.user.id) &&
+                          ) : pms.filter((v) => v.approve === true).length ===
+                              0 /*||
+                              d.approvedUserId !== session?.user.id */ &&
                             session?.user.role !== "administrator" ? (
                             <Button variant="ghost" size="sm" disabled>
                               <Lock className="size-4" />

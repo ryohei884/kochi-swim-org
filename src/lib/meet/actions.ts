@@ -25,7 +25,6 @@ export async function getList(kind: number, year: number) {
       kind: kind ? kind : undefined,
       approved: true,
     },
-    include: { createdUser: true, revisedUser: true, approvedUser: true },
     orderBy: [
       {
         fromDate: "asc",

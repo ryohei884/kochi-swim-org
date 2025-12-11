@@ -22,7 +22,7 @@ type Approver = {
 export default async function Page({
   params,
 }: {
-  params: Promise<{ page: string }>;
+  params: Promise<{ page: number }>;
 }) {
   const { page } = await params;
   const session = await auth();
@@ -34,7 +34,7 @@ export default async function Page({
     permission = await getPermissionList();
   }
 
-  const approver: Approver = await getApproverList({ categoryLink: "seminar" });
+  const approver: Approver = await getApproverList({ categoryLink: "news" });
 
   return (
     <NewsList

@@ -5,7 +5,7 @@ import Header from "@/components/top/header";
 export default async function Page({
   params,
 }: {
-  params: Promise<{ page: string }>;
+  params: Promise<{ page: number }>;
 }) {
   const { page } = await params;
   return (

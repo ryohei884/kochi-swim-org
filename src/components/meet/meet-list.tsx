@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getList } from "@/lib/meet/actions";
-import type { meetWithUserSchemaType } from "@/lib/meet/verification";
+import type { meetSchemaType } from "@/lib/meet/verification";
 import { meetKind, poolSize } from "@/lib/utils";
 
 interface Props {
@@ -28,7 +28,7 @@ interface Props {
   year: number;
 }
 
-type meetListWithOpenType = meetWithUserSchemaType & {
+type meetListWithOpenType = meetSchemaType & {
   open: boolean;
 };
 export default function MeetList(props: Props) {
@@ -51,7 +51,7 @@ export default function MeetList(props: Props) {
       }
 
       const meetList = await response.json();
-      const meetListWithOpen = meetList.map((v: meetWithUserSchemaType) => {
+      const meetListWithOpen = meetList.map((v: meetSchemaType) => {
         return { ...v, open: false };
       });
       setMeet(meetListWithOpen);

@@ -21,7 +21,6 @@ export async function getList(year?: number) {
       : now.getFullYear();
   const nextYear = thisYear + 1;
   const res = await prisma.seminar.findMany({
-    include: { createdUser: true, revisedUser: true, approvedUser: true },
     where: {
       approved: true,
       fromDate: {
