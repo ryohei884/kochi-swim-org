@@ -81,9 +81,9 @@ export default function SeminarList(props: Props) {
     const res = await getListAdmin(year);
 
     if (res !== null) {
-      const meetNum = await getListNumAdmin(year);
+      const seminarNum = await getListNumAdmin(year);
       setData(res);
-      setDataNum(meetNum);
+      setDataNum(seminarNum);
       setIsReady(true);
     }
   };
@@ -131,7 +131,7 @@ export default function SeminarList(props: Props) {
   return (
     <>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight p-2 flex justify-between">
-        競技会情報
+        講習会情報
         {isReady &&
           (pms.filter((v) => v.submit === true).length > 0 ||
             session?.user.role === "administrator") && (
