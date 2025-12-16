@@ -20,7 +20,7 @@ export default function Committee() {
                   alt=""
                   width={320}
                   height={320}
-                  src={"/tsutsumi.jpg"}
+                  src={"/wp_club.jpg"}
                   priority={true}
                   className="block size-full object-cover"
                 />
@@ -30,7 +30,7 @@ export default function Committee() {
                   alt=""
                   width={320}
                   height={320}
-                  src={"/wp_meet.jpg"}
+                  src={"/meeting.jpg"}
                   priority={true}
                   className="block size-full object-cover"
                 />
@@ -40,7 +40,7 @@ export default function Committee() {
                   alt=""
                   width={320}
                   height={320}
-                  src={"/party.jpg"}
+                  src={"/as_club.jpg"}
                   priority={true}
                   className="block size-full object-cover"
                 />
