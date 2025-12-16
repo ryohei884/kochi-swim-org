@@ -6,7 +6,12 @@ import { getLiveNow } from "@/lib/live/actions";
 import type { liveWithUserSchemaType } from "@/lib/live/verification";
 import { liveWithUserSchemaDV } from "@/lib/live/verification";
 
-export default function Hero() {
+interface Props {
+  pictureURL: string | undefined;
+}
+
+export default function Hero(props: Props) {
+  const { pictureURL } = props;
   const [live, setLive] =
     useState<liveWithUserSchemaType>(liveWithUserSchemaDV);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -105,14 +110,16 @@ export default function Hero() {
           </div>
         </div>
         <div className="bg-gray-50 lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 dark:bg-gray-800">
-          <Image
-            alt=""
-            width={1587}
-            height={1190}
-            src="/waterpolo_top.jpg"
-            priority={true}
-            className="aspect-3/2 object-cover lg:aspect-auto lg:size-full"
-          />
+          {pictureURL !== undefined && (
+            <Image
+              alt=""
+              width={1587}
+              height={1190}
+              src={pictureURL}
+              priority={true}
+              className="aspect-3/2 object-cover lg:aspect-auto lg:size-full"
+            />
+          )}
         </div>
       </div>
     </div>
