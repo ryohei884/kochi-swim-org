@@ -39,15 +39,39 @@ export default function LiveList(props: Props) {
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const getLive = async (page: number) => {
-    const liveList = await getList(page);
-    setLive(liveList);
-    const liveListNum = await getListNum();
-    setLiveNum(liveListNum);
-    setIsReady(true);
+    if (page === 1) {
+      try {
+        const fetchURL = await fetch("/live_top");
+        const URL = await fetchURL.json();
+        const response = await fetch(`${URL}`);
+
+        if (!response.ok) {
+          console.log("JSON file doesn't exist.");
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const liveList = await response.json();
+        setLive(liveList);
+        const liveListNum = await getListNum();
+        setLiveNum(liveListNum);
+        setIsReady(true);
+      } catch (error) {
+        const liveList = await getList(page);
+        setLive(liveList);
+        const liveListNum = await getListNum();
+        setLiveNum(liveListNum);
+        setIsReady(true);
+      }
+    } else {
+      const liveList = await getList(page);
+      setLive(liveList);
+      const liveListNum = await getListNum();
+      setLiveNum(liveListNum);
+      setIsReady(true);
+    }
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(false);
     getLive(Number(page));
   }, [page]);

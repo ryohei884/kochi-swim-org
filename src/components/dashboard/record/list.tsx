@@ -192,11 +192,11 @@ export default function RecordList(props: Props) {
                     <TableHead>種目</TableHead>
                     <TableHead>距離</TableHead>
                     <TableHead>タイム</TableHead>
-                    <TableHead>保持者</TableHead>
-                    <TableHead>チーム</TableHead>
+                    <TableHead>選手名</TableHead>
+                    <TableHead>所属</TableHead>
                     <TableHead>樹立日</TableHead>
                     <TableHead>大会名</TableHead>
-                    <TableHead>場所</TableHead>
+                    <TableHead>会場</TableHead>
                     <TableHead>作成者</TableHead>
                     <TableHead>更新者</TableHead>
                     <TableHead>承認者</TableHead>
@@ -274,7 +274,11 @@ export default function RecordList(props: Props) {
                               }
                             </TableCell>
                             <TableCell>{intToTime(d.time)}</TableCell>
-                            <TableCell>{d.swimmer1}</TableCell>
+                            <TableCell>
+                              {d.swimmer1}
+                              {d.distance > 6 &&
+                                `・${d.swimmer2}・${d.swimmer3}・${d.swimmer4}`}
+                            </TableCell>
                             <TableCell>{d.team}</TableCell>
                             <TableCell>
                               {d.date && format(d.date, "PPP", { locale: ja })}

@@ -83,11 +83,14 @@ export default function RecordCreateForm(props: Props) {
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [openDate, setOpenDate] = useState(false);
+  const [styles, setStyles] = useState(recordStyle);
 
   const form = useForm<recordCreateSchemaType>({
     resolver: zodResolver(recordCreateSchema),
     defaultValues: recordCreateSchemaDV,
   });
+
+  const { watch, register, ...others } = form;
 
   const onSubmit: SubmitHandler<recordCreateSchemaType> = async (
     data: recordCreateSchemaType,
@@ -98,14 +101,15 @@ export default function RecordCreateForm(props: Props) {
       newBlob = await uploadImage(data.image);
     }
 
-    // ここにtimeの変換関数を書く。
-
     const res = await create({
       ...data,
       swimmer1: data.swimmer1.replace("　", " ").trim(),
-      swimmer2: data.swimmer2 ? data.swimmer2.replace("　", " ").trim() : null,
-      swimmer3: data.swimmer3 ? data.swimmer3.replace("　", " ").trim() : null,
-      swimmer4: data.swimmer4 ? data.swimmer4.replace("　", " ").trim() : null,
+      swimmer2:
+        data.swimmer2 !== null ? data.swimmer2.replace("　", " ").trim() : null,
+      swimmer3:
+        data.swimmer3 !== null ? data.swimmer3.replace("　", " ").trim() : null,
+      swimmer4:
+        data.swimmer4 !== null ? data.swimmer4.replace("　", " ").trim() : null,
       category: Number(data.category),
       poolsize: Number(data.poolsize),
       sex: Number(data.sex),
@@ -176,8 +180,20 @@ export default function RecordCreateForm(props: Props) {
   }
 
   const dt = new Date();
-  const minDT = new Date(dt.setFullYear(dt.getFullYear() - 22));
-  const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 24));
+  const minDT = new Date(dt.setFullYear(dt.getFullYear() - 32));
+  const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 34));
+
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const watchDistance = watch("distance");
+
+  // useEffect(() => {
+  //   // eslint-disable-next-line react-hooks/incompatible-library
+  //   const subscription = watch((value, { name, type }) =>
+  //     console.log(value, name, type),
+  //   if(value )
+  //   );
+  //   return () => subscription.unsubscribe();
+  // }, [watch]);
 
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -311,7 +327,10 @@ export default function RecordCreateForm(props: Props) {
                         </SelectTrigger>
                         <SelectContent>
                           {recordDistance.map((value, index) => (
-                            <SelectItem key={index} value={String(value.id)}>
+                            <SelectItem
+                              key={`distance_${index}`}
+                              value={String(value.id)}
+                            >
                               {value.label}
                             </SelectItem>
                           ))}
@@ -322,30 +341,70 @@ export default function RecordCreateForm(props: Props) {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="style"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>種目</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="種目" {...field} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {recordStyle.map((value, index) => (
-                            <SelectItem key={index} value={String(value.id)}>
-                              {value.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {watchDistance <= 6 && (
+                <FormField
+                  control={form.control}
+                  name="style"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>種目</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="種目" {...field} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {styles.map(
+                              (value, index) =>
+                                value.id < 6 && (
+                                  <SelectItem
+                                    key={`style_${index}`}
+                                    value={String(value.id)}
+                                  >
+                                    {value.label}
+                                  </SelectItem>
+                                ),
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {watchDistance > 6 && (
+                <FormField
+                  control={form.control}
+                  name="style"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>種目</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="種目" {...field} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {styles.map(
+                              (value, index) =>
+                                value.id >= 6 && (
+                                  <SelectItem
+                                    key={`style_${index}`}
+                                    value={String(value.id)}
+                                  >
+                                    {value.label}
+                                  </SelectItem>
+                                ),
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="time"
@@ -384,7 +443,7 @@ export default function RecordCreateForm(props: Props) {
                 )}
               />
 
-              {Number(form.getValues("style")) <= 5 ? (
+              {watchDistance <= 6 ? (
                 <FormField
                   control={form.control}
                   name="swimmer1"
@@ -392,7 +451,11 @@ export default function RecordCreateForm(props: Props) {
                     <FormItem>
                       <FormLabel>選手名</FormLabel>
                       <FormControl>
-                        <Input type="text" placeholder="選手名" {...field} />
+                        <Input
+                          type="text"
+                          placeholder="選手名"
+                          {...register("swimmer1")}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -407,7 +470,11 @@ export default function RecordCreateForm(props: Props) {
                       <FormItem>
                         <FormLabel>第1泳者</FormLabel>
                         <FormControl>
-                          <Input type="text" placeholder="第1泳者" {...field} />
+                          <Input
+                            type="text"
+                            placeholder="第1泳者"
+                            {...register("swimmer1")}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -423,7 +490,8 @@ export default function RecordCreateForm(props: Props) {
                           <Input
                             type="text"
                             placeholder="第2泳者"
-                            value={field.value || ""}
+                            {...register("swimmer2")}
+                            // value={field.value !== null ? field.value : ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -440,7 +508,8 @@ export default function RecordCreateForm(props: Props) {
                           <Input
                             type="text"
                             placeholder="第3泳者"
-                            value={field.value || ""}
+                            {...register("swimmer3")}
+                            // value={field.value !== null ? field.value : ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -457,7 +526,8 @@ export default function RecordCreateForm(props: Props) {
                           <Input
                             type="text"
                             placeholder="第4泳者"
-                            value={field.value || ""}
+                            {...register("swimmer4")}
+                            // value={field.value !== null ? field.value : ""}
                           />
                         </FormControl>
                         <FormMessage />

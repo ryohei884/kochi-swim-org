@@ -38,11 +38,10 @@ export default function NewsList(props: Props) {
         const URLTop = await fetchURLTop.json();
         const response_top = await fetch(`${URLTop}`);
 
-        const fetchURLTopNum = await fetch("/news_list_top_num");
-        const URLTopNum = await fetchURLTopNum.json();
-        const response_num = await fetch(`${URLTopNum}`);
+        const fetchURLTopNum = await fetch("/news_list_num");
+        const NumTop = await fetchURLTopNum.json();
 
-        if (!response_top.ok || !response_num.ok) {
+        if (!response_top.ok) {
           console.log("JSON file doesn't exist.");
           throw new Error(`HTTP error! status: ${response_top.status}`);
         }
@@ -50,8 +49,7 @@ export default function NewsList(props: Props) {
         const newsList = await response_top.json();
         setNews(newsList);
         setDataNum(newsList.length);
-        const newsListNum = await response_num.json();
-        setNewsNum(newsListNum);
+        setNewsNum(NumTop);
         setIsReady(true);
       } catch (error) {
         const newsList = await getList(page);

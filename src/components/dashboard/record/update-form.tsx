@@ -96,6 +96,8 @@ export default function RecordUpdateForm(props: Props) {
     },
   });
 
+  const { watch, register, ...others } = form;
+
   const fetchData = async (id: string) => {
     setIsReady(false);
     const res = await getByIdAdmin(id);
@@ -195,8 +197,14 @@ export default function RecordUpdateForm(props: Props) {
   }
 
   const dt = new Date();
-  const minDT = new Date(dt.setFullYear(dt.getFullYear() - 22));
-  const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 24));
+  const minDT = new Date(dt.setFullYear(dt.getFullYear() - 32));
+  const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 34));
+
+  const watchDistance = watch("distance");
+
+  const handleChange = () => {
+    form.reset();
+  };
 
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -379,37 +387,84 @@ export default function RecordUpdateForm(props: Props) {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="style"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>種目</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={String(field.value)}
-                      >
-                        <SelectTrigger className="w-full" hidden={!isReady}>
-                          <SelectValue placeholder="種目" {...field} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {recordStyle.map((value, index) => (
-                            <SelectItem key={index} value={String(value.id)}>
-                              {value.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <Skeleton
-                      hidden={isReady}
-                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {watchDistance <= 6 && (
+                <FormField
+                  control={form.control}
+                  name="style"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>種目</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={String(field.value)}
+                        >
+                          <SelectTrigger className="w-full" hidden={!isReady}>
+                            <SelectValue placeholder="種目" {...field} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {recordStyle.map(
+                              (value, index) =>
+                                value.id < 6 && (
+                                  <SelectItem
+                                    key={index}
+                                    value={String(value.id)}
+                                  >
+                                    {value.label}
+                                  </SelectItem>
+                                ),
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <Skeleton
+                        hidden={isReady}
+                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {watchDistance > 6 && (
+                <FormField
+                  control={form.control}
+                  name="style"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>種目</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={String(field.value)}
+                        >
+                          <SelectTrigger className="w-full" hidden={!isReady}>
+                            <SelectValue placeholder="種目" {...field} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {recordStyle.map(
+                              (value, index) =>
+                                value.id >= 6 && (
+                                  <SelectItem
+                                    key={index}
+                                    value={String(value.id)}
+                                  >
+                                    {value.label}
+                                  </SelectItem>
+                                ),
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <Skeleton
+                        hidden={isReady}
+                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="time"
@@ -459,7 +514,7 @@ export default function RecordUpdateForm(props: Props) {
                 )}
               />
 
-              {Number(form.getValues("style")) <= 5 ? (
+              {watchDistance <= 6 ? (
                 <FormField
                   control={form.control}
                   name="swimmer1"
@@ -467,7 +522,11 @@ export default function RecordUpdateForm(props: Props) {
                     <FormItem>
                       <FormLabel>選手名</FormLabel>
                       <FormControl hidden={!isReady}>
-                        <Input type="text" placeholder="選手名" {...field} />
+                        <Input
+                          type="text"
+                          placeholder="選手名"
+                          {...register("swimmer1")}
+                        />
                       </FormControl>
                       <Skeleton
                         hidden={isReady}
@@ -486,7 +545,11 @@ export default function RecordUpdateForm(props: Props) {
                       <FormItem>
                         <FormLabel>第1泳者</FormLabel>
                         <FormControl hidden={!isReady}>
-                          <Input type="text" placeholder="第1泳者" {...field} />
+                          <Input
+                            type="text"
+                            placeholder="第1泳者"
+                            {...register("swimmer1")}
+                          />
                         </FormControl>
                         <Skeleton
                           hidden={isReady}
@@ -506,7 +569,7 @@ export default function RecordUpdateForm(props: Props) {
                           <Input
                             type="text"
                             placeholder="第2泳者"
-                            value={field.value || ""}
+                            {...register("swimmer2")}
                           />
                         </FormControl>
                         <Skeleton
@@ -527,7 +590,7 @@ export default function RecordUpdateForm(props: Props) {
                           <Input
                             type="text"
                             placeholder="第3泳者"
-                            value={field.value || ""}
+                            {...register("swimmer3")}
                           />
                         </FormControl>
                         <Skeleton
@@ -548,7 +611,7 @@ export default function RecordUpdateForm(props: Props) {
                           <Input
                             type="text"
                             placeholder="第4泳者"
-                            value={field.value || ""}
+                            {...register("swimmer4")}
                           />
                         </FormControl>
                         <Skeleton

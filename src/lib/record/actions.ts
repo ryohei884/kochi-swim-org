@@ -1,4 +1,7 @@
 "use server";
+import { del, put } from "@vercel/blob";
+import { get } from "@vercel/edge-config";
+
 import { auth } from "@/auth";
 import type {
   recordApproveSchemaType,
@@ -8,9 +11,8 @@ import type {
 } from "@/lib/record/verification";
 import { prisma } from "@/prisma";
 
-export async function getList(page?: number) {
+export async function getList(category: number, poolsize: number, sex: number) {
   const res = await prisma.record.findMany({
-    include: { createdUser: true, revisedUser: true, approvedUser: true },
     orderBy: [
       {
         style: "asc",
@@ -31,9 +33,10 @@ export async function getList(page?: number) {
     where: {
       approved: true,
       valid: true,
+      category: category,
+      poolsize: poolsize,
+      sex: sex,
     },
-    skip: page ? (page - 1) * 10 : undefined,
-    take: page ? 10 : undefined,
   });
   return res;
 }
@@ -140,9 +143,6 @@ export async function update(prop: recordUpdateSchemaType) {
   } else {
     const contest = await prisma.record.findFirst({
       where: { id: id },
-      include: {
-        createdUser: true,
-      },
     });
 
     if (!contest) {
@@ -175,6 +175,14 @@ export async function update(prop: recordUpdateSchemaType) {
           approved: false,
         },
       });
+      await blobUpdate(contest.category, contest.poolsize, contest.sex);
+      if (
+        res.category !== contest.category ||
+        res.poolsize !== contest.poolsize ||
+        res.sex !== contest.sex
+      ) {
+        await blobUpdate(res.category, res.poolsize, res.sex);
+      }
       return res;
     }
   }
@@ -193,11 +201,12 @@ export async function exclude(prop: recordExcludeSchemaType) {
     if (!contest) {
       throw new Error("Record ID does not exist.");
     } else {
-      await prisma.record.delete({
+      const res = await prisma.record.delete({
         where: {
           id: id,
         },
       });
+      await blobUpdate(res.category, res.poolsize, res.sex);
     }
   }
 }
@@ -215,7 +224,7 @@ export async function approve(prop: recordApproveSchemaType) {
     if (!contest) {
       throw new Error("Record ID does not exist.");
     } else {
-      await prisma.record.update({
+      const res = await prisma.record.update({
         where: {
           id: id,
         },
@@ -225,6 +234,61 @@ export async function approve(prop: recordApproveSchemaType) {
           approvedAt: new Date(),
         },
       });
+      // await blobUpdate(res.category, res.poolsize, res.sex);
     }
+  }
+}
+
+export async function blobUpdate(
+  category: number,
+  poolsize: number,
+  sex: number,
+) {
+  try {
+    const res = await getList(category, poolsize, sex);
+    const oldEdgeConfig = await get(`record_${category}_${poolsize}_${sex}`);
+
+    const blob = await put(
+      `data/record_${category}_${poolsize}_${sex}.json`,
+      JSON.stringify(res),
+      {
+        access: "public",
+        allowOverwrite: true,
+        addRandomSuffix: true,
+      },
+    );
+
+    const updateEdgeConfig = await fetch(
+      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              operation: "update",
+              key: `record_${category}_${poolsize}_${sex}`,
+              value: blob.url,
+            },
+          ],
+        }),
+      },
+    );
+    if (
+      oldEdgeConfig !== undefined &&
+      oldEdgeConfig !== null &&
+      updateEdgeConfig.status === 200
+    ) {
+      const regexRecord = /record_\d_\d_\d-*.+\.json/g;
+      const urlRecord = oldEdgeConfig.toString().match(regexRecord);
+      if (urlRecord !== null) {
+        const res = await del(`data/${urlRecord[0]}`);
+      }
+    }
+  } catch (error) {
+    console.log(error);
   }
 }

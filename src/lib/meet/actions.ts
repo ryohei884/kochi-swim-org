@@ -1,6 +1,7 @@
 "use server";
 
-import { put } from "@vercel/blob";
+import { del, put } from "@vercel/blob";
+import { get } from "@vercel/edge-config";
 
 import { auth } from "@/auth";
 import type {
@@ -208,36 +209,54 @@ export async function update(prop: meetUpdateSchemaType) {
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
   } else {
-    const res = await prisma.meet.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        id: data.id,
-        code: data.code,
-        kind: Number(data.kind),
-        title: data.title,
-        fromDate: data.fromDate,
-        toDate: data.toDate,
-        deadline: data.deadline,
-        place: data.place,
-        poolsize: Number(data.poolsize) || 0,
-        result: data.result,
-        description: data.description,
-        detail: data.detail !== "[]" ? data.detail : null,
-        attachment: data.attachment !== "[]" ? data.attachment : null,
-        revisedUserId: session?.user?.id,
-        approvedUserId: data.approvedUserId,
-        approved: false,
-      },
+    const contest = await prisma.meet.findFirst({
+      where: { id: data.id },
     });
-    const now = new Date(res.fromDate);
-    const year =
-      now.getMonth() <= 3 && now.getDate() <= 31
-        ? now.getFullYear() - 1
-        : now.getFullYear();
-    await blobUpdate(res.kind, year);
-    return res;
+
+    if (!contest) {
+      throw new Error("Meet ID does not exist.");
+    } else {
+      const res = await prisma.meet.update({
+        where: {
+          id: data.id,
+        },
+        data: {
+          id: data.id,
+          code: data.code,
+          kind: Number(data.kind),
+          title: data.title,
+          fromDate: data.fromDate,
+          toDate: data.toDate,
+          deadline: data.deadline,
+          place: data.place,
+          poolsize: Number(data.poolsize) || 0,
+          result: data.result,
+          description: data.description,
+          detail: data.detail !== "[]" ? data.detail : null,
+          attachment: data.attachment !== "[]" ? data.attachment : null,
+          revisedUserId: session?.user?.id,
+          approvedUserId: data.approvedUserId,
+          approved: false,
+        },
+      });
+      const now = new Date(res.fromDate);
+      const year =
+        now.getMonth() <= 3 && now.getDate() <= 31
+          ? now.getFullYear() - 1
+          : now.getFullYear();
+
+      const contesNnow = new Date(contest.fromDate);
+      const contestYear =
+        contesNnow.getMonth() <= 3 && contesNnow.getDate() <= 31
+          ? contesNnow.getFullYear() - 1
+          : contesNnow.getFullYear();
+      await blobUpdate(res.kind, year);
+      if (res.kind !== contest.kind || year !== contestYear) {
+        await blobUpdate(contest.kind, contestYear);
+      }
+
+      return res;
+    }
   }
 }
 
@@ -303,9 +322,10 @@ export async function approve(prop: meetApproveSchemaType) {
 }
 
 export async function blobUpdate(kind: number, year: number) {
-  const res = await getList(kind, year);
-
   try {
+    const res = await getList(kind, year);
+    const oldEdgeConfig = await get(`meet_${year}_${kind}`);
+
     const blob = await put(
       `data/meet_${year}_${kind}.json`,
       JSON.stringify(res),
@@ -334,36 +354,19 @@ export async function blobUpdate(kind: number, year: number) {
         }),
       },
     );
-  } catch (error) {
-    const blob = await put(
-      `data/meet_${year}_${kind}.json`,
-      JSON.stringify(res),
-      {
-        access: "public",
-        allowOverwrite: true,
-        addRandomSuffix: true,
-      },
-    );
 
-    const updateEdgeConfig = await fetch(
-      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          items: [
-            {
-              operation: "create",
-              key: `meet_${year}_${kind}`,
-              value: blob.url,
-            },
-          ],
-        }),
-      },
-    );
+    if (
+      oldEdgeConfig !== undefined &&
+      oldEdgeConfig !== null &&
+      updateEdgeConfig.status === 200
+    ) {
+      const regexMeet = /meet_\d{4}_\d-*.+\.json/g;
+      const urlMeet = oldEdgeConfig.toString().match(regexMeet);
+      if (urlMeet !== null) {
+        await del(`data/${urlMeet[0]}`);
+      }
+    }
+  } catch (error) {
     console.log(error);
   }
 }

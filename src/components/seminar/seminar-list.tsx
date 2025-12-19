@@ -36,32 +36,23 @@ export default function SeminarList(props: Props) {
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const getSeminar = async (year: number) => {
-    if (year === 2025) {
-      try {
-        const fetchURL = await fetch("/seminar_list_top");
-        const URL = await fetchURL.json();
-        const response = await fetch(`${URL}`);
+    try {
+      const fetchURL = await fetch(`/seminar_${year}`);
+      const URL = await fetchURL.json();
+      const response = await fetch(`${URL}`);
 
-        if (!response.ok) {
-          console.log("JSON file doesn't exist.");
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const seminarList = await response.json();
-        const seminarListWithOpen = seminarList.map((v: seminarSchemaType) => {
-          return { ...v, open: false };
-        });
-        setSeminar(seminarListWithOpen);
-        setIsReady(true);
-      } catch (error) {
-        const seminarList = await getList(year);
-        const seminarListWithOpen = seminarList.map((v) => {
-          return { ...v, open: false };
-        });
-        setSeminar(seminarListWithOpen);
-        setIsReady(true);
+      if (!response.ok) {
+        console.log("JSON file doesn't exist.");
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    } else {
+
+      const seminarList = await response.json();
+      const seminarListWithOpen = seminarList.map((v: seminarSchemaType) => {
+        return { ...v, open: false };
+      });
+      setSeminar(seminarListWithOpen);
+      setIsReady(true);
+    } catch (error) {
       const seminarList = await getList(year);
       const seminarListWithOpen = seminarList.map((v) => {
         return { ...v, open: false };

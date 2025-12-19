@@ -19,21 +19,34 @@ export default auth(async (req) => {
     return NextResponse.json(res);
   }
 
-  if (req.nextUrl.pathname.includes("news_list_top_num")) {
-    const res = await get("news_list_top_num");
+  if (req.nextUrl.pathname.includes("news_list_num")) {
+    const res = await get("news_list_num");
     return NextResponse.json(res);
   }
 
-  const regex = /meet_\d{4}_\d/g;
-  const url = req.nextUrl.pathname.match(regex);
-  if (url !== null) {
-    console.log(url[0]);
-    const res = await get(`${url[0]}`);
+  if (req.nextUrl.pathname.includes("live_top")) {
+    const res = await get("live_top");
     return NextResponse.json(res);
   }
 
-  if (req.nextUrl.pathname.includes("seminar_list_top")) {
-    const res = await get("seminar_list_top");
+  const regexMeet = /meet_\d{4}_\d/g;
+  const urlMeet = req.nextUrl.pathname.match(regexMeet);
+  if (urlMeet !== null) {
+    const res = await get(`${urlMeet[0]}`);
+    return NextResponse.json(res);
+  }
+
+  const regexSeminar = /seminar_\d{4}/g;
+  const urlSeminar = req.nextUrl.pathname.match(regexSeminar);
+  if (urlSeminar !== null) {
+    const res = await get(`${urlSeminar[0]}`);
+    return NextResponse.json(res);
+  }
+
+  const regexRecord = /record_\d_\d_\d/g;
+  const urlRecord = req.nextUrl.pathname.match(regexRecord);
+  if (urlRecord !== null) {
+    const res = await get(`${urlRecord[0]}`);
     return NextResponse.json(res);
   }
 });
@@ -43,8 +56,10 @@ export const config = {
     "/((?!api|_next/static|_next/image|favicon.ico).*)",
     "/news_list_3",
     "/news_list_top",
-    "/news_list_top_num",
+    "/news_list_num",
     "/meet_\d{4}_\d",
-    "/seminar_list_top",
+    "/seminar_\d{4}",
+    "/record_\d_\d_\d",
+    "/live_top",
   ],
 };

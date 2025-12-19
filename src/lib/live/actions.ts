@@ -1,5 +1,8 @@
 "use server";
 
+import { del, put } from "@vercel/blob";
+import { get } from "@vercel/edge-config";
+
 import { auth } from "@/auth";
 import type {
   liveCreateSchemaType,
@@ -76,6 +79,7 @@ export async function create(prop: liveCreateSchemaType) {
         createdUserId: session?.user?.id,
       },
     });
+    await blobUpdate();
     return res;
   }
 }
@@ -120,6 +124,7 @@ export async function update(prop: liveUpdateSchemaType) {
           finished: finished,
         },
       });
+      await blobUpdate();
       return res;
     }
   }
@@ -143,6 +148,7 @@ export async function exclude(prop: liveExcludeSchemaType) {
           id: id,
         },
       });
+      await blobUpdate();
     }
   }
 }
@@ -152,7 +158,7 @@ export async function getLiveNow() {
     where: {
       onAir: true,
     },
-    include: { createdUser: true, meet: true },
+    include: { meet: true },
     orderBy: [
       {
         order: "asc",
@@ -199,4 +205,73 @@ export async function reOrder() {
       }
     }),
   );
+
+  await blobUpdate();
+}
+
+export async function blobUpdate() {
+  try {
+    const res = await getList(1);
+    const oldEdgeConfig = await get("live_top");
+
+    const blob = await put(`data/live_top.json`, JSON.stringify(res), {
+      access: "public",
+      allowOverwrite: true,
+      addRandomSuffix: true,
+    });
+    const updateEdgeConfig = await fetch(
+      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              operation: "update",
+              key: "live_top",
+              value: blob.url,
+            },
+          ],
+        }),
+      },
+    );
+
+    if (
+      oldEdgeConfig !== undefined &&
+      oldEdgeConfig !== null &&
+      updateEdgeConfig.status === 200
+    ) {
+      const regexLive = /live_top-*.+\.json/g;
+      const urlLive = oldEdgeConfig.toString().match(regexLive);
+      if (urlLive !== null) {
+        await del(`data/${urlLive[0]}`);
+      }
+    }
+
+    const resActive = await getLiveNow();
+    await fetch(
+      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              operation: "update",
+              key: "live_active_url",
+              value: resActive ? resActive.url : false,
+            },
+          ],
+        }),
+      },
+    );
+  } catch (error) {
+    console.log(error);
+  }
 }

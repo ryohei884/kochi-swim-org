@@ -55,6 +55,18 @@ export const liveWithUserSchemaDV: liveWithUserSchemaType = {
   createdUser: userSchemaDV,
 };
 
+// liveWithMeetSchema
+export const liveWithMeetSchema = liveSchema.extend({
+  meet: meetSchema.nullable(),
+});
+
+export type liveWithMeetSchemaType = z.infer<typeof liveWithMeetSchema>;
+
+export const liveWithMeetSchemaDV: liveWithMeetSchemaType = {
+  ...liveSchemaDV,
+  meet: meetSchemaDV,
+};
+
 // liveCreateSchema
 export const liveCreateSchema = liveSchema.omit({
   id: true,

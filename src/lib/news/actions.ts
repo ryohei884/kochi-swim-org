@@ -1,5 +1,7 @@
 "use server";
-import { put } from "@vercel/blob";
+
+import { del, put } from "@vercel/blob";
+import { get } from "@vercel/edge-config";
 
 import { auth } from "@/auth";
 import type {
@@ -310,6 +312,9 @@ export async function blobUpdate(num_fix: number) {
   const num = await getListNum();
 
   try {
+    const oldEdgeConfigLT = await get("news_list_top");
+    const oldEdgeConfigL3 = await get("news_list_3");
+
     const blob_top = await put(
       `data/news_list_top.json`,
       JSON.stringify(res_list_top),
@@ -331,15 +336,6 @@ export async function blobUpdate(num_fix: number) {
     );
 
     const entry_num = num + num_fix;
-    const blob_num = await put(
-      `data/news_list_top_num.json`,
-      JSON.stringify(entry_num),
-      {
-        access: "public",
-        allowOverwrite: true,
-        addRandomSuffix: true,
-      },
-    );
     const updateEdgeConfig = await fetch(
       `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
       {
@@ -362,76 +358,32 @@ export async function blobUpdate(num_fix: number) {
             },
             {
               operation: "update",
-              key: "news_list_top_num",
-              value: blob_num.url,
+              key: "news_list_num",
+              value: entry_num,
             },
           ],
         }),
       },
     );
+
+    if (updateEdgeConfig.status === 200) {
+      if (oldEdgeConfigLT !== undefined && oldEdgeConfigLT !== null) {
+        const regexLT = /news_list_top-*.+\.json/g;
+        const urlLT = oldEdgeConfigLT.toString().match(regexLT);
+        if (urlLT !== null) {
+          await del(`data/${urlLT[0]}`);
+        }
+      }
+
+      if (oldEdgeConfigL3 !== undefined && oldEdgeConfigL3 !== null) {
+        const regexL3 = /news_list_3-*.+\.json/g;
+        const urlL3 = oldEdgeConfigL3.toString().match(regexL3);
+        if (urlL3 !== null) {
+          await del(`data/${urlL3[0]}`);
+        }
+      }
+    }
   } catch (error) {
     console.log(error);
   }
 }
-
-// export async function edgeUpdate() {
-//   const res_list = await getList(1);
-//   const num = await getListNum();
-
-//   try {
-//     const updateEdgeConfig = await fetch(
-//       `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
-//       {
-//         method: "PATCH",
-//         headers: {
-//           Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           items: [
-//             {
-//               operation: "update",
-//               key: "news_list_top",
-//               value: res_list,
-//             },
-//             {
-//               operation: "update",
-//               key: "news_list_top_num",
-//               value: num,
-//             },
-//           ],
-//         }),
-//       },
-//     );
-//     const result = await updateEdgeConfig.json();
-//     console.log(result);
-//   } catch (error) {
-//     console.log(error);
-//     const createEdgeConfig = await fetch(
-//       `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
-//       {
-//         method: "PATCH",
-//         headers: {
-//           Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           items: [
-//             {
-//               operation: "create",
-//               key: "news_list_top",
-//               value: res_list,
-//             },
-//             {
-//               operation: "create",
-//               key: "news_list_top_num",
-//               value: num,
-//             },
-//           ],
-//         }),
-//       },
-//     );
-//     const result = await createEdgeConfig.json();
-//     console.log(result);
-//   }
-// }

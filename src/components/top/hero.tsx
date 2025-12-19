@@ -3,8 +3,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { getLiveNow } from "@/lib/live/actions";
-import type { liveWithUserSchemaType } from "@/lib/live/verification";
-import { liveWithUserSchemaDV } from "@/lib/live/verification";
+import type { liveWithMeetSchemaType } from "@/lib/live/verification";
+import {
+  liveWithMeetSchema,
+  liveWithMeetSchemaDV,
+} from "@/lib/live/verification";
 
 interface Props {
   pictureURL: string | undefined;
@@ -12,16 +15,33 @@ interface Props {
 
 export default function Hero(props: Props) {
   const { pictureURL } = props;
-  const [live, setLive] =
-    useState<liveWithUserSchemaType>(liveWithUserSchemaDV);
+  const [live, setLive] = useState<liveWithMeetSchemaType | null>(
+    liveWithMeetSchemaDV,
+  );
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const getLive = async () => {
-    const res = await getLiveNow();
-    if (res !== null) {
-      setLive(res);
+    try {
+      const fetchLiveTop = await fetch("/live_top");
+      const LiveTop = await fetchLiveTop.json();
+      if (LiveTop !== false && LiveTop !== undefined) {
+        const parsedValue = liveWithMeetSchema.safeParse(LiveTop);
+        if (parsedValue.success) {
+          setLive(parsedValue.data);
+        }
+      } else {
+        setLive(null);
+      }
+      setIsReady(true);
+    } catch (error) {
+      const res = await getLiveNow();
+      if (res !== null) {
+        setLive(res);
+      } else {
+        setLive(null);
+      }
+      setIsReady(true);
     }
-    setIsReady(true);
   };
 
   useEffect(() => {
@@ -47,7 +67,8 @@ export default function Hero(props: Props) {
             <div className="relative px-6 py-32 sm:py-40 lg:px-8 lg:py-56 lg:pr-0">
               <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-xl">
                 <div className="hidden sm:mb-10 sm:flex">
-                  {live.url !== null &&
+                  {live !== null &&
+                    live.url !== null &&
                     live.meet !== null &&
                     isReady &&
                     live.meet?.title !== "" && (
@@ -67,7 +88,8 @@ export default function Hero(props: Props) {
                     )}
                 </div>
                 <div className="flex mb-10 sm:hidden">
-                  {live.url !== null &&
+                  {live !== null &&
+                    live.url !== null &&
                     live.meet !== null &&
                     isReady &&
                     live.meet?.title !== "" && (

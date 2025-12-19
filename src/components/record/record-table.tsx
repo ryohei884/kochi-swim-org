@@ -2,10 +2,13 @@
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { Fragment, useState } from "react";
+import { Award } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import { record } from "@/components/record/record-list";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -15,66 +18,92 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getList } from "@/lib/record/actions";
+import type { recordSchemaType } from "@/lib/record/verification";
+import {
+  intToTime,
+  recordCategory,
+  recordDistance,
+  recordPoolsize,
+  recordSex,
+  recordStyle,
+} from "@/lib/utils";
+type Props = {
+  category: "prefecture" | "high" | "junior_high" | "elementary";
+  poolsize: "long" | "short";
+  sex: "men" | "women" | "mixed";
+};
 
-// type Props = {
-//   id: number;
-//   poolsize: "長水路" | "短水路";
-//   recordType:
-//     | "高知県記録"
-//     | "高知県大学記録"
-//     | "高知県高校記録"
-//     | "高知県中学記録"
-//     | "高知県学童記録"
-//     | "高知県マスターズ記録";
-//   sex: "男子" | "女子" | "混合";
-//   style:
-//     | "自由形"
-//     | "背泳ぎ"
-//     | "平泳ぎ"
-//     | "バタフライ"
-//     | "個人メドレー"
-//     | "フリーリレー"
-//     | "メドレーリレー";
-//   distance: number;
-//   time: number;
-//   name: string;
-//   team: string;
-//   pool: string;
-//   date: string;
-//   meet: string;
-// }[];
+export default function RecordList(props: Props) {
+  const router = useRouter();
+  const { category, poolsize, sex } = props;
 
-export default function RecordList() {
-  const [poolsize, setPoolsize] = useState<string>("長水路");
-  const [type, setType] = useState<string>("高知県記録");
-  const [sex, setSex] = useState<string>("男子");
+  const [record, setRecord] = useState<recordSchemaType[]>([]);
+  const [isReady, setIsReady] = useState<boolean>(false);
+  const [dataNum, setDataNum] = useState<number>(3);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  const handlePoolsizeChange = (e: string) => {
-    setPoolsize(e);
-  };
+  const now = new Date();
+  const year =
+    now.getMonth() <= 3 && now.getDate() <= 31
+      ? now.getFullYear() - 1
+      : now.getFullYear();
+  const nextYear = year + 1;
 
-  const handleTypeChange = (e: string) => {
-    setType(e);
-  };
+  const getRecord = async (category: string, poolsize: string, sex: string) => {
+    const categoryNum =
+      recordCategory.find((v) => v.herf === category)?.id || 0;
+    const poolsizeNum =
+      recordPoolsize.find((v) => v.herf === poolsize)?.id || 0;
+    const sexNum = recordSex.find((v) => v.herf === sex)?.id || 0;
+    try {
+      const fetchURL = await fetch(
+        `/record_${categoryNum}_${poolsizeNum}_${sexNum}`,
+      );
+      const URL = await fetchURL.json();
+      const response = await fetch(`${URL}`);
 
-  const handleSexChange = (e: string) => {
-    setSex(e);
-  };
+      if (!response.ok) {
+        console.log("JSON file doesn't exist.");
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-  function getTime(time: number) {
-    if (time > 6000) {
-      const minute = Math.floor(time / 6000);
-      const second = Math.floor((time - minute * 6000) / 100);
-      const msec = Math.floor(time - minute * 6000 - second * 100);
-      return `${minute}:${("00" + second).slice(-2)}:${("00" + msec).slice(
-        -2,
-      )}`;
-    } else {
-      const second = Math.floor(time / 100);
-      const msec = Math.floor(time - second * 100);
-      return `${second}:${("00" + msec).slice(-2)}`;
+      const recordList = await response.json();
+      const recordNum = recordList.length;
+      const lastUpdateDate = recordList.reduce(
+        (a: recordSchemaType, b: recordSchemaType) => (a.date > b.date ? a : b),
+      );
+      setRecord(recordList);
+      setDataNum(recordNum);
+      setLastUpdated(lastUpdateDate.date);
+      setIsReady(true);
+    } catch (error) {
+      const recordList = await getList(categoryNum, poolsizeNum, sexNum);
+
+      if (recordList !== null) {
+        const recordNum = recordList.length;
+        const lastUpdateDate = recordList.reduce(
+          (a: recordSchemaType, b: recordSchemaType) =>
+            a.date > b.date ? a : b,
+        );
+        setRecord(recordList);
+        setDataNum(recordNum);
+        setLastUpdated(lastUpdateDate.date);
+        setIsReady(true);
+      }
     }
-  }
+  };
+
+  useEffect(() => {
+    setIsReady(false);
+    getRecord(category, poolsize, sex);
+  }, [category, poolsize, sex]);
+
+  const handleChange = (e: string) => {
+    router.push(`/record/${e}`);
+    setIsReady(false);
+  };
+
   return (
     <div className="bg-white py-24 sm:py-32 dark:bg-gray-900">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -83,104 +112,166 @@ export default function RecordList() {
             県記録
           </h2>
           <p className="mt-2 text-lg/8 text-gray-600 dark:text-gray-400">
-            詳細は各リンク先からご覧ください。
+            {format(lastUpdated, "PPP", { locale: ja })}現在
           </p>
           <div className="mt-16 space-y-20 lg:mt-20">
             <Tabs
-              defaultValue="長水路"
-              onValueChange={(e) => handlePoolsizeChange(e)}
+              defaultValue={`${category}/${poolsize}/${sex}`}
+              onValueChange={(e) => handleChange(e)}
             >
               <TabsList>
-                <TabsTrigger value="長水路">長水路</TabsTrigger>
+                <TabsTrigger value={`prefecture/${poolsize}/${sex}`}>
+                  県記録
+                </TabsTrigger>
                 <Separator orientation="vertical" />
-                <TabsTrigger value="短水路">短水路</TabsTrigger>
+                <TabsTrigger value={`high/${poolsize}/${sex}`}>
+                  高校記録
+                </TabsTrigger>
+                <Separator orientation="vertical" />
+                <TabsTrigger value={`junior_high/${poolsize}/${sex}`}>
+                  中学記録
+                </TabsTrigger>
+                <Separator orientation="vertical" />
+                <TabsTrigger value={`elementary/${poolsize}/${sex}`}>
+                  学童記録
+                </TabsTrigger>
               </TabsList>
-              <TabsContent value={poolsize}>
+              <Tabs
+                defaultValue={`${category}/${poolsize}/${sex}`}
+                onValueChange={(e) => handleChange(e)}
+              >
+                <TabsList>
+                  <TabsTrigger value={`${category}/long/${sex}`}>
+                    長水路
+                  </TabsTrigger>
+                  <Separator orientation="vertical" />
+                  <TabsTrigger value={`${category}/short/${sex}`}>
+                    短水路
+                  </TabsTrigger>
+                </TabsList>
                 <Tabs
-                  defaultValue="高知県記録"
-                  onValueChange={(e) => handleTypeChange(e)}
+                  defaultValue={`${category}/${poolsize}/${sex}`}
+                  onValueChange={(e) => handleChange(e)}
                 >
                   <TabsList>
-                    <TabsTrigger value="高知県記録">県</TabsTrigger>
+                    <TabsTrigger value={`${category}/${poolsize}/men`}>
+                      男子
+                    </TabsTrigger>
                     <Separator orientation="vertical" />
-                    <TabsTrigger value="高知県高校記録">県高校</TabsTrigger>
-                    <Separator orientation="vertical" />
-                    <TabsTrigger value="高知県中学記録">県中学</TabsTrigger>
-                    <Separator orientation="vertical" />
-                    <TabsTrigger value="高知県学童記録">県学童</TabsTrigger>
-                    <Separator orientation="vertical" />
+                    <TabsTrigger value={`${category}/${poolsize}/women`}>
+                      女子
+                    </TabsTrigger>
+                    {/* <TabsTrigger value={`${category}/${poolsize}/mixed`}>
+                      混合
+                    </TabsTrigger> */}
                   </TabsList>
-                  <TabsContent value={type}>
-                    <Tabs
-                      defaultValue="男子"
-                      onValueChange={(e) => handleSexChange(e)}
-                    >
-                      <TabsList>
-                        <TabsTrigger value="男子">男子</TabsTrigger>
-                        <Separator orientation="vertical" />
-                        <TabsTrigger value="女子">女子</TabsTrigger>
-                        <Separator orientation="vertical" />
-                        <TabsTrigger value="混合">混合</TabsTrigger>
-                      </TabsList>
-                      <TabsContent value={sex}>
-                        <p className="p-2 font-semibold tracking-tight text-pretty text-gray-900 dark:text-white">
-                          {type} {poolsize} {sex}
-                        </p>
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>種目</TableHead>
-                              <TableHead>距離</TableHead>
-                              <TableHead>タイム</TableHead>
-                              <TableHead>選手名</TableHead>
-                              <TableHead>所属</TableHead>
-                              <TableHead>樹立日</TableHead>
-                              <TableHead>会場</TableHead>
-                              <TableHead>大会名</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {record
-                              .filter(
-                                (m) =>
-                                  m.category == type &&
-                                  m.poolsize == poolsize &&
-                                  m.sex == sex,
-                              )
-                              .map((m) => (
-                                <Fragment key={m.id}>
-                                  <TableRow>
-                                    <TableCell>{m.style}</TableCell>
-                                    <TableCell>{m.distance}</TableCell>
-                                    <TableCell className="text-right">
-                                      {getTime(m.time)}
+                  <TabsContent value={`${category}/${poolsize}/${sex}`}>
+                    <p className="p-2 font-semibold tracking-tight text-pretty text-gray-900 dark:text-white">
+                      {recordCategory.find((v) => v.herf === category)?.label} /{" "}
+                      {recordPoolsize.find((v) => v.herf === poolsize)?.label} /{" "}
+                      {recordSex.find((v) => v.herf === sex)?.label}
+                    </p>
+                    <hr />
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>種目</TableHead>
+                          <TableHead>距離</TableHead>
+                          <TableHead>タイム</TableHead>
+                          <TableHead>新記録</TableHead>
+                          <TableHead>選手名</TableHead>
+                          <TableHead>所属</TableHead>
+                          <TableHead>樹立日</TableHead>
+                          <TableHead>大会名</TableHead>
+                          <TableHead>会場</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {!isReady
+                          ? (function () {
+                              const rows = [];
+                              for (let i = 0; i < dataNum; i++) {
+                                rows.push(
+                                  <TableRow key={i}>
+                                    {(function () {
+                                      const cols = [];
+                                      for (let j = 0; j < 13; j++) {
+                                        cols.push(
+                                          <TableCell key={`${i}_${j}`}>
+                                            <Skeleton className="flex h-6 w-full border border-input p-2 file:border-0 max-w-full" />
+                                          </TableCell>,
+                                        );
+                                      }
+                                      return <>{cols}</>;
+                                    })()}
+                                    <TableCell className="flex-none text-center w-12">
+                                      <Button variant="ghost">
+                                        <Skeleton className="size-6 border border-input file:border-0" />
+                                      </Button>
                                     </TableCell>
-                                    <TableCell>
-                                      {m.swimmer1} {m.swimmer2}
+                                    <TableCell className="flex-none text-center w-12">
+                                      <Button variant="ghost">
+                                        <Skeleton className="size-6 border border-input file:border-0" />
+                                      </Button>
                                     </TableCell>
-                                    <TableCell>{m.team}</TableCell>
-                                    <TableCell>
-                                      {m.date &&
-                                        format(
-                                          new Date(String(m.date)),
-                                          "PPP",
-                                          {
-                                            locale: ja,
-                                          },
-                                        )}
+                                    <TableCell className="flex-none text-center w-12">
+                                      <Button variant="ghost">
+                                        <Skeleton className="size-6 border border-input file:border-0" />
+                                      </Button>
                                     </TableCell>
-                                    <TableCell>{m.place}</TableCell>
-                                    <TableCell>{m.meet}</TableCell>
-                                  </TableRow>
-                                </Fragment>
-                              ))}
-                          </TableBody>
-                        </Table>
-                      </TabsContent>
-                    </Tabs>
+                                  </TableRow>,
+                                );
+                              }
+                              return <>{rows}</>;
+                            })()
+                          : record.map((d) => {
+                              return (
+                                <TableRow key={d.id}>
+                                  <TableCell>
+                                    {
+                                      recordStyle.find((v) => v.id === d.style)
+                                        ?.label
+                                    }
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    {
+                                      recordDistance.find(
+                                        (v) => v.id === d.distance,
+                                      )?.label
+                                    }
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    {intToTime(d.time)}
+                                  </TableCell>
+                                  <TableCell className="justify-items-center">
+                                    {new Date(d.date) >=
+                                      new Date(`${year}/4/1`) &&
+                                      new Date(d.date) <=
+                                        new Date(`${nextYear}/3/31`) && (
+                                        <Award className="size-4 text-destructive" />
+                                      )}
+                                  </TableCell>
+                                  <TableCell>
+                                    {d.swimmer1}
+                                    {d.style >= 6 &&
+                                      `・${d.swimmer2}・${d.swimmer3}・${d.swimmer4}`}
+                                  </TableCell>
+                                  <TableCell>{d.team}</TableCell>
+                                  <TableCell>
+                                    {d.date &&
+                                      format(d.date, "PPP", { locale: ja })}
+                                  </TableCell>
+                                  <TableCell>{d.meetName}</TableCell>
+                                  <TableCell>{d.place}</TableCell>
+                                </TableRow>
+                              );
+                            })}
+                      </TableBody>
+                    </Table>
+                    <hr />
                   </TabsContent>
                 </Tabs>
-              </TabsContent>
+              </Tabs>
             </Tabs>
           </div>
         </div>

@@ -43,7 +43,6 @@ export default function MeetList(props: Props) {
       const fetchURL = await fetch(`/meet_${year}_${kindNum}`);
       const URL = await fetchURL.json();
       const response = await fetch(`${URL}`);
-      // const response = await fetch(`${URL}/data/meet_${year}_${kindNum}.json`);
 
       if (!response.ok) {
         console.log("JSON file doesn't exist.");

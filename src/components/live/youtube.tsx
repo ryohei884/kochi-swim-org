@@ -1,4 +1,6 @@
 "use client";
+
+import { get } from "@vercel/edge-config";
 import {
   MediaControlBar,
   MediaController,
@@ -17,17 +19,31 @@ import ReactPlayer from "react-player";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { getLiveNow } from "@/lib/live/actions";
+import { liveWithMeetSchema } from "@/lib/live/verification";
 
 export default function Youtube() {
   const [url, setUrl] = useState<string | null>(null);
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const getLive = async () => {
-    const res = await getLiveNow();
-    if (res !== null && res.url !== null) {
-      setUrl(res.url);
+    try {
+      const res = await get("live_top");
+      if (res !== false && res !== undefined) {
+        const parsedValue = liveWithMeetSchema.safeParse(res);
+        if (parsedValue.success) {
+          setUrl(parsedValue.data.url);
+        }
+      } else {
+        setUrl(null);
+      }
+      setIsReady(true);
+    } catch (error) {
+      const res = await getLiveNow();
+      if (res !== null && res.url !== null) {
+        setUrl(res.url);
+      }
+      setIsReady(true);
     }
-    setIsReady(true);
   };
 
   useEffect(() => {
