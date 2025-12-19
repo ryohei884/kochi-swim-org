@@ -79,7 +79,7 @@ export async function create(prop: liveCreateSchemaType) {
         createdUserId: session?.user?.id,
       },
     });
-    await blobUpdate();
+    await blobUpdate(1);
     return res;
   }
 }
@@ -124,7 +124,7 @@ export async function update(prop: liveUpdateSchemaType) {
           finished: finished,
         },
       });
-      await blobUpdate();
+      await blobUpdate(0);
       return res;
     }
   }
@@ -148,7 +148,7 @@ export async function exclude(prop: liveExcludeSchemaType) {
           id: id,
         },
       });
-      await blobUpdate();
+      await blobUpdate(-1);
     }
   }
 }
@@ -206,10 +206,10 @@ export async function reOrder() {
     }),
   );
 
-  await blobUpdate();
+  await blobUpdate(0);
 }
 
-export async function blobUpdate() {
+export async function blobUpdate(num_fix: number) {
   try {
     const res = await getList(1);
     const oldEdgeConfig = await get("live_top");
@@ -251,6 +251,8 @@ export async function blobUpdate() {
       }
     }
 
+    const num = await getListNum();
+    const entry_num = num + num_fix;
     const resActive = await getLiveNow();
     await fetch(
       `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
@@ -266,6 +268,11 @@ export async function blobUpdate() {
               operation: "update",
               key: "live_active_url",
               value: resActive ? resActive : false,
+            },
+            {
+              operation: "update",
+              key: "live_list_num",
+              value: entry_num,
             },
           ],
         }),

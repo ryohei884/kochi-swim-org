@@ -45,6 +45,9 @@ export default function LiveList(props: Props) {
         const URL = await fetchURL.json();
         const response = await fetch(`${URL}`);
 
+        const fetchURLTopNum = await fetch("/live_list_num");
+        const NumTop = await fetchURLTopNum.json();
+
         if (!response.ok) {
           console.log("JSON file doesn't exist.");
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -52,8 +55,7 @@ export default function LiveList(props: Props) {
 
         const liveList = await response.json();
         setLive(liveList);
-        const liveListNum = await getListNum();
-        setLiveNum(liveListNum);
+        setLiveNum(NumTop);
         setIsReady(true);
       } catch (error) {
         const liveList = await getList(page);

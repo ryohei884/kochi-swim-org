@@ -34,6 +34,11 @@ export default auth(async (req) => {
     return NextResponse.json(res);
   }
 
+  if (req.nextUrl.pathname.includes("live_list_num")) {
+    const res = await get("live_list_num");
+    return NextResponse.json(res);
+  }
+
   const regexMeet = /meet_\d{4}_\d/g;
   const urlMeet = req.nextUrl.pathname.match(regexMeet);
   if (urlMeet !== null) {
@@ -67,5 +72,6 @@ export const config = {
     "/record_\d_\d_\d",
     "/live_top",
     "/live_active_url",
+    "/live_list_num",
   ],
 };
