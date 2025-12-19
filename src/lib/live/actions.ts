@@ -265,7 +265,7 @@ export async function blobUpdate() {
             {
               operation: "update",
               key: "live_active_url",
-              value: resActive ? resActive.url : false,
+              value: resActive ? resActive : false,
             },
           ],
         }),

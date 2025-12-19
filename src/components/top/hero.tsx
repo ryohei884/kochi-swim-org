@@ -4,10 +4,7 @@ import { useEffect, useState } from "react";
 
 import { getLiveNow } from "@/lib/live/actions";
 import type { liveWithMeetSchemaType } from "@/lib/live/verification";
-import {
-  liveWithMeetSchema,
-  liveWithMeetSchemaDV,
-} from "@/lib/live/verification";
+import { liveWithMeetSchemaDV } from "@/lib/live/verification";
 
 interface Props {
   pictureURL: string | undefined;
@@ -22,13 +19,10 @@ export default function Hero(props: Props) {
 
   const getLive = async () => {
     try {
-      const fetchLiveTop = await fetch("/live_top");
+      const fetchLiveTop = await fetch("/live_active_url");
       const LiveTop = await fetchLiveTop.json();
       if (LiveTop !== false && LiveTop !== undefined) {
-        const parsedValue = liveWithMeetSchema.safeParse(LiveTop);
-        if (parsedValue.success) {
-          setLive(parsedValue.data);
-        }
+        setLive(LiveTop);
       } else {
         setLive(null);
       }

@@ -18,30 +18,30 @@ import ReactPlayer from "react-player";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { getLiveNow } from "@/lib/live/actions";
-import { liveWithMeetSchema } from "@/lib/live/verification";
 
 export default function Youtube() {
-  const [url, setUrl] = useState<string | null>(null);
+  // const [live, setLive] = useState<liveWithMeetSchemaType | null>(
+  //   liveWithMeetSchemaDV,
+  // );
   const [isReady, setIsReady] = useState<boolean>(false);
+  const [url, setUrl] = useState<string | null>(null);
 
   const getLive = async () => {
     try {
-      const fetchURL = await fetch("/live_top");
-      const URL = await fetchURL.json();
-
-      if (URL !== false && URL !== undefined) {
-        const parsedValue = liveWithMeetSchema.safeParse(URL);
-        if (parsedValue.success) {
-          setUrl(parsedValue.data.url);
-        }
+      const fetchLiveTop = await fetch("/live_active_url");
+      const LiveTop = await fetchLiveTop.json();
+      if (LiveTop !== false && LiveTop.url !== null) {
+        setUrl(LiveTop.url);
       } else {
         setUrl(null);
       }
       setIsReady(true);
     } catch (error) {
       const res = await getLiveNow();
-      if (res !== null && res.url !== null) {
+      if (res !== null) {
         setUrl(res.url);
+      } else {
+        setUrl(null);
       }
       setIsReady(true);
     }
