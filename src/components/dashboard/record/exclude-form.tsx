@@ -269,7 +269,10 @@ export default function RecordExcludeForm(props: Props) {
                   <FormItem>
                     <FormLabel>種目</FormLabel>
                     <FormControl>
-                      <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                      <div
+                        className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"
+                        hidden={!isReady}
+                      >
                         {
                           recordStyle.find((value) => value.id === field.value)
                             ?.label
@@ -429,7 +432,10 @@ export default function RecordExcludeForm(props: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>樹立日</FormLabel>
-                    <div className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                    <div
+                      className="flex-none h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm"
+                      hidden={!isReady}
+                    >
                       {field.value ? (
                         format(field.value, "PPP", { locale: ja })
                       ) : (

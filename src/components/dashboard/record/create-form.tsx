@@ -180,20 +180,11 @@ export default function RecordCreateForm(props: Props) {
   }
 
   const dt = new Date();
-  const minDT = new Date(dt.setFullYear(dt.getFullYear() - 32));
-  const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 34));
+  const minDT = new Date(dt.setFullYear(dt.getFullYear() - 102));
+  const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 104));
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const watchDistance = watch("distance");
-
-  // useEffect(() => {
-  //   // eslint-disable-next-line react-hooks/incompatible-library
-  //   const subscription = watch((value, { name, type }) =>
-  //     console.log(value, name, type),
-  //   if(value )
-  //   );
-  //   return () => subscription.unsubscribe();
-  // }, [watch]);
 
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>

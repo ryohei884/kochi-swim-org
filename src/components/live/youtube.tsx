@@ -1,6 +1,5 @@
 "use client";
 
-import { get } from "@vercel/edge-config";
 import {
   MediaControlBar,
   MediaController,
@@ -27,9 +26,11 @@ export default function Youtube() {
 
   const getLive = async () => {
     try {
-      const res = await get("live_top");
-      if (res !== false && res !== undefined) {
-        const parsedValue = liveWithMeetSchema.safeParse(res);
+      const fetchURL = await fetch("/live_top");
+      const URL = await fetchURL.json();
+
+      if (URL !== false && URL !== undefined) {
+        const parsedValue = liveWithMeetSchema.safeParse(URL);
         if (parsedValue.success) {
           setUrl(parsedValue.data.url);
         }

@@ -197,14 +197,10 @@ export default function RecordUpdateForm(props: Props) {
   }
 
   const dt = new Date();
-  const minDT = new Date(dt.setFullYear(dt.getFullYear() - 32));
-  const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 34));
+  const minDT = new Date(dt.setFullYear(dt.getFullYear() - 102));
+  const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 104));
 
   const watchDistance = watch("distance");
-
-  const handleChange = () => {
-    form.reset();
-  };
 
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>

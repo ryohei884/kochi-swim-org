@@ -234,7 +234,7 @@ export async function approve(prop: recordApproveSchemaType) {
           approvedAt: new Date(),
         },
       });
-      // await blobUpdate(res.category, res.poolsize, res.sex);
+      await blobUpdate(res.category, res.poolsize, res.sex);
     }
   }
 }
