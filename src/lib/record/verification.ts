@@ -80,8 +80,8 @@ export const recordSchema = z.object({
     ),
   swimmer1: z
     .string()
-    .min(2, {
-      message: "選手名は2文字以上で入力してください。",
+    .min(1, {
+      message: "選手名は1文字以上で入力してください。",
     })
     .max(128, {
       message: "選手名は128文字以下で入力してください。",
@@ -91,8 +91,8 @@ export const recordSchema = z.object({
   swimmer4: z.string().nullable(),
   team: z
     .string()
-    .min(2, {
-      message: "チーム名は2文字以上で入力してください。",
+    .min(1, {
+      message: "チーム名は1文字以上で入力してください。",
     })
     .max(128, {
       message: "チーム名は128文字以下で入力してください。",
