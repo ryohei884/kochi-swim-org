@@ -46,7 +46,7 @@ export async function create(prop: groupCreateSchemaType) {
 }
 
 export async function update(prop: groupUpdateSchemaType) {
-  const { id, name, createdUserId } = prop;
+  const { id, name } = prop;
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
@@ -69,7 +69,6 @@ export async function update(prop: groupUpdateSchemaType) {
         data: {
           id: id,
           name: name,
-          createdUserId: createdUserId,
           updatedUserId: session?.user?.id,
         },
       });

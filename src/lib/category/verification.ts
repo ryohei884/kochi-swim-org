@@ -120,8 +120,7 @@ export const categoryUpdateSchema = categorySchema.omit({
   createdAt: true,
   updatedAt: true,
   updatedUserId: true,
-  createdUser: true,
-  updatedUser: true,
+  createdUserId: true,
 });
 
 export type categoryUpdateSchemaType = z.infer<typeof categoryUpdateSchema>;
@@ -132,7 +131,6 @@ export const categoryUpdateSchemaDV: categoryUpdateSchemaType = {
   link: categorySchemaDV.link,
   order: categorySchemaDV.order,
   role: categorySchemaDV.role,
-  createdUserId: categorySchemaDV.createdUserId,
 };
 
 // categoryGetByIdSchema
@@ -145,8 +143,6 @@ export const categoryGetByIdSchema = categorySchema.omit({
   updatedAt: true,
   createdUserId: true,
   updatedUserId: true,
-  createdUser: true,
-  updatedUser: true,
 });
 
 export type categoryGetByIdSchemaType = z.infer<typeof categoryGetByIdSchema>;
@@ -165,8 +161,6 @@ export const categoryExcludeSchema = categorySchema.omit({
   updatedAt: true,
   createdUserId: true,
   updatedUserId: true,
-  createdUser: true,
-  updatedUser: true,
 });
 
 export type categoryExcludeSchemaType = z.infer<typeof categoryExcludeSchema>;

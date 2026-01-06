@@ -110,8 +110,7 @@ export const groupUpdateSchema = groupSchema.omit({
   createdAt: true,
   updatedAt: true,
   updatedUserId: true,
-  createdUser: true,
-  updatedUser: true,
+  createdUserId: true,
 });
 
 export type groupUpdateSchemaType = z.infer<typeof groupUpdateSchema>;
@@ -119,7 +118,6 @@ export type groupUpdateSchemaType = z.infer<typeof groupUpdateSchema>;
 export const groupUpdateSchemaDV: groupUpdateSchemaType = {
   id: groupSchemaDV.id,
   name: groupSchemaDV.name,
-  createdUserId: groupSchemaDV.createdUserId,
 };
 
 // groupGetByIdSchema
@@ -128,9 +126,7 @@ export const groupGetByIdSchema = groupSchema.omit({
   createdAt: true,
   updatedAt: true,
   createdUserId: true,
-  updatedUserId: true,
-  createdUser: true,
-  updatedUser: true,
+  updatedUserId: true
 });
 
 export type groupGetByIdSchemaType = z.infer<typeof groupGetByIdSchema>;
@@ -146,8 +142,6 @@ export const groupExcludeSchema = groupSchema.omit({
   updatedAt: true,
   createdUserId: true,
   updatedUserId: true,
-  createdUser: true,
-  updatedUser: true,
 });
 
 export type groupExcludeSchemaType = z.infer<typeof groupExcludeSchema>;
@@ -163,8 +157,6 @@ export const memberSchema = groupSchema.omit({
   updatedAt: true,
   createdUserId: true,
   updatedUserId: true,
-  createdUser: true,
-  updatedUser: true,
 });
 
 export type memberSchemaType = z.infer<typeof memberSchema>;
@@ -214,8 +206,6 @@ export const groupMemberFormSchemaDV: groupMemberFormSchemaType = {
 export const groupMemberUpdateSchema = groupMemberSchema.omit({
   createdUserId: true,
   updatedUserId: true,
-  createdUser: true,
-  updatedUser: true,
 });
 
 export type groupMemberUpdateSchemaType = z.infer<

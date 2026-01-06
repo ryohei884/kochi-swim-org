@@ -75,7 +75,7 @@ export async function create(prop: categoryCreateSchemaType) {
 }
 
 export async function update(prop: categoryUpdateSchemaType) {
-  const { id, name, link, order, role, createdUserId } = prop;
+  const { id, name, link, order, role } = prop;
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
@@ -101,7 +101,6 @@ export async function update(prop: categoryUpdateSchemaType) {
           link: link,
           order: order,
           role: role,
-          createdUserId: createdUserId,
           updatedUserId: session?.user?.id,
         },
       });
