@@ -54,6 +54,7 @@ export default function NewsList(props: Props) {
         setDataNum(newsList.length);
         setNewsNum(NumTop);
         setIsReady(true);
+        console.log(newsList);
       } catch (error) {
         const newsList = await getList(page);
         if (newsList !== null) {
@@ -122,7 +123,7 @@ export default function NewsList(props: Props) {
                         <div>
                           <div className="flex items-center gap-x-4 text-xs">
                             <Skeleton className="w-24 h-4" />
-                            <Skeleton className="w-24 h-4 relative z-10 rounded-full px-3 py-1.5 hover:bg-gray-100 dark:bg-gray-800/60" />
+                            <Skeleton className="w-24 h-4 relative rounded-full px-3 py-1.5 hover:bg-gray-100 dark:bg-gray-800/60" />
                           </div>
                           <div className="relative max-w-xl">
                             <h3 className="mt-3 text-lg/6 font-semibold">
@@ -135,11 +136,11 @@ export default function NewsList(props: Props) {
                       </article>,
                     );
                   }
-                  return <>{rows}</>;
+                  return rows;
                 })()
               : news.map((post) => (
                   <div
-                    key={post.id}
+                    key={`post_${post.id}`}
                     className="isolate flex flex-col gap-8 lg:flex-row"
                   >
                     <div className="relative aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0">
@@ -183,11 +184,11 @@ export default function NewsList(props: Props) {
                       </div>
                       <div>
                         <h3 className="mt-3 text-lg/6 font-semibold text-gray-900  dark:text-white">
-                          <span className="absolute inset-0" />
                           {post.title}
                         </h3>
                         <div className="my-5 text-sm/6 text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
                           <ReactMarkdown
+                            key={`react_markdown_${post.id}`}
                             remarkPlugins={[remarkGfm]}
                             components={{
                               a: AnchorTag,
@@ -197,25 +198,6 @@ export default function NewsList(props: Props) {
                           </ReactMarkdown>
                         </div>
                       </div>
-
-                      {/* {post.linkCategory && post.linkString !== null && (
-                        <div>
-                          <Link
-                            href={
-                              "/" +
-                              (newsLinkCategory.find(
-                                (v) => v.id === post.linkCategory,
-                              )?.href || "") +
-                              "/" +
-                              post.linkString
-                            }
-                            className="text-sm/6 font-semibold text-gray-900 dark:text-white"
-                            replace
-                          >
-                            詳細へ <span aria-hidden="true">→</span>
-                          </Link>
-                        </div>
-                      )} */}
                     </div>
                   </div>
                 ))}
