@@ -145,7 +145,7 @@ export default function News() {
                         </Link>
                       )}
                     </div>
-                    <div className="group relative grow">
+                    <div className="grow">
                       <Link href="/news">
                         <h3 className="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600 dark:text-white dark:group-hover:text-gray-300">
                           <span className="absolute inset-0" />
