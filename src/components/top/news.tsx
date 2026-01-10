@@ -151,20 +151,17 @@ export default function News() {
                           <span className="absolute inset-0" />
                           {post.title}
                         </h3>
-                        {/* <p className="whitespace-pre-wrap mt-5 line-clamp-3 text-sm/6 text-gray-600 dark:text-gray-400">
-                          {post.detail}
-                        </p> */}
-                        <div className="whitespace-pre-wrap mt-5 line-clamp-3 text-sm/6 text-gray-600 dark:text-gray-400">
-                          <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
-                            components={{
-                              a: AnchorTag,
-                            }}
-                          >
-                            {post.detail}
-                          </ReactMarkdown>
-                        </div>
                       </Link>
+                      <div className="whitespace-pre-wrap mt-5 line-clamp-3 text-sm/6 text-gray-600 dark:text-gray-400">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            a: AnchorTag,
+                          }}
+                        >
+                          {post.detail}
+                        </ReactMarkdown>
+                      </div>
                     </div>
                   </div>
                 </article>
