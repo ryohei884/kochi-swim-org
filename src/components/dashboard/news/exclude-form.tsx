@@ -3,11 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { Trash2 } from "lucide-react";
+import { ExternalLink, Trash2 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -95,6 +98,20 @@ export default function NewsExcludeForm(props: Props) {
     });
   };
 
+  const AnchorTag = ({ node, children, ...props }: any) => {
+    try {
+      new URL(props.href ?? "");
+      props.target = "_blank";
+      props.rel = "noopener noreferrer";
+    } catch (e) {}
+    return (
+      <Link {...props} className="flex items-center underline">
+        {children}
+        <ExternalLink className="h-4 ml-1" />
+      </Link>
+    );
+  };
+
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
@@ -161,7 +178,14 @@ export default function NewsExcludeForm(props: Props) {
                     <FormLabel>本文</FormLabel>
                     <FormControl hidden={!isReady}>
                       <div className="whitespace-pre-wrap flex-none min-h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                        {field.value}
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            a: AnchorTag,
+                          }}
+                        >
+                          {field.value}
+                        </ReactMarkdown>
                       </div>
                     </FormControl>
                     <Skeleton

@@ -12,6 +12,7 @@ const navigation = [
   { name: "ライブ配信", href: "live" },
   { name: "県記録", href: "record" },
   { name: "講習会情報", href: "seminar" },
+  { name: "関連団体（リンク集）", href: "link" },
   // { name: "ログイン", href: "sign-in" },
 ];
 
@@ -57,6 +58,7 @@ export default function Heder() {
                   <Link
                     key={item.name}
                     href={`/${item.href}`}
+                    hidden={item.href === "link" ? true : false}
                     className="text-sm/6 font-semibold text-gray-900 dark:text-white"
                   >
                     {item.name}

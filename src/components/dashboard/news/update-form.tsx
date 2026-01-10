@@ -6,11 +6,14 @@ import { init } from "@paralleldrive/cuid2";
 import type { PutBlobResult } from "@vercel/blob";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { CalendarIcon, PencilLine } from "lucide-react";
+import { CalendarIcon, ExternalLink, PencilLine } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -176,6 +179,20 @@ export default function NewsUpdateForm(props: Props) {
   const minDT = new Date(dt.setFullYear(dt.getFullYear() - 2));
   const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 4));
 
+  const AnchorTag = ({ node, children, ...props }: any) => {
+    try {
+      new URL(props.href ?? "");
+      props.target = "_blank";
+      props.rel = "noopener noreferrer";
+    } catch (e) {}
+    return (
+      <Link {...props} className="flex items-center underline">
+        {children}
+        <ExternalLink className="h-4 ml-1" />
+      </Link>
+    );
+  };
+
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger className="align-middle" asChild>
@@ -246,6 +263,23 @@ export default function NewsUpdateForm(props: Props) {
                       className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
                     />
                     <FormMessage />
+                    <FormLabel className="pt-8 pb-1">
+                      リンク表示（例）
+                    </FormLabel>
+                    <code className=" outline rounded-xs p-1 text-xs">
+                      [表示名](https://www.swim-kochi.org)
+                    </code>
+                    <FormLabel className="pt-8 pb-1">プレビュー</FormLabel>
+                    <div className="whitespace-pre-wrap flex-none min-h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          a: AnchorTag,
+                        }}
+                      >
+                        {field.value}
+                      </ReactMarkdown>
+                    </div>
                   </FormItem>
                 )}
               />

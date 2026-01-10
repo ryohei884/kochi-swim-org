@@ -17,7 +17,7 @@ const navigation = {
   association: [
     { name: "ご挨拶", href: "greetings" },
     { name: "法人概要", href: "overview" },
-    { name: "関連団体", href: "link" },
+    { name: "関連団体（リンク集）", href: "link" },
   ],
   //   legal: [
   //     { name: "利用規約", href: "#" },

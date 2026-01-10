@@ -2,9 +2,12 @@
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
+import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import {
   Pagination,
@@ -78,6 +81,20 @@ export default function NewsList(props: Props) {
     getNews(Number(page));
   }, [page]);
 
+  const AnchorTag = ({ node, children, ...props }: any) => {
+    try {
+      new URL(props.href ?? "");
+      props.target = "_blank";
+      props.rel = "noopener noreferrer";
+    } catch (e) {}
+    return (
+      <Link {...props} className="flex items-center underline">
+        {children}
+        <ExternalLink className="h-4 ml-1" />
+      </Link>
+    );
+  };
+
   return (
     <div className="bg-white py-24 sm:py-32 dark:bg-gray-900">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -85,9 +102,9 @@ export default function NewsList(props: Props) {
           <h2 className="text-4xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-5xl dark:text-white">
             お知らせ
           </h2>
-          <p className="mt-2 text-lg/8 text-gray-600 dark:text-gray-400">
+          {/* <p className="mt-2 text-lg/8 text-gray-600 dark:text-gray-400">
             詳細は各リンク先からご覧ください。
-          </p>
+          </p> */}
           <div className="mt-16 space-y-20 lg:mt-20">
             {!isReady
               ? (function () {
@@ -107,7 +124,7 @@ export default function NewsList(props: Props) {
                             <Skeleton className="w-24 h-4" />
                             <Skeleton className="w-24 h-4 relative z-10 rounded-full px-3 py-1.5 hover:bg-gray-100 dark:bg-gray-800/60" />
                           </div>
-                          <div className="group relative max-w-xl">
+                          <div className="relative max-w-xl">
                             <h3 className="mt-3 text-lg/6 font-semibold">
                               <span className="absolute inset-0" />
                               <Skeleton className="w-120 h-6" />
@@ -121,9 +138,9 @@ export default function NewsList(props: Props) {
                   return <>{rows}</>;
                 })()
               : news.map((post) => (
-                  <article
+                  <div
                     key={post.id}
-                    className="relative isolate flex flex-col gap-8 lg:flex-row"
+                    className="isolate flex flex-col gap-8 lg:flex-row"
                   >
                     <div className="relative aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0">
                       <Image
@@ -164,15 +181,23 @@ export default function NewsList(props: Props) {
                           </Link>
                         )}
                       </div>
-                      <div className="group relative max-w-xl">
-                        <h3 className="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600 dark:text-white dark:group-hover:text-gray-300">
+                      <div>
+                        <h3 className="mt-3 text-lg/6 font-semibold text-gray-900  dark:text-white">
                           <span className="absolute inset-0" />
                           {post.title}
                         </h3>
-                        <p className="my-5 text-sm/6 text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
-                          {post.detail}
-                        </p>
+                        <div className="my-5 text-sm/6 text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                              a: AnchorTag,
+                            }}
+                          >
+                            {post.detail}
+                          </ReactMarkdown>
+                        </div>
                       </div>
+
                       {/* {post.linkCategory && post.linkString !== null && (
                         <div>
                           <Link
@@ -192,7 +217,7 @@ export default function NewsList(props: Props) {
                         </div>
                       )} */}
                     </div>
-                  </article>
+                  </div>
                 ))}
           </div>
           <Pagination className="mt-16 flex items-center justify-between">

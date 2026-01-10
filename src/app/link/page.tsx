@@ -10,7 +10,7 @@ export default function Page() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:max-w-5xl">
             <h2 className="text-4xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-5xl dark:text-white">
-              関連団体
+              関連団体（リンク集）
             </h2>
             <LinkList />
           </div>
