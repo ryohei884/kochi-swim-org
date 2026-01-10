@@ -200,16 +200,16 @@ export default function NewsApproveForm(props: Props) {
                   <FormItem>
                     <FormLabel>本文</FormLabel>
                     <FormControl hidden={!isReady}>
-                    <div className="whitespace-pre-wrap flex-none min-h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          a: AnchorTag,
-                        }}
-                      >
-                        {field.value}
-                      </ReactMarkdown>
-                    </div>
+                      <div className="whitespace-pre-wrap flex-none min-h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            a: AnchorTag,
+                          }}
+                        >
+                          {field.value}
+                        </ReactMarkdown>
+                      </div>
                     </FormControl>
                     <Skeleton
                       hidden={isReady}

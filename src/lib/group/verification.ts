@@ -126,7 +126,7 @@ export const groupGetByIdSchema = groupSchema.omit({
   createdAt: true,
   updatedAt: true,
   createdUserId: true,
-  updatedUserId: true
+  updatedUserId: true,
 });
 
 export type groupGetByIdSchemaType = z.infer<typeof groupGetByIdSchema>;
