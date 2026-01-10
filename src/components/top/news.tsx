@@ -2,9 +2,12 @@
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
+import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { getList3 } from "@/lib/news/actions";
@@ -39,6 +42,20 @@ export default function News() {
     setIsReady(false);
     getNews();
   }, []);
+
+  const AnchorTag = ({ node, children, ...props }: any) => {
+    try {
+      new URL(props.href ?? "");
+      props.target = "_blank";
+      props.rel = "noopener noreferrer";
+    } catch (e) {}
+    return (
+      <Link {...props} className="flex items-center underline">
+        {children}
+        <ExternalLink className="h-4 ml-1" />
+      </Link>
+    );
+  };
 
   return (
     <div className="bg-white py-24 sm:py-32 dark:bg-gray-900">
@@ -134,9 +151,19 @@ export default function News() {
                           <span className="absolute inset-0" />
                           {post.title}
                         </h3>
-                        <p className="whitespace-pre-wrap mt-5 line-clamp-3 text-sm/6 text-gray-600 dark:text-gray-400">
+                        {/* <p className="whitespace-pre-wrap mt-5 line-clamp-3 text-sm/6 text-gray-600 dark:text-gray-400">
                           {post.detail}
-                        </p>
+                        </p> */}
+                        <div className="whitespace-pre-wrap mt-5 line-clamp-3 text-sm/6 text-gray-600 dark:text-gray-400">
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                              a: AnchorTag,
+                            }}
+                          >
+                            {post.detail}
+                          </ReactMarkdown>
+                        </div>
                       </Link>
                     </div>
                   </div>
