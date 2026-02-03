@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 const navigation = {
@@ -181,10 +182,21 @@ export default function Footer() {
               <br />
               土佐中学校・高等学校内
               <br />
-              <Link href="/contact" className="font-bold">
-                お問い合わせ
-              </Link>
-              からご連絡ください。
+              <br />
+              <span className="flex">
+                <Link
+                  href="/contact"
+                  className="font-bold flex items-center"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  お問い合わせ <ExternalLink className="h-4" />
+                </Link>
+                からご連絡ください。
+              </span>
+              <span className="text-xs">
+                お電話でのお問い合わせは受け付けておりません。
+              </span>
             </p>
           </div>
         </div>
