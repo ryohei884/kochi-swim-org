@@ -20,6 +20,8 @@ export default function Page() {
         return "/as_top.jpg";
       case 2:
         return "/waterpolo_top.jpg";
+      case 3:
+        return "/diving_top.jpg";
       default:
         return "/swimming_top.jpg";
     }
@@ -27,7 +29,7 @@ export default function Page() {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setRandomNumber(Math.floor(Math.random() * 3));
+    setRandomNumber(Math.floor(Math.random() * 4));
   }, []);
 
   return (
