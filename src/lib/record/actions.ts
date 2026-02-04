@@ -41,6 +41,36 @@ export async function getList(category: number, poolsize: number, sex: number) {
   return res;
 }
 
+export async function getAllList() {
+  const res = await prisma.record.findMany({
+    orderBy: [
+      { poolsize: "asc" },
+      { category: "asc" },
+      { sex: "asc" },
+      {
+        style: "asc",
+      },
+      {
+        distance: "asc",
+      },
+      {
+        date: "desc",
+      },
+      {
+        createdAt: "asc",
+      },
+      {
+        revisedAt: "asc",
+      },
+    ],
+    where: {
+      approved: true,
+      valid: true,
+    },
+  });
+  return res;
+}
+
 export async function getListAdmin(
   category: number,
   poolsize: number,
@@ -285,7 +315,48 @@ export async function blobUpdate(
       const regexRecord = /record_\d_\d_\d-*.+\.json/g;
       const urlRecord = oldEdgeConfig.toString().match(regexRecord);
       if (urlRecord !== null) {
-        const res = await del(`data/${urlRecord[0]}`);
+        await del(`data/${urlRecord[0]}`);
+      }
+    }
+
+    // All
+    const resAll = await getAllList();
+    const oldAllEdgeConfig = await get("record_all");
+
+    const blobAll = await put("data/record_all.json", JSON.stringify(resAll), {
+      access: "public",
+      allowOverwrite: true,
+      addRandomSuffix: true,
+    });
+
+    const updateAllEdgeConfig = await fetch(
+      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              operation: "update",
+              key: "record_all",
+              value: blobAll.url,
+            },
+          ],
+        }),
+      },
+    );
+    if (
+      oldAllEdgeConfig !== undefined &&
+      oldAllEdgeConfig !== null &&
+      updateAllEdgeConfig.status === 200
+    ) {
+      const regexAllRecord = /record_all-*.+\.json/g;
+      const urlAllRecord = oldAllEdgeConfig.toString().match(regexAllRecord);
+      if (urlAllRecord !== null) {
+        await del(`data/${urlAllRecord[0]}`);
       }
     }
   } catch (error) {

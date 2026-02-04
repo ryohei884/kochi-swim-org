@@ -2,7 +2,8 @@
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { Award } from "lucide-react";
+import { Award, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -114,6 +115,16 @@ export default function RecordList(props: Props) {
           <p className="mt-2 text-lg/8 text-gray-600 dark:text-gray-400">
             {format(lastUpdated, "PPP", { locale: ja })}現在
           </p>
+          <div className="mt-16 space-y-20 lg:mt-20">
+            <Link
+              href="/record/pdf"
+              className="flex items-center"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              高知県記録一覧（PDF） <ExternalLink className="h-4" />
+            </Link>
+          </div>
           <div className="mt-16 space-y-20 lg:mt-20">
             <Tabs
               defaultValue={`${category}/${poolsize}/${sex}`}

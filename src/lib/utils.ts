@@ -113,3 +113,20 @@ export const timeToInt = (time: number) => {
 export const copyToClipboard = async (meetId: string) => {
   await global.navigator.clipboard.writeText(meetId);
 };
+
+export const pdfCategory = [
+  { id: 1, herf: "prefecture", label: "高知県記録" },
+  { id: 2, herf: "high", label: "高知県高校記録" },
+  { id: 3, herf: "junior_high", label: "高知県中学記録" },
+  { id: 4, herf: "elementary", label: "高知県学童記録" },
+];
+
+export const pdfPoolsize = [
+  { id: 1, label: "長水路", herf: "long" },
+  { id: 2, label: "短水路", herf: "short" },
+];
+
+export const pdfSex = [
+  { id: 1, label: "男子", herf: "men" },
+  { id: 2, label: "女子", herf: "women" },
+];
