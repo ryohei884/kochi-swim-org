@@ -1,9 +1,9 @@
 "use client";
 
-import { PDFDownloadLink } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { Award, ExternalLink } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -35,6 +35,14 @@ type Props = {
   poolsize: "long" | "short";
   sex: "men" | "women" | "mixed";
 };
+
+const PDFDownloadLink = dynamic(
+  () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
+  {
+    ssr: false,
+    loading: () => <p>Loading...</p>,
+  },
+);
 
 export default function RecordList(props: Props) {
   const router = useRouter();
