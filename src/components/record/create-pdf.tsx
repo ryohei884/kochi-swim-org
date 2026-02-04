@@ -214,7 +214,7 @@ const CreatePDF = () => {
     <Document
       title="高知県記録一覧"
       pageMode="fullScreen"
-      pageLayout="singlePage"
+      pageLayout="oneColumn"
     >
       {pdfPoolsize.map((p, pi) => {
         return pdfCategory.map((c, ci) => {
