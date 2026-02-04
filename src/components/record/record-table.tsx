@@ -1,12 +1,13 @@
 "use client";
 
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { Award, ExternalLink } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import CreatePDF from "@/components/record/create-pdf";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -116,14 +117,15 @@ export default function RecordList(props: Props) {
             {format(lastUpdated, "PPP", { locale: ja })}現在
           </p>
           <div className="mt-16 space-y-20 lg:mt-20">
-            <Link
-              href="/record/pdf"
-              className="flex items-center"
-              target="_blank"
-              rel="noopener noreferrer"
+            <PDFDownloadLink
+              document={<CreatePDF />}
+              fileName="record_all.pdf"
+              className="mt-16 space-y-20 lg:mt-20"
             >
-              高知県記録一覧（PDF） <ExternalLink className="h-4" />
-            </Link>
+              <div className="flex items-center">
+                高知県記録一覧（PDF） <ExternalLink className="h-4" />
+              </div>
+            </PDFDownloadLink>
           </div>
           <div className="mt-16 space-y-20 lg:mt-20">
             <Tabs

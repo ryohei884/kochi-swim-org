@@ -1,5 +1,5 @@
 "use client";
-import { PDFViewer } from "@react-pdf/renderer";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { useEffect, useState } from "react";
 
 import CreatePDF from "@/components/record/create-pdf";
@@ -15,16 +15,16 @@ export default function Page() {
   return (
     <>
       {loaded && (
-        <PDFViewer
-          style={{
-            position: "absolute",
-            border: 0,
-            height: "100%",
-            width: "100%",
-          }}
-        >
-          <CreatePDF />
-        </PDFViewer>
+        <div className="max-w-7xl mx-auto">
+          <div className="w-full h-svh">
+            <PDFDownloadLink document={<CreatePDF />} fileName="record_all.pdf">
+              Download
+            </PDFDownloadLink>
+            <PDFViewer height="100%" width="100%">
+              <CreatePDF />
+            </PDFViewer>
+          </div>
+        </div>
       )}
     </>
   );
