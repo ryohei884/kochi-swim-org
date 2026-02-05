@@ -52,7 +52,7 @@ interface Props {
   fetchListData: () => Promise<void>;
 }
 
-export default function RecordExcludeForm(props: Props) {
+export default function RecordApproveForm(props: Props) {
   const { id, fetchListData } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -111,9 +111,9 @@ export default function RecordExcludeForm(props: Props) {
       <SheetContent>
         <ScrollArea className="h-dvh pr-2">
           <SheetHeader>
-            <SheetTitle>記録削除</SheetTitle>
+            <SheetTitle>記録承認</SheetTitle>
             <SheetDescription className="sr-only">
-              記録削除画面
+              記録承認画面
             </SheetDescription>
           </SheetHeader>
           <Form {...form}>

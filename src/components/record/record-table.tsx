@@ -2,12 +2,12 @@
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { Award, ExternalLink } from "lucide-react";
+import { Award, FileText } from "lucide-react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import CreatePDF from "@/components/record/create-pdf";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,6 +30,7 @@ import {
   recordSex,
   recordStyle,
 } from "@/lib/utils";
+
 type Props = {
   category: "prefecture" | "high" | "junior_high" | "elementary";
   poolsize: "long" | "short";
@@ -124,17 +125,10 @@ export default function RecordList(props: Props) {
           <p className="mt-2 text-lg/8 text-gray-600 dark:text-gray-400">
             {format(lastUpdated, "PPP", { locale: ja })}現在
           </p>
-          <div className="mt-16 space-y-20 lg:mt-20">
-            <PDFDownloadLink
-              document={<CreatePDF />}
-              fileName="record_all.pdf"
-              className="mt-16 space-y-20 lg:mt-20"
-            >
-              <div className="flex items-center">
-                高知県記録一覧（PDF） <ExternalLink className="h-4" />
-              </div>
-            </PDFDownloadLink>
-          </div>
+          <Link href="/record-pdf" className="mt-16 flex items-center">
+            高知県記録一覧（PDF）
+            <FileText className="h-4" />
+          </Link>
           <div className="mt-16 space-y-20 lg:mt-20">
             <Tabs
               defaultValue={`${category}/${poolsize}/${sex}`}

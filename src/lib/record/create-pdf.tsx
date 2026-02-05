@@ -64,7 +64,7 @@ const TextJustify = (maxCharNum: number, fontSize: number, char: string) => {
   );
 };
 
-const CreatePDF = () => {
+const RecordPDF = () => {
   const [record, setRecord] = useState<recordSchemaType[]>([]);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [dataNum, setDataNum] = useState<number>(3);
@@ -170,26 +170,11 @@ const CreatePDF = () => {
 
   const getRecord = async () => {
     try {
-      const fetchURL = await fetch(`/record_all`);
-      const URL = await fetchURL.json();
-      const response = await fetch(`${URL}`);
-
-      if (!response.ok) {
-        console.log("JSON file doesn't exist.");
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const recordList = await response.json();
-      const recordNum = recordList.length;
-      const lastUpdateDate = recordList.reduce(
-        (a: recordSchemaType, b: recordSchemaType) => (a.date > b.date ? a : b),
-      );
-      setRecord(recordList);
-      setDataNum(recordNum);
-      setLastUpdated(lastUpdateDate.date);
-      setIsReady(true);
-    } catch (error) {
       const recordList = await getAllList();
+
+      if (recordList === null) {
+        throw new Error(`getAllList failed`);
+      }
 
       if (recordList !== null) {
         const recordNum = recordList.length;
@@ -202,6 +187,8 @@ const CreatePDF = () => {
         setLastUpdated(lastUpdateDate.date);
         setIsReady(true);
       }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -210,7 +197,7 @@ const CreatePDF = () => {
     getRecord();
   }, []);
 
-  return (
+  return isReady ? (
     <Document
       title="高知県記録一覧"
       pageMode="fullScreen"
@@ -328,7 +315,17 @@ const CreatePDF = () => {
         });
       })}
     </Document>
+  ) : (
+    <Document
+      title="高知県記録一覧"
+      pageMode="fullScreen"
+      pageLayout="oneColumn"
+    >
+      <Page size="A4" orientation="landscape" style={styles.page}>
+        <Text>データが取得できませんでした。</Text>
+      </Page>
+    </Document>
   );
 };
 
-export default CreatePDF;
+export default RecordPDF;

@@ -327,7 +327,9 @@ export default function NewsList(props: Props) {
         </TableBody>
       </Table>
       <hr />
-      <ReOrder fetchListData={fetchListData} />
+      <div className="text-right">
+        <ReOrder fetchListData={fetchListData} />
+      </div>
       <Pagination className="mt-16 flex items-center justify-between">
         <PaginationContent className="-mt-px flex w-0 flex-1">
           <PaginationItem className="inline-flex items-center">

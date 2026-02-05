@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { CheckIcon, Copy } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -27,7 +28,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getByIdAdmin, getListAdmin } from "@/lib/record/actions";
+import { getByIdAdmin, getListAdmin, pdfUpdate } from "@/lib/record/actions";
+import RecordPDF from "@/lib/record/create-pdf";
 import type { recordWithUserSchemaType } from "@/lib/record/verification";
 import {
   copyToClipboard,
@@ -44,6 +46,14 @@ interface Props {
   poolsize: "long" | "short";
   sex: "men" | "women" | "mixed";
 }
+
+const BlobProvider = dynamic(
+  () => import("@react-pdf/renderer").then((mod) => mod.BlobProvider),
+  {
+    ssr: false,
+    loading: () => <p>Loading...</p>,
+  },
+);
 
 export default function RecordList(props: Props) {
   const router = useRouter();
@@ -121,6 +131,14 @@ export default function RecordList(props: Props) {
   const handleChange = (e: string) => {
     router.push(`/dashboard/record/${e}`);
     setIsReady(false);
+  };
+
+  const handlePrintPdf = async (blob: Blob | null) => {
+    if (blob) {
+      await pdfUpdate(blob);
+    } else {
+      alert("URL is null");
+    }
   };
 
   useEffect(() => {
@@ -334,7 +352,15 @@ export default function RecordList(props: Props) {
           </Tabs>
         </Tabs>
       </Tabs>
-      {/* <ReOrder fetchListData={fetchListData} /> */}
+      <div className="text-right">
+        <BlobProvider document={<RecordPDF />}>
+          {({ blob }) => (
+            <Button variant="outline" onClick={() => handlePrintPdf(blob)}>
+              記録一覧ファイル(PDF)を更新する
+            </Button>
+          )}
+        </BlobProvider>
+      </div>
     </>
   );
 }

@@ -1,4 +1,5 @@
 "use server";
+
 import { del, put } from "@vercel/blob";
 import { get } from "@vercel/edge-config";
 
@@ -357,6 +358,51 @@ export async function blobUpdate(
       const urlAllRecord = oldAllEdgeConfig.toString().match(regexAllRecord);
       if (urlAllRecord !== null) {
         await del(`data/${urlAllRecord[0]}`);
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function pdfUpdate(blob: Blob) {
+  try {
+    // All
+    const oldAllEdgeConfig = await get("record_pdf");
+    const blobAll = await put("files/record_all.pdf", blob, {
+      access: "public",
+      allowOverwrite: true,
+      addRandomSuffix: true,
+    });
+
+    const updateAllEdgeConfig = await fetch(
+      `https://api.vercel.com/v1/edge-config/${process.env.EDGE_CONFIG_ID}/items`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.EDGE_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              operation: "update",
+              key: "record_pdf",
+              value: blobAll.url,
+            },
+          ],
+        }),
+      },
+    );
+    if (
+      oldAllEdgeConfig !== undefined &&
+      oldAllEdgeConfig !== null &&
+      updateAllEdgeConfig.status === 200
+    ) {
+      const regexAllRecord = /record_all-*.+\.pdf/g;
+      const urlAllRecord = oldAllEdgeConfig.toString().match(regexAllRecord);
+      if (urlAllRecord !== null) {
+        await del(`files/${urlAllRecord[0]}`);
       }
     }
   } catch (error) {
