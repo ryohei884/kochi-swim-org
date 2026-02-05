@@ -2,9 +2,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import Footer from "@/components/top/footer";
-import Header from "@/components/top/header";
-
 export default function Home() {
   const [pdfURL, setPdfURL] = useState<URL | null>(null);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -37,28 +34,14 @@ export default function Home() {
     getURL();
   }, []);
 
-  return (
-    <>
-      <Header />
-      <div className="bg-white py-24 sm:py-32 dark:bg-gray-900">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl lg:max-w-5xl">
-            {pdfURL && isReady ? (
-              <object
-                className="mx-auto"
-                title="PDF"
-                data={pdfURL.toString()}
-                type="application/pdf"
-                width="100%"
-                height="800"
-              />
-            ) : (
-              "Loading ..."
-            )}
-          </div>
-        </div>
-      </div>
-      <Footer />
-    </>
+  return pdfURL && isReady ? (
+    <object
+      className="w-svw h-svh"
+      title="高知県記録一覧"
+      data={pdfURL.toString()}
+      type="application/pdf"
+    />
+  ) : (
+    <div>Loading ...</div>
   );
 }
