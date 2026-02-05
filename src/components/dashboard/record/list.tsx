@@ -6,6 +6,7 @@ import { CheckIcon, Copy } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import ApproveForm from "@/components/dashboard/record/approve-form";
 import CreateForm from "@/components/dashboard/record/create-form";
@@ -29,7 +30,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getByIdAdmin, getListAdmin, pdfUpdate } from "@/lib/record/actions";
-import RecordPDF from "@/lib/record/create-pdf";
+import RecordPDF from "@/lib/record/record-pdf";
 import type { recordWithUserSchemaType } from "@/lib/record/verification";
 import {
   copyToClipboard,
@@ -136,6 +137,12 @@ export default function RecordList(props: Props) {
   const handlePrintPdf = async (blob: Blob | null) => {
     if (blob) {
       await pdfUpdate(blob);
+      toast("更新しました。", {
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
     } else {
       alert("URL is null");
     }

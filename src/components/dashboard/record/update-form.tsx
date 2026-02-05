@@ -776,10 +776,7 @@ export default function RecordUpdateForm(props: Props) {
 
                       <FormMessage />
                     </FormItem>
-                    <div
-                      hidden={!isReady}
-                      className="aspect-video max-w-[560px]"
-                    >
+                    <div hidden={!isReady} className="aspect-video max-w-140">
                       {preview ? (
                         <Image
                           src={preview}
@@ -794,7 +791,7 @@ export default function RecordUpdateForm(props: Props) {
                     </div>
                     <Skeleton
                       hidden={isReady}
-                      className="flex aspect-video max-w-[560px]  border border-input px-3 py-2 file:border-0"
+                      className="flex aspect-video max-w-140  border border-input px-3 py-2 file:border-0"
                     />
                   </>
                 )}

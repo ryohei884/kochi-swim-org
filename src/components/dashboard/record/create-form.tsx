@@ -658,7 +658,7 @@ export default function RecordCreateForm(props: Props) {
                   </FormItem>
                 )}
               />
-              <div className="aspect-video max-w-[560px]">
+              <div className="aspect-video max-w-140">
                 {preview ? (
                   <Image
                     src={preview}
