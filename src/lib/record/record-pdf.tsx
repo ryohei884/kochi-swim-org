@@ -106,7 +106,7 @@ const RecordPDF = () => {
   // Create styles
   const styles = StyleSheet.create({
     page: {
-      backgroundColor: "#E4E4E4",
+      backgroundColor: "#FFFFFF",
       fontFamily: "IPASans",
       fontSize: FONTSIZE,
     },
@@ -281,13 +281,7 @@ const RecordPDF = () => {
                         new Date(`${nextYear}/3/31`);
 
                       return (
-                        <View
-                          key={`record_${d.id}`}
-                          style={[
-                            styles.row,
-                            { color: newRecord ? "red" : "black" },
-                          ]}
-                        >
+                        <View key={`record_${d.id}`} style={styles.row}>
                           {di === 0 || currentStyle !== previousStyle ? (
                             TextJustify(
                               styleLength,
@@ -313,76 +307,93 @@ const RecordPDF = () => {
                                 ?.label
                             }
                           </Text>
-                          <Text style={styles.time}>{intToTime(d.time)}</Text>
-                          {d.style >= 6 ? (
-                            <View style={[{ justifyContent: "flex-start" }]}>
-                              {TextJustify(
-                                swimmerLength,
-                                FONTSIZE,
-                                `${d.swimmer1}・${d.swimmer2}`,
-                              )}
-                              <br />
-                              {TextJustify(
-                                swimmerLength,
-                                FONTSIZE,
-                                `${d.swimmer3}・${d.swimmer4}`,
-                              )}
-                            </View>
-                          ) : (
-                            TextJustify(swimmerLength, FONTSIZE, d.swimmer1)
-                          )}
-
                           <View
                             style={[
                               {
-                                flexWrap: "nowrap",
+                                color: newRecord ? "red" : "black",
+                                // flexWrap: "nowrap",
                                 flexDirection: "row",
+                                // fontFamily: "IPASerif",
                               },
                             ]}
                           >
                             <Text
                               style={[
-                                {
-                                  marginLeft: FONTSIZE * MARGIN_RIGHT * -1,
-                                  marginRight: FONTSIZE,
-                                },
+                                styles.time,
+                                { color: newRecord ? "red" : "black" },
                               ]}
                             >
-                              （
+                              {intToTime(d.time)}
                             </Text>
-                            {TextJustify(teamLength, FONTSIZE, d.team)}
-                            <Text
+                            {d.style >= 6 ? (
+                              <View style={[{ justifyContent: "flex-start" }]}>
+                                {TextJustify(
+                                  swimmerLength,
+                                  FONTSIZE,
+                                  `${d.swimmer1}・${d.swimmer2}`,
+                                )}
+                                <br />
+                                {TextJustify(
+                                  swimmerLength,
+                                  FONTSIZE,
+                                  `${d.swimmer3}・${d.swimmer4}`,
+                                )}
+                              </View>
+                            ) : (
+                              TextJustify(swimmerLength, FONTSIZE, d.swimmer1)
+                            )}
+
+                            <View
                               style={[
                                 {
-                                  marginLeft: FONTSIZE * MARGIN_RIGHT * -1,
+                                  flexWrap: "nowrap",
+                                  flexDirection: "row",
                                 },
                               ]}
                             >
-                              ）
-                            </Text>
-                          </View>
+                              <Text
+                                style={[
+                                  {
+                                    marginLeft: FONTSIZE * MARGIN_RIGHT * -1,
+                                    marginRight: FONTSIZE,
+                                  },
+                                ]}
+                              >
+                                （
+                              </Text>
+                              {TextJustify(teamLength, FONTSIZE, d.team)}
+                              <Text
+                                style={[
+                                  {
+                                    marginLeft: FONTSIZE * MARGIN_RIGHT * -1,
+                                  },
+                                ]}
+                              >
+                                ）
+                              </Text>
+                            </View>
 
-                          {/* {TextJustify(
+                            {/* {TextJustify(
                             teamLength + 2,
                             FONTSIZE,
                             `（${d.team})`,
                           )} */}
-                          <Text style={styles.date}>
-                            {d.date && format(d.date, "yyyy/MM/dd")}
-                          </Text>
-                          <View>
-                            {TextJustify(
-                              placeLength + 2,
-                              FONTSIZE - 2,
-                              d.meetName,
-                            )}
-                            {TextJustify(
-                              placeLength + 2,
-                              FONTSIZE - 2,
-                              `（${d.place}）`,
-                            )}
+                            <Text style={styles.date}>
+                              {d.date && format(d.date, "yyyy/MM/dd")}
+                            </Text>
+                            <View>
+                              {TextJustify(
+                                placeLength + 2,
+                                FONTSIZE - 2,
+                                d.meetName,
+                              )}
+                              {TextJustify(
+                                placeLength + 2,
+                                FONTSIZE - 2,
+                                `（${d.place}）`,
+                              )}
 
-                            {/* <View
+                              {/* <View
                               style={[
                                 {
                                   flexWrap: "nowrap",
@@ -410,6 +421,7 @@ const RecordPDF = () => {
                                 ）
                               </Text>
                             </View> */}
+                            </View>
                           </View>
                         </View>
                       );
