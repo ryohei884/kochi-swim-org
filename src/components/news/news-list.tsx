@@ -116,9 +116,9 @@ export default function NewsList(props: Props) {
                         key={`skelton_${i}`}
                         className="relative isolate flex flex-col gap-8 lg:flex-row"
                       >
-                        <div className="relative aspect-3/2 lg:w-64 lg:shrink-0">
-                          <Skeleton className="absolute inset-0 size-full rounded-2xl  object-cover dark:bg-gray-800" />
-                          <div className="absolute inset-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
+                        <div className="relative aspect-3/2 min-w-full lg:min-w-sm lg:shrink-0">
+                          <Skeleton className="absolute inset-0 min-w-full lg:min-w-sm rounded-2xl  object-cover dark:bg-gray-800" />
+                          <div className="absolute min-w-full lg:min-w-sm inset-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
                         </div>
                         <div>
                           <div className="flex items-center gap-x-4 text-xs">
