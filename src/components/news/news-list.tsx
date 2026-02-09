@@ -116,7 +116,7 @@ export default function NewsList(props: Props) {
                         key={`skelton_${i}`}
                         className="relative isolate flex flex-col gap-8 lg:flex-row"
                       >
-                        <div className="relative aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0">
+                        <div className="relative aspect-3/2 lg:w-64 lg:shrink-0">
                           <Skeleton className="absolute inset-0 size-full rounded-2xl  object-cover dark:bg-gray-800" />
                           <div className="absolute inset-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
                         </div>
@@ -143,16 +143,16 @@ export default function NewsList(props: Props) {
                     key={`post_${post.id}`}
                     className="isolate flex flex-col gap-8 lg:flex-row"
                   >
-                    <div className="relative aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0">
+                    <div className="relative w-full">
                       <Image
                         alt=""
                         width={672}
                         height={336}
                         priority={true}
-                        src={post.image ? `${post.image}` : "/logo.svg"}
-                        className="absolute inset-0 aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0 rounded-2xl bg-gray-50 object-cover dark:bg-gray-800"
+                        src={post.image ? `${post.image}` : "/logo3-2.svg"}
+                        className="w-full rounded-2xl bg-gray-100 object-cover aspect-3/2 dark:bg-gray-800"
                       />
-                      <div className="absolute inset-0 aspect-video sm:aspect-2/1 lg:aspect-square lg:w-64 lg:shrink-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
+                      <div className="absolute inset-0 aspect-3/2 lg:w-sm lg:shrink-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
                     </div>
                     <div>
                       <div className="flex items-center gap-x-4 text-xs">
