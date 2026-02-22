@@ -2,7 +2,7 @@
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { Check, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsDownUp, ChevronsUpDown, FileText } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
@@ -95,6 +95,10 @@ export default function MeetList(props: Props) {
           <p className="mt-2 text-lg/8 text-gray-600 dark:text-gray-400">
             詳細は各リンク先からご覧ください。
           </p>
+          <Link href="/meet-pdf" className="mt-16 flex items-center">
+            2026年度競技会日程表（PDF）
+            <FileText className="h-4" />
+          </Link>
           <div className="mt-16 lg:mt-20">
             <Tabs
               defaultValue={`${kind}/${year}`}
