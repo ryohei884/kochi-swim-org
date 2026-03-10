@@ -7,12 +7,13 @@ import Link from "next/link";
 import { useState } from "react";
 
 const navigation = [
-  { name: "お知らせ", href: "news" },
-  { name: "競技会情報", href: "meet" },
-  { name: "ライブ配信", href: "live" },
-  { name: "県記録", href: "record" },
-  { name: "講習会情報", href: "seminar" },
-  { name: "関連団体（リンク集）", href: "link" },
+  { name: "お知らせ", href: "/news", lg: true, sm: true },
+  { name: "競技会情報", href: "/meet", lg: true, sm: true },
+  { name: "ライブ配信", href: "/live", lg: true, sm: true },
+  { name: "県記録", href: "/record", lg: true, sm: true },
+  { name: "講習会情報", href: "/seminar", lg: true, sm: true },
+  { name: "関連団体（リンク集）", href: "/link", lg: false, sm: true },
+  { name: "直営クラブ", href: "/club", lg: false, sm: true },
   // { name: "ログイン", href: "sign-in" },
 ];
 
@@ -57,8 +58,8 @@ export default function Heder() {
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
-                    href={`/${item.href}`}
-                    hidden={item.href === "link" ? true : false}
+                    href={item.href}
+                    hidden={item.lg ? false : true}
                     className="text-sm/6 font-semibold text-gray-900 dark:text-white"
                   >
                     {item.name}
@@ -111,13 +112,14 @@ export default function Heder() {
                     <Link
                       key={item.name}
                       href={item.href}
+                      hidden={item.sm ? false : true}
                       className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5"
                     >
                       {item.name}
                     </Link>
                   ))}
                 </div>
-                <div className="py-6">
+                <div className="space-y-2 py-6">
                   <Link
                     href="/contact"
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5"

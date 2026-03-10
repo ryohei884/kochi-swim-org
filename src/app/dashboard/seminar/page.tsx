@@ -32,7 +32,11 @@ export default async function Page() {
   const approver: Approver = await getApproverList({ categoryLink: "seminar" });
 
   const dt = new Date();
-  const thisYear = dt.getFullYear();
+  const thisYear =
+    dt.getMonth() <= 3 && dt.getDate() <= 31
+      ? dt.getFullYear() - 1
+      : dt.getFullYear();
+
   return (
     <SeminarList
       year={thisYear}

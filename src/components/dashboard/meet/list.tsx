@@ -13,13 +13,6 @@ import CreateForm from "@/components/dashboard/meet/create-form";
 import ExcludeForm from "@/components/dashboard/meet/exclude-form";
 import UpdateForm from "@/components/dashboard/meet/update-form";
 import { Button } from "@/components/ui/button";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -40,7 +33,6 @@ import {
   getByIdAdmin,
   getListAdmin,
   getListNumAdmin,
-  getListPageAdmin,
 } from "@/lib/meet/actions";
 import type { meetWithUserSchemaType } from "@/lib/meet/verification";
 import { copyToClipboard, meetKind, poolSize } from "@/lib/utils";
@@ -71,7 +63,6 @@ type Approver = {
 interface Props {
   kind: "swimming" | "diving" | "waterpolo" | "as" | "ow";
   year: number;
-  page: number;
   session: Session | null;
   permission: Permission;
   approver: Approver;
@@ -79,9 +70,7 @@ interface Props {
 
 export default function MeetList(props: Props) {
   const router = useRouter();
-  const { kind, year, page, session, permission, approver } = props;
-  const previousPage = Number(page) - 1;
-  const nextPage = Number(page) + 1;
+  const { kind, year, session, permission, approver } = props;
   const [data, setData] = useState<meetWithUserSchemaType[]>([]);
   const [callbackData, setCallbackData] = useState<string | undefined>(
     undefined,
@@ -91,15 +80,10 @@ export default function MeetList(props: Props) {
 
   const pms: Permission = permission.filter((v) => v.categoryLink === "meet");
 
-  const fetchData = async (
-    kind: string,
-    year: number,
-    page: number,
-    id?: string,
-  ) => {
+  const fetchData = async (kind: string, year: number, id?: string) => {
     data && setCallbackData(id);
     const kindNum = meetKind.find((v) => v.href === kind)?.id || 0;
-    const res = await getListAdmin(kindNum, year, page);
+    const res = await getListAdmin(kindNum, year);
 
     if (res !== null) {
       const meetNum = await getListNumAdmin(kindNum, year);
@@ -113,37 +97,34 @@ export default function MeetList(props: Props) {
     // data && setCallbackData(id);
     if (id !== undefined) {
       const resMeet = await getByIdAdmin({ id: id });
-      const resPage = await getListPageAdmin(id);
+      // const resPage = await getListPageAdmin(id);
       if (resMeet !== null) {
         const resList = await getListAdmin(
           resMeet.kind,
           resMeet.fromDate.getFullYear(),
-          Math.round(resPage > 0 ? Math.floor((resPage - 1) / 10) + 1 : 1),
         );
         if (resList !== null) {
           const kindHref = meetKind.find((v) => v.id === resMeet.kind)?.href;
-          const meetNum = await getListNumAdmin(
-            resMeet.kind,
-            resMeet.fromDate.getFullYear(),
-          );
+          // const meetNum = await getListNumAdmin(
+          //   resMeet.kind,
+          //   resMeet.fromDate.getFullYear(),
+          // );
           setData(resList);
-          setDataNum(meetNum);
+          // setDataNum(meetNum);
           setCallbackData(id);
           router.push(
-            `/dashboard/meet/${kindHref}/${resMeet.fromDate.getFullYear()}/${Math.round(
-              resPage > 0 ? Math.floor((resPage - 1) / 10) + 1 : 1,
-            )}`,
+            `/dashboard/meet/${kindHref}/${resMeet.fromDate.getFullYear()}`,
           );
           setIsReady(true);
         }
       }
     } else {
       const kindNum = meetKind.find((v) => v.href === kind)?.id || 0;
-      const resList = await getListAdmin(kindNum, year, page);
+      const resList = await getListAdmin(kindNum, year);
       if (resList !== null) {
-        const meetNum = await getListNumAdmin(kindNum, year);
+        // const meetNum = await getListNumAdmin(kindNum, year);
         setData(resList);
-        setDataNum(meetNum);
+        // setDataNum(meetNum);
         setCallbackData(undefined);
         // router.push(`/dashboard/meet/${kind}/${year}/${page}`);
         setIsReady(true);
@@ -152,15 +133,15 @@ export default function MeetList(props: Props) {
   };
 
   const handleChange = (e: string) => {
-    router.push(`/dashboard/meet/${e}/1`);
+    router.push(`/dashboard/meet/${e}`);
     setIsReady(false);
   };
 
   useEffect(() => {
     setIsReady(false);
-    fetchData(kind, year, page, undefined);
+    fetchData(kind, year, undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kind, year, page]);
+  }, [kind, year]);
 
   if (isReady) {
     if (!session || !session.user.role) {
@@ -428,8 +409,9 @@ export default function MeetList(props: Props) {
                     })}
               </TableBody>
             </Table>
+            {/* 
             <hr />
-            <Pagination className="mt-16 flex items-center justify-between">
+<Pagination className="mt-16 flex items-center justify-between">
               <PaginationContent className="-mt-px flex w-0 flex-1">
                 <PaginationItem className="inline-flex items-center">
                   <PaginationPrevious
@@ -445,7 +427,7 @@ export default function MeetList(props: Props) {
                   />
                 </PaginationItem>
               </PaginationContent>
-            </Pagination>
+            </Pagination> */}
           </TabsContent>
         </Tabs>
       </Tabs>

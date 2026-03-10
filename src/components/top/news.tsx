@@ -128,12 +128,15 @@ export default function News() {
                       >
                         {format(post.revisedAt, "PPP", { locale: ja })}
                       </time>
-                      {post.linkCategory && (
+                      {post.linkCategory && post.linkCategory !== 1 && (
                         <Link
                           href={
-                            newsLinkCategory.find(
+                            "/" +
+                            (newsLinkCategory.find(
                               (v) => v.id === post.linkCategory,
-                            )?.href || "#"
+                            )?.href || "") +
+                            "/id/" +
+                            (post.linkString !== null ? post.linkString : "")
                           }
                           className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:bg-gray-800"
                         >
@@ -146,27 +149,37 @@ export default function News() {
                       )}
                     </div>
                     <div className="grow">
-                      <Link href="/news">
+                      <Link href={`/news/id/${post.id}`}>
                         <h3 className="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600 dark:text-white dark:group-hover:text-gray-300">
                           <span className="absolute inset-0" />
                           {post.title}
                         </h3>
                       </Link>
                       <div className="whitespace-pre-wrap mt-5 line-clamp-3 text-sm/6 text-gray-600 dark:text-gray-400">
-                        <ReactMarkdown
-                          remarkPlugins={[remarkGfm]}
-                          components={{
-                            a: AnchorTag,
-                          }}
-                        >
-                          {post.detail}
-                        </ReactMarkdown>
+                        <Link href={`/news/id/${post.id}`}>
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                              a: AnchorTag,
+                            }}
+                          >
+                            {post.detail}
+                          </ReactMarkdown>
+                        </Link>
                       </div>
                     </div>
                   </div>
                 </article>
               ),
           )}
+        </div>
+        <div className="float-end  mt-16">
+          <Link
+            href="/news"
+            className="text-sm/6 font-semibold text-gray-900 dark:text-white"
+          >
+            過去のお知らせ <span aria-hidden="true">→</span>
+          </Link>
         </div>
       </div>
     </div>

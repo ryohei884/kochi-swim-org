@@ -162,14 +162,14 @@ export default function NewsList(props: Props) {
                         >
                           {format(post.createdAt, "PPP", { locale: ja })}
                         </time>
-                        {post.linkCategory && (
+                        {post.linkCategory && post.linkCategory !== 1 && (
                           <Link
                             href={
                               "/" +
                               (newsLinkCategory.find(
                                 (v) => v.id === post.linkCategory,
                               )?.href || "") +
-                              "/" +
+                              "/id/" +
                               (post.linkString !== null ? post.linkString : "")
                             }
                             className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:bg-gray-800"

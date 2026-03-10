@@ -32,12 +32,15 @@ export default async function Page() {
   const approver: Approver = await getApproverList({ categoryLink: "meet" });
 
   const dt = new Date();
-  const thisYear = dt.getFullYear();
+  const thisYear =
+    dt.getMonth() <= 3 && dt.getDate() <= 31
+      ? dt.getFullYear() - 1
+      : dt.getFullYear();
+
   return (
     <MeetList
       kind="swimming"
       year={thisYear}
-      page={1}
       session={session}
       permission={permission}
       approver={approver}

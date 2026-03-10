@@ -43,7 +43,6 @@ export default async function Page({
     <MeetList
       kind={kind}
       year={year}
-      page={1}
       session={session}
       permission={permission}
       approver={approver}

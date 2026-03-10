@@ -35,6 +35,26 @@ export async function getList(page?: number) {
   return res;
 }
 
+export async function getListAll() {
+  const res = await prisma.news.findMany({
+    orderBy: [
+      {
+        order: "desc",
+      },
+      {
+        createdAt: "asc",
+      },
+      {
+        revisedAt: "asc",
+      },
+    ],
+    where: {
+      approved: true,
+    },
+  });
+  return res;
+}
+
 export async function getListAdmin(page?: number) {
   const res = await prisma.news.findMany({
     include: { createdUser: true, revisedUser: true, approvedUser: true },
