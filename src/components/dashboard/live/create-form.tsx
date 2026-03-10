@@ -70,12 +70,7 @@ export default function LiveCreateForm(props: Props) {
   ) => {
     const res = await create(data);
 
-    toast("作成しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("作成しました。", {});
     fetchListData(res.id);
     setDialogOpen(false);
     form.reset();

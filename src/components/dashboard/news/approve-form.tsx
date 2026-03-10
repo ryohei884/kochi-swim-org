@@ -101,12 +101,7 @@ export default function NewsApproveForm(props: Props) {
   ) => {
     await approve(data);
 
-    toast("承認しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("承認しました。", {});
     fetchListData();
     setDialogOpen(false);
   };

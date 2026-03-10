@@ -152,12 +152,7 @@ export default function MeetCreateForm(props: Props) {
       attachment: JSON.stringify(attachmentBlob),
     });
 
-    toast("作成しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("作成しました。", {});
     fetchListData(res.id);
     setDialogOpen(false);
     reset();

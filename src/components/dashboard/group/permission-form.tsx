@@ -74,12 +74,7 @@ export default function PermissionForm(props: Props) {
     console.log(data);
     update_permission(data);
 
-    toast("更新しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("更新しました。", {});
     fetchListData();
     setDialogOpen(false);
   };
@@ -213,7 +208,7 @@ export default function PermissionForm(props: Props) {
                                         >
                                           <Skeleton
                                             key={i}
-                                            className="flex size-4 border border-input max-w-full rounded-[4px]"
+                                            className="flex size-4 border border-input max-w-full rounded-lg"
                                           />
                                         </TableCell>
                                       );

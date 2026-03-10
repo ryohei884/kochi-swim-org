@@ -44,10 +44,6 @@ export default function ContactForm() {
       description: (
         <div>担当者が速やかに対応いたしますので、しばらくお待ちください。</div>
       ),
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
     });
     form.reset();
   };

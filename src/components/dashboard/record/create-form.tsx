@@ -122,12 +122,7 @@ export default function RecordCreateForm(props: Props) {
       meetName: data.meetName.replace("　", " ").trim(),
     });
 
-    toast("作成しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("作成しました。", {});
     fetchListData(res.id);
     setPreview("");
     setDialogOpen(false);

@@ -74,10 +74,6 @@ export default function CategoryCreateForm(props: Props) {
 
     toast("作成しました。", {
       // description: <div>{JSON.stringify(data, null, 2)}</div>,
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
     });
     fetchListData(res);
     setDialogOpen(false);

@@ -141,12 +141,7 @@ export default function MeetUpdateForm(props: Props) {
       attachment: JSON.stringify(attachmentBlob),
     });
 
-    toast("更新しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("更新しました。", {});
     fetchListData(res.id);
     setDialogOpen(false);
     reset();

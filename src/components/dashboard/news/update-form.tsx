@@ -118,12 +118,7 @@ export default function NewsUpdateForm(props: Props) {
       image: newBlob ?? data.image,
     });
 
-    toast("更新しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("更新しました。", {});
     fetchListData(res.id);
     setPreview("");
     setDialogOpen(false);

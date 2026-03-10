@@ -137,12 +137,7 @@ export default function RecordList(props: Props) {
   const handlePrintPdf = async (blob: Blob | null) => {
     if (blob) {
       await pdfUpdate(blob);
-      toast("更新しました。", {
-        action: {
-          label: "Undo",
-          onClick: () => console.log("Undo"),
-        },
-      });
+      toast("更新しました。", {});
     } else {
       alert("URL is null");
     }

@@ -35,7 +35,7 @@ import {
   getListNumAdmin,
 } from "@/lib/meet/actions";
 import type { meetWithUserSchemaType } from "@/lib/meet/verification";
-import { copyToClipboard, meetKind, poolSize } from "@/lib/utils";
+import { copyToClipboard, getFY, meetKind, poolSize } from "@/lib/utils";
 
 interface Session {
   user: {
@@ -101,7 +101,7 @@ export default function MeetList(props: Props) {
       if (resMeet !== null) {
         const resList = await getListAdmin(
           resMeet.kind,
-          resMeet.fromDate.getFullYear(),
+          getFY(resMeet.fromDate),
         );
         if (resList !== null) {
           const kindHref = meetKind.find((v) => v.id === resMeet.kind)?.href;
@@ -112,9 +112,7 @@ export default function MeetList(props: Props) {
           setData(resList);
           // setDataNum(meetNum);
           setCallbackData(id);
-          router.push(
-            `/dashboard/meet/${kindHref}/${resMeet.fromDate.getFullYear()}`,
-          );
+          router.push(`/dashboard/meet/${kindHref}/${getFY(resMeet.fromDate)}`);
           setIsReady(true);
         }
       }

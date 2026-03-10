@@ -79,12 +79,7 @@ export default function MeetExcludeForm(props: Props) {
     console.log("data", data);
     await exclude(data);
 
-    toast("削除しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("削除しました。", {});
     fetchListData();
     setDialogOpen(false);
   };

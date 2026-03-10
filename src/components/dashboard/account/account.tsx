@@ -54,12 +54,7 @@ export default function Account() {
     console.log(data);
     const res = await update(data);
 
-    toast("更新しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("更新しました。", {});
     fetchData();
     form.reset(res);
   };

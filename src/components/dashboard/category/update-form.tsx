@@ -82,12 +82,7 @@ export default function CategoryUpdateForm(props: Props) {
   ) => {
     const res = await update(data);
 
-    toast("更新しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("更新しました。", {});
     fetchListData(res);
     setDialogOpen(false);
   };

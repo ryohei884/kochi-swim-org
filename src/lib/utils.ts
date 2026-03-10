@@ -13,6 +13,14 @@ export const forRange = (a: number, z: number) => {
   return lst;
 };
 
+export const getFY = (date: Date) => {
+  const year =
+    date.getMonth() <= 3 && date.getDate() <= 31
+      ? date.getFullYear() - 1
+      : date.getFullYear();
+  return year;
+};
+
 export const years = [2025, 2026];
 
 export const newsLinkCategory = [

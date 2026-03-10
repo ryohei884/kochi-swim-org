@@ -68,12 +68,7 @@ export default function MemberForm(props: Props) {
   ) => {
     await update_member({ users: data.users, id: id });
 
-    toast("更新しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("更新しました。", {});
     fetchListData();
     setDialogOpen(false);
   };

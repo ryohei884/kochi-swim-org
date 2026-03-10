@@ -76,12 +76,7 @@ export default function SeminarApproveForm(props: Props) {
     console.log("data", data);
     await approve(data);
 
-    toast("承認しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("承認しました。", {});
     fetchListData(data.id);
     setDialogOpen(false);
   };

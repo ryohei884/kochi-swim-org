@@ -75,12 +75,7 @@ export default function LiveExcludeForm(props: Props) {
   ) => {
     await exclude(data);
 
-    toast("削除しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("削除しました。", {});
     fetchListData();
     setDialogOpen(false);
   };

@@ -79,12 +79,7 @@ export default function LiveUpdateForm(props: Props) {
   ) => {
     const res = await update(data);
 
-    toast("更新しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("更新しました。", {});
     fetchListData(res.id);
     setDialogOpen(false);
     form.reset();

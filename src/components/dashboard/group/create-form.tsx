@@ -55,12 +55,7 @@ export default function GroupCreateForm(props: Props) {
   ) => {
     const res = await create(data);
 
-    toast("作成しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("作成しました。", {});
     fetchListData(res);
     setDialogOpen(false);
     form.reset();

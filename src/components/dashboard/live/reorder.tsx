@@ -14,12 +14,7 @@ export default function ReOrder(props: Props) {
 
   const handleClick = async () => {
     await reOrder();
-    toast("表示順を整理しました。", {
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+    toast("表示順を整理しました。", {});
     fetchListData();
   };
 
