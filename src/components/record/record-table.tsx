@@ -63,10 +63,10 @@ export default function RecordList(props: Props) {
 
   const getRecord = async (category: string, poolsize: string, sex: string) => {
     const categoryNum =
-      recordCategory.find((v) => v.herf === category)?.id || 0;
+      recordCategory.find((v) => v.href === category)?.id || 0;
     const poolsizeNum =
-      recordPoolsize.find((v) => v.herf === poolsize)?.id || 0;
-    const sexNum = recordSex.find((v) => v.herf === sex)?.id || 0;
+      recordPoolsize.find((v) => v.href === poolsize)?.id || 0;
+    const sexNum = recordSex.find((v) => v.href === sex)?.id || 0;
     try {
       const fetchURL = await fetch(
         `/record_${categoryNum}_${poolsizeNum}_${sexNum}`,
@@ -182,9 +182,9 @@ export default function RecordList(props: Props) {
                   </TabsList>
                   <TabsContent value={`${category}/${poolsize}/${sex}`}>
                     <p className="p-2 font-semibold tracking-tight text-pretty text-gray-900 dark:text-white">
-                      {recordCategory.find((v) => v.herf === category)?.label} /{" "}
-                      {recordPoolsize.find((v) => v.herf === poolsize)?.label} /{" "}
-                      {recordSex.find((v) => v.herf === sex)?.label}
+                      {recordCategory.find((v) => v.href === category)?.label} /{" "}
+                      {recordPoolsize.find((v) => v.href === poolsize)?.label} /{" "}
+                      {recordSex.find((v) => v.href === sex)?.label}
                     </p>
                     <hr />
                     <Table>

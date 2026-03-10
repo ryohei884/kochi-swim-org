@@ -188,7 +188,23 @@ export async function getById(prop: meetGetByIdSchemaType) {
       id: id,
       approved: true,
     },
-    include: { createdUser: true, revisedUser: true, approvedUser: true },
+  });
+  return res;
+}
+
+export async function getListAll() {
+  const res = await prisma.meet.findMany({
+    orderBy: [
+      {
+        createdAt: "asc",
+      },
+      {
+        revisedAt: "asc",
+      },
+    ],
+    where: {
+      approved: true,
+    },
   });
   return res;
 }

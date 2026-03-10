@@ -5,6 +5,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const forRange = (a: number, z: number) => {
+  const lst = [];
+  for (let i = a; i <= z; i++) {
+    lst.push(i);
+  }
+  return lst;
+};
+
+export const years = [2025, 2026];
+
 export const newsLinkCategory = [
   { id: 1, name: "お知らせ", href: "news" },
   { id: 2, name: "競技会情報", href: "meet" },
@@ -40,48 +50,48 @@ export const poolSize = [
 ];
 
 export const recordCategory = [
-  { id: 0, herf: "null", label: "その他" },
-  { id: 1, herf: "prefecture", label: "県" },
-  { id: 2, herf: "high", label: "高校" },
-  { id: 3, herf: "junior_high", label: "中学" },
-  { id: 4, herf: "elementary", label: "学童" },
+  { id: 0, href: "null", label: "その他" },
+  { id: 1, href: "prefecture", label: "県" },
+  { id: 2, href: "high", label: "高校" },
+  { id: 3, href: "junior_high", label: "中学" },
+  { id: 4, href: "elementary", label: "学童" },
 ];
 
 export const recordPoolsize = [
-  { id: 0, label: "その他", herf: "null" },
-  { id: 1, label: "長水路", herf: "long" },
-  { id: 2, label: "短水路", herf: "short" },
+  { id: 0, label: "その他", href: "null" },
+  { id: 1, label: "長水路", href: "long" },
+  { id: 2, label: "短水路", href: "short" },
 ];
 
 export const recordSex = [
-  { id: 0, label: "その他", herf: "null" },
-  { id: 1, label: "男子", herf: "men" },
-  { id: 2, label: "女子", herf: "women" },
-  { id: 3, label: "混合", herf: "mixed" },
+  { id: 0, label: "その他", href: "null" },
+  { id: 1, label: "男子", href: "men" },
+  { id: 2, label: "女子", href: "women" },
+  { id: 3, label: "混合", href: "mixed" },
 ];
 
 export const recordStyle = [
-  { id: 0, label: "その他", herf: "null" },
-  { id: 1, label: "自由形", herf: "free" },
-  { id: 2, label: "背泳ぎ", herf: "back" },
-  { id: 3, label: "平泳ぎ", herf: "breast" },
-  { id: 4, label: "バタフライ", herf: "butterfly" },
-  { id: 5, label: "個人メドレー", herf: "im" },
-  { id: 6, label: "フリーリレー", herf: "free_relay" },
-  { id: 7, label: "メドレーリレー", herf: "medley_relay" },
+  { id: 0, label: "その他", href: "null" },
+  { id: 1, label: "自由形", href: "free" },
+  { id: 2, label: "背泳ぎ", href: "back" },
+  { id: 3, label: "平泳ぎ", href: "breast" },
+  { id: 4, label: "バタフライ", href: "butterfly" },
+  { id: 5, label: "個人メドレー", href: "im" },
+  { id: 6, label: "フリーリレー", href: "free_relay" },
+  { id: 7, label: "メドレーリレー", href: "medley_relay" },
 ];
 
 export const recordDistance = [
-  { id: 0, label: "その他", herf: "null" },
-  { id: 1, label: "50m", herf: "50m" },
-  { id: 2, label: "100m", herf: "100m" },
-  { id: 3, label: "200m", herf: "200m" },
-  { id: 4, label: "400m", herf: "400m" },
-  { id: 5, label: "800m", herf: "800m" },
-  { id: 6, label: "1500m", herf: "1500m" },
-  { id: 7, label: "4×50m", herf: "4_50m" },
-  { id: 8, label: "4×100m", herf: "4_100m" },
-  { id: 9, label: "4×200m", herf: "4_200m" },
+  { id: 0, label: "その他", href: "null" },
+  { id: 1, label: "50m", href: "50m" },
+  { id: 2, label: "100m", href: "100m" },
+  { id: 3, label: "200m", href: "200m" },
+  { id: 4, label: "400m", href: "400m" },
+  { id: 5, label: "800m", href: "800m" },
+  { id: 6, label: "1500m", href: "1500m" },
+  { id: 7, label: "4×50m", href: "4_50m" },
+  { id: 8, label: "4×100m", href: "4_100m" },
+  { id: 9, label: "4×200m", href: "4_200m" },
 ];
 
 export const intToTime = (time: number) => {
@@ -115,18 +125,18 @@ export const copyToClipboard = async (meetId: string) => {
 };
 
 export const pdfCategory = [
-  { id: 1, herf: "prefecture", label: "高知県記録" },
-  { id: 2, herf: "high", label: "高知県高校記録" },
-  { id: 3, herf: "junior_high", label: "高知県中学記録" },
-  { id: 4, herf: "elementary", label: "高知県学童記録" },
+  { id: 1, href: "prefecture", label: "高知県記録" },
+  { id: 2, href: "high", label: "高知県高校記録" },
+  { id: 3, href: "junior_high", label: "高知県中学記録" },
+  { id: 4, href: "elementary", label: "高知県学童記録" },
 ];
 
 export const pdfPoolsize = [
-  { id: 1, label: "長水路", herf: "long" },
-  { id: 2, label: "短水路", herf: "short" },
+  { id: 1, label: "長水路", href: "long" },
+  { id: 2, label: "短水路", href: "short" },
 ];
 
 export const pdfSex = [
-  { id: 1, label: "男子", herf: "men" },
-  { id: 2, label: "女子", herf: "women" },
+  { id: 1, label: "男子", href: "men" },
+  { id: 2, label: "女子", href: "women" },
 ];

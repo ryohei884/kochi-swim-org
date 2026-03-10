@@ -74,10 +74,10 @@ export default function RecordList(props: Props) {
   ) => {
     data && setCallbackData(id);
     const categoryNum =
-      recordCategory.find((v) => v.herf === category)?.id || 0;
+      recordCategory.find((v) => v.href === category)?.id || 0;
     const poolsizeNum =
-      recordPoolsize.find((v) => v.herf === poolsize)?.id || 0;
-    const sexNum = recordSex.find((v) => v.herf === sex)?.id || 0;
+      recordPoolsize.find((v) => v.href === poolsize)?.id || 0;
+    const sexNum = recordSex.find((v) => v.href === sex)?.id || 0;
     const res = await getListAdmin(categoryNum, poolsizeNum, sexNum);
 
     if (res !== null) {
@@ -101,11 +101,11 @@ export default function RecordList(props: Props) {
         if (resList !== null) {
           const category = recordCategory.find(
             (v) => v.id === resRecord.category,
-          )?.herf;
+          )?.href;
           const poolsize = recordPoolsize.find(
             (v) => v.id === resRecord.poolsize,
-          )?.herf;
-          const sex = recordSex.find((v) => v.id === resRecord.sex)?.herf;
+          )?.href;
+          const sex = recordSex.find((v) => v.id === resRecord.sex)?.href;
           setData(resList);
           //   setDataNum(resList.length());
           setCallbackData(id);
@@ -115,10 +115,10 @@ export default function RecordList(props: Props) {
       }
     } else {
       const categoryNum =
-        recordCategory.find((v) => v.herf === category)?.id || 0;
+        recordCategory.find((v) => v.href === category)?.id || 0;
       const poolsizeNum =
-        recordPoolsize.find((v) => v.herf === poolsize)?.id || 0;
-      const sexNum = recordSex.find((v) => v.herf === sex)?.id || 0;
+        recordPoolsize.find((v) => v.href === poolsize)?.id || 0;
+      const sexNum = recordSex.find((v) => v.href === sex)?.id || 0;
       const resList = await getListAdmin(categoryNum, poolsizeNum, sexNum);
       if (resList !== null) {
         setData(resList);
@@ -205,9 +205,9 @@ export default function RecordList(props: Props) {
             </TabsList>
             <TabsContent value={`${category}/${poolsize}/${sex}`}>
               <p className="p-2 font-semibold tracking-tight text-pretty text-gray-900 dark:text-white">
-                {recordCategory.find((v) => v.herf === category)?.label} /{" "}
-                {recordPoolsize.find((v) => v.herf === poolsize)?.label} /{" "}
-                {recordSex.find((v) => v.herf === sex)?.label}
+                {recordCategory.find((v) => v.href === category)?.label} /{" "}
+                {recordPoolsize.find((v) => v.href === poolsize)?.label} /{" "}
+                {recordSex.find((v) => v.href === sex)?.label}
               </p>
               <hr />
               <Table>
