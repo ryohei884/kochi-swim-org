@@ -125,7 +125,7 @@ export default function MeetItem(props: Props) {
                             <Button variant="ghost">
                               {meet.code !== null ? (
                                 <Link
-                                  href={`https://result.swimeet.or.jp/tournament/${meet.code}`}
+                                  href={`https://result.swim.or.jp/tournament/${meet.code}`}
                                   rel="noopener noreferrer"
                                   target="_blank"
                                 >
