@@ -13,7 +13,6 @@ export async function generateStaticParams() {
     .flat(Infinity)
     .filter((v) => v !== undefined);
 
-  console.log("seminar: ", result);
   return result;
 }
 

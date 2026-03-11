@@ -6,7 +6,8 @@ import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
+import Markdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 
 import {
@@ -93,6 +94,30 @@ export default function NewsList(props: Props) {
         {children}
         <ExternalLink className="h-4 ml-1" />
       </Link>
+    );
+  };
+
+  const UListTag = ({ node, children, ...props }: any) => {
+    return (
+      <ul {...props} className="list-disc list-outside pl-[1em] mb-[1em]">
+        {children}
+      </ul>
+    );
+  };
+
+  const OListTag = ({ node, children, ...props }: any) => {
+    return (
+      <ol {...props} className="list-decimal list-outside pl-[1em] mb-[1em]">
+        {children}
+      </ol>
+    );
+  };
+
+  const PTag = ({ node, children, ...props }: any) => {
+    return (
+      <p {...props} className="mb-[1em]">
+        {children}
+      </p>
     );
   };
 
@@ -201,15 +226,18 @@ export default function NewsList(props: Props) {
                           {post.title}
                         </h3>
                         <div className="my-5 text-sm/6 text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
-                          <ReactMarkdown
+                          <Markdown
                             key={`react_markdown_${post.id}`}
-                            remarkPlugins={[remarkGfm]}
+                            remarkPlugins={[remarkGfm, remarkBreaks]}
                             components={{
                               a: AnchorTag,
+                              ul: UListTag,
+                              ol: OListTag,
+                              p: PTag,
                             }}
                           >
                             {post.detail}
-                          </ReactMarkdown>
+                          </Markdown>
                         </div>
                       </div>
                     </div>

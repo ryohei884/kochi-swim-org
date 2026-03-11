@@ -9,8 +9,6 @@ import { forRange } from "@/lib/utils";
 export async function generateStaticParams() {
   const listNum = await get("live_list_num").then((res) => Number(res));
 
-  console.log("listNum", listNum);
-
   const pages: number[] = forRange(1, listNum / 10);
 
   return pages.map((page) => ({

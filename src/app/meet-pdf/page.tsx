@@ -1,8 +1,7 @@
 "use client";
 
 export default function Page() {
-  const pdfURL =
-    "https://nzprheefai1ubld0.public.blob.vercel-storage.com/files/meetlist-IBee3al8YSuDuEzPZGGoq3ZI6UAVyy";
+  const pdfURL = "/files/meetlist20260309.pdf";
 
   return pdfURL ? (
     <object
