@@ -214,7 +214,7 @@ export default function Footer() {
             ))}
           </div> */}
           <p className="mt-8 text-sm/6 text-gray-600 md:order-1 md:mt-0 dark:text-gray-400">
-            &copy; 2025 （一社）高知県水泳連盟. All rights reserved.
+            &copy; 2025-2026 （一社）高知県水泳連盟. All rights reserved.
           </p>
         </div>
       </div>
