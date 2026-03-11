@@ -1,10 +1,17 @@
+"use client";
+
 export default function Page() {
-  return (
+  const pdfURL =
+    "https://nzprheefai1ubld0.public.blob.vercel-storage.com/files/meetlist-rJW1lJFKMdnqGaaxt0nkvBgllpeCvf.pdf";
+
+  return pdfURL ? (
     <object
       className="w-svw h-svh"
       title="2026年度競技会日程表(2026年3月9日更新)"
-      data={`/files/meetlist20260309.pdf`}
+      data={pdfURL}
       type="application/pdf"
     />
+  ) : (
+    <div>Loading ...</div>
   );
 }
