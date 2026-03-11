@@ -154,7 +154,7 @@ export default function News() {
                     <div className="grow">
                       <Link href={`/news/id/${post.id}`}>
                         <h3 className="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600 dark:text-white dark:group-hover:text-gray-300">
-                          <span className="absolute inset-0" />
+                          {/* <span className="absolute inset-0" /> */}
                           {post.title}
                         </h3>
                       </Link>
