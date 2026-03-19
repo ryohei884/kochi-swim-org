@@ -24,7 +24,7 @@ export default async function Page({
   const { kind } = await params;
   const dt = new Date();
   const thisYear =
-    dt.getMonth() <= 3 && dt.getDate() <= 31
+    dt.getMonth() <= 3 && dt.getDate() <= 15
       ? dt.getFullYear() - 1
       : dt.getFullYear();
   return (
