@@ -98,9 +98,9 @@ export default function SeminarList(props: Props) {
               onValueChange={(e) => handleChange(e)}
             >
               <TabsList>
-                <TabsTrigger value="2025">2025</TabsTrigger>
-                <Separator orientation="vertical" />
                 <TabsTrigger value="2026">2026</TabsTrigger>
+                <Separator orientation="vertical" />
+                <TabsTrigger value="2025">2025</TabsTrigger>
               </TabsList>
               <TabsContent value={`${year}`}>
                 <Table>

@@ -120,9 +120,9 @@ export default function MeetList(props: Props) {
                 onValueChange={(e) => handleChange(e)}
               >
                 <TabsList>
-                  <TabsTrigger value={`${kind}/2025`}>2025年度</TabsTrigger>
-                  <Separator orientation="vertical" />
                   <TabsTrigger value={`${kind}/2026`}>2026年度</TabsTrigger>
+                  <Separator orientation="vertical" />
+                  <TabsTrigger value={`${kind}/2025`}>2025年度</TabsTrigger>
                 </TabsList>
                 <TabsContent value={`${kind}/${year}`}>
                   <p
