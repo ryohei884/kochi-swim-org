@@ -8,8 +8,16 @@ export async function POST(request: Request): Promise<NextResponse> {
   if (!filename) throw new Error("No filename.");
   if (!request.body) throw new Error("No request.body.");
 
-  const blob = await put(filename, request.body, {
+  const img = await new Response(request.body).text();
+  const data = img.replace(/^data:image\/\w+;base64,/, "");
+  const buf = Buffer.from(data, "base64");
+  const file = new File([buf], `${filename}`, {
+    type: "image/png",
+  });
+
+  const blob = await put(`${filename}`, file, {
     access: "public",
+    contentType: "image/png",
   });
 
   return NextResponse.json(blob);

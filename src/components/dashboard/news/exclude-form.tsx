@@ -87,7 +87,7 @@ export default function NewsExcludeForm(props: Props) {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
-        label: "Undo",
+        label: "OK",
         onClick: () => console.log(errors),
       },
     });
@@ -197,7 +197,7 @@ export default function NewsExcludeForm(props: Props) {
                 render={({ field: { value } }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>イメージ画像</FormLabel>
-                    <div className="flex-none  w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
+                    {/* <div className="flex-none  w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
                       <Image
                         src={value ? `${value}` : "/logo.png"}
                         alt=""
@@ -205,7 +205,14 @@ export default function NewsExcludeForm(props: Props) {
                         width={80}
                         className="w-full h-full object-contain object-center"
                       />
-                    </div>
+                    </div> */}
+                    <Image
+                      src={value ? `${value}` : "/logo.png"}
+                      alt="プレビュー"
+                      height={229}
+                      width={344}
+                      className="w-full aspect-3/2 border-2 rounded-2xl object-contain object-center"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

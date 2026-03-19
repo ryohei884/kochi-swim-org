@@ -3,22 +3,22 @@ import Link from "next/link";
 
 const navigation = {
   frequently: [
-    { name: "お知らせ", href: "news" },
-    { name: "競技会情報", href: "meet" },
-    { name: "ライブ配信", href: "live" },
-    { name: "県記録", href: "record" },
-    { name: "講習会情報", href: "seminar" },
+    { name: "お知らせ", href: "/news" },
+    { name: "競技会情報", href: "/meet" },
+    { name: "ライブ配信", href: "/live" },
+    { name: "県記録", href: "/record" },
+    { name: "講習会情報", href: "/seminar" },
   ],
   recruitment: [
     //     { name: "スポンサー募集", href: "#" },
     //     { name: "競技役員募集", href: "#" },
     //     { name: "指導者募集", href: "#" },
-    { name: "直営クラブ", href: "club" },
+    { name: "直営クラブ", href: "/club" },
   ],
   association: [
-    { name: "ご挨拶", href: "greetings" },
-    { name: "法人概要", href: "overview" },
-    { name: "関連団体（リンク集）", href: "link" },
+    { name: "ご挨拶", href: "/greetings" },
+    { name: "法人概要", href: "/overview" },
+    { name: "関連団体（リンク集）", href: "/link" },
   ],
   //   legal: [
   //     { name: "利用規約", href: "#" },
@@ -124,7 +124,7 @@ export default function Footer() {
                   {navigation.recruitment.map((item) => (
                     <li key={item.name}>
                       <Link
-                        href={`/${item.href}`}
+                        href={item.href}
                         className="text-sm/6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                       >
                         {item.name}
@@ -143,7 +143,7 @@ export default function Footer() {
                   {navigation.association.map((item) => (
                     <li key={item.name}>
                       <Link
-                        href={`/${item.href}`}
+                        href={item.href}
                         className="text-sm/6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                       >
                         {item.name}

@@ -7,7 +7,6 @@ import type { PutBlobResult } from "@vercel/blob";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { CalendarIcon, ExternalLink, PencilLine } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
@@ -18,6 +17,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import CropperButton from "@/components/ui/cropper-button";
 import {
   Form,
   FormControl,
@@ -131,7 +131,7 @@ export default function NewsUpdateForm(props: Props) {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
-        label: "Undo",
+        label: "OK",
         onClick: () => console.log(errors),
       },
     });
@@ -146,7 +146,7 @@ export default function NewsUpdateForm(props: Props) {
     const extension = file.name.slice(file.name.lastIndexOf(".") + 1);
 
     const response = await fetch(
-      `/api/news/image/upload?filename=images/${filename()}.${extension}`,
+      `/api/news/image/upload?filename=images/${filename()}.png`,
       {
         method: "POST",
         body: file,
@@ -157,18 +157,18 @@ export default function NewsUpdateForm(props: Props) {
     return newBlob.url;
   };
 
-  function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
-    const dataTransfer = new DataTransfer();
+  // function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
+  //   const dataTransfer = new DataTransfer();
 
-    Array.from(event.target.files!).forEach((image) =>
-      dataTransfer.items.add(image),
-    );
+  //   Array.from(event.target.files!).forEach((image) =>
+  //     dataTransfer.items.add(image),
+  //   );
 
-    const files = dataTransfer.files;
-    const displayUrl = URL.createObjectURL(event.target.files![0]);
+  //   const files = dataTransfer.files;
+  //   const displayUrl = URL.createObjectURL(event.target.files![0]);
 
-    return { files, displayUrl };
-  }
+  //   return { files, displayUrl };
+  // }
 
   const dt = new Date();
   const minDT = new Date(dt.setFullYear(dt.getFullYear() - 2));
@@ -287,39 +287,18 @@ export default function NewsUpdateForm(props: Props) {
                     <FormItem>
                       <FormLabel>イメージ画像</FormLabel>
                       <FormControl>
-                        <Input
-                          id="image"
-                          type="file"
-                          accept="image/*"
-                          {...rest}
-                          onChange={(event) => {
-                            const { files, displayUrl } = getImageData(event);
-                            setPreview(displayUrl);
-                            onChange(files);
+                        <CropperButton
+                          id="image_cropper"
+                          defaultValue={value ? (value as string) : undefined}
+                          className="mb-4"
+                          onCropped={(e) => {
+                            onChange(e.target.files);
                           }}
+                          {...rest}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
-                    <div className="aspect-video max-w-140">
-                      {preview ? (
-                        <Image
-                          src={preview}
-                          alt=""
-                          height={100}
-                          width={100}
-                          className="w-full h-full object-contain object-center"
-                        />
-                      ) : (
-                        <Image
-                          src={value ? `${value}` : "/logo.png"}
-                          alt=""
-                          height={100}
-                          width={100}
-                          className="w-full h-full object-contain object-center"
-                        />
-                      )}
-                    </div>
                   </>
                 )}
               />

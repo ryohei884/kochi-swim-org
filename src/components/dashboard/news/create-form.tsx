@@ -1,14 +1,11 @@
 // @ts-nocheck
 
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { init } from "@paralleldrive/cuid2";
-import type { PutBlobResult } from "@vercel/blob";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
 import { CalendarIcon, ExternalLink, Plus } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
@@ -19,6 +16,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import CropperButton from "@/components/ui/cropper-button";
 import {
   Form,
   FormControl,
@@ -76,7 +74,6 @@ interface Props {
 export default function NewsCreateForm(props: Props) {
   const { fetchListData, maxOrder, approver } = props;
 
-  const [preview, setPreview] = useState("");
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -99,6 +96,7 @@ export default function NewsCreateForm(props: Props) {
   const onSubmit: SubmitHandler<newsCreateOnSubmitSchemaType> = async (
     data: newsCreateOnSubmitSchemaType,
   ) => {
+    console.log("data: ", data);
     let newBlob;
     if (data.image !== null && typeof data.image !== "string") {
       newBlob = await uploadImage(data.image);
@@ -111,7 +109,6 @@ export default function NewsCreateForm(props: Props) {
 
     toast("作成しました。", {});
     fetchListData(res.id);
-    setPreview("");
     setDialogOpen(false);
     form.reset();
   };
@@ -122,7 +119,7 @@ export default function NewsCreateForm(props: Props) {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
-        label: "Undo",
+        label: "OK",
         onClick: () => console.log(errors),
       },
     });
@@ -134,10 +131,10 @@ export default function NewsCreateForm(props: Props) {
     }
 
     const filename = init({ length: 8 });
-    const extension = file.name.slice(file.name.lastIndexOf(".") + 1);
+    // const extension = file.name.slice(file.name.lastIndexOf(".") + 1);
 
     const response = await fetch(
-      `/api/news/image/upload?filename=images/${filename()}.${extension}`,
+      `/api/news/image/upload?filename=images/${filename()}.png`,
       {
         method: "POST",
         body: file,
@@ -147,19 +144,6 @@ export default function NewsCreateForm(props: Props) {
     const newBlob = (await response.json()) as PutBlobResult;
     return newBlob.url;
   };
-
-  function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
-    const dataTransfer = new DataTransfer();
-
-    Array.from(event.target.files!).forEach((image) =>
-      dataTransfer.items.add(image),
-    );
-
-    const files = dataTransfer.files;
-    const displayUrl = URL.createObjectURL(event.target.files![0]);
-
-    return { files, displayUrl };
-  }
 
   const dt = new Date();
   const minDT = new Date(dt.setFullYear(dt.getFullYear() - 2));
@@ -242,32 +226,6 @@ export default function NewsCreateForm(props: Props) {
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="detail"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>本文</FormLabel>
-                    <FormControl hidden={!isReady}>
-                      <div className="whitespace-pre-wrap flex-none min-h-9 w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                        <ReactMarkdown
-                          remarkPlugins={[remarkGfm]}
-                          components={{
-                            a: AnchorTag,
-                          }}
-                        >
-                          {field.value}
-                        </ReactMarkdown>
-                      </div>
-                    </FormControl>
-                    <Skeleton
-                      hidden={isReady}
-                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
               <FormField
                 control={form.control}
                 name="image"
@@ -275,36 +233,20 @@ export default function NewsCreateForm(props: Props) {
                   <FormItem>
                     <FormLabel>イメージ画像</FormLabel>
                     <FormControl>
-                      <Input
-                        id="image"
-                        type="file"
-                        accept="image/*"
-                        {...rest}
-                        onChange={(event) => {
-                          const { files, displayUrl } = getImageData(event);
-                          setPreview(displayUrl);
-                          onChange(files);
+                      <CropperButton
+                        id="image_cropper"
+                        className="mb-4"
+                        defaultValue={null}
+                        onCropped={(e) => {
+                          onChange(e.target.files);
                         }}
+                        {...rest}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <div className="aspect-video max-w-140">
-                <FormLabel className="py-2">プレビュー</FormLabel>
-                {preview ? (
-                  <Image
-                    src={preview}
-                    alt=""
-                    height={100}
-                    width={100}
-                    className="w-full h-full object-contain object-center"
-                  />
-                ) : (
-                  <Skeleton className="w-full h-full bg-accent rounded-lg border flex justify-center items-center" />
-                )}
-              </div>
               <FormField
                 control={form.control}
                 name="fromDate"

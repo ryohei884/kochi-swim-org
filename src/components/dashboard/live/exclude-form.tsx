@@ -84,7 +84,7 @@ export default function LiveExcludeForm(props: Props) {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
-        label: "Undo",
+        label: "OK",
         onClick: () => console.log(errors),
       },
     });

@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
       new URL("https://nzprheefai1ubld0.public.blob.vercel-storage.com/**"),
       new URL("https://profile.line-scdn.net/**"),
     ],
+    minimumCacheTTL: 14400, // 4 hours
   },
 };
 

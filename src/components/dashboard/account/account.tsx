@@ -63,7 +63,7 @@ export default function Account() {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
-        label: "Undo",
+        label: "OK",
         onClick: (e) => {
           e.preventDefault();
           console.log(errors);

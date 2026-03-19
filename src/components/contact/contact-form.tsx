@@ -52,7 +52,7 @@ export default function ContactForm() {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
-        label: "Undo",
+        label: "OK",
         onClick: () => console.log(errors),
       },
     });

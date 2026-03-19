@@ -85,7 +85,7 @@ export default function SeminarExcludeForm(props: Props) {
     toast("エラーが発生しました。", {
       description: <div>{JSON.stringify(errors, null, 2)}</div>,
       action: {
-        label: "Undo",
+        label: "OK",
         onClick: (e) => {
           e.preventDefault();
           setDialogOpen(false);
