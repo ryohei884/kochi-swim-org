@@ -105,6 +105,29 @@ export async function getListAdmin(
   return res;
 }
 
+export async function getListAdminAll() {
+  const res = await prisma.record.findMany({
+    orderBy: [
+      {
+        style: "asc",
+      },
+      {
+        distance: "asc",
+      },
+      {
+        date: "desc",
+      },
+      {
+        createdAt: "asc",
+      },
+      {
+        revisedAt: "asc",
+      },
+    ],
+  });
+  return res;
+}
+
 export async function getById(id: string) {
   const res = await prisma.record.findFirst({
     where: {

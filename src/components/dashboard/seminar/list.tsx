@@ -140,9 +140,9 @@ export default function SeminarList(props: Props) {
       </h4>
       <Tabs defaultValue={`${year}`} onValueChange={(e) => handleChange(e)}>
         <TabsList>
-          <TabsTrigger value="2025">2025</TabsTrigger>
-          <Separator orientation="vertical" />
           <TabsTrigger value="2026">2026</TabsTrigger>
+          <Separator orientation="vertical" />
+          <TabsTrigger value="2025">2025</TabsTrigger>
         </TabsList>
         <TabsContent value={`${year}`}>
           <p className="p-2 font-semibold tracking-tight text-pretty text-gray-900 dark:text-white">

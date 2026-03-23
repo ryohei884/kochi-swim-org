@@ -4,6 +4,7 @@ import type { DefaultSession } from "@auth/core/types";
 import {
   CalendarCheck2,
   Component,
+  FileCog,
   LogOut,
   Megaphone,
   MessageSquare,
@@ -83,6 +84,14 @@ const data = {
       role: 4,
       icon: CalendarCheck2,
       only: [],
+    },
+    {
+      name: "ファイル整理",
+      link: "file-management",
+      order: 6,
+      role: 2,
+      icon: FileCog,
+      only: ["administrator"],
     },
   ],
   navSecondary: [

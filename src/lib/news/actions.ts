@@ -75,6 +75,23 @@ export async function getListAdmin(page?: number) {
   return res;
 }
 
+export async function getListAdminAll() {
+  const res = await prisma.news.findMany({
+    orderBy: [
+      {
+        order: "desc",
+      },
+      {
+        createdAt: "asc",
+      },
+      {
+        revisedAt: "asc",
+      },
+    ],
+  });
+  return res;
+}
+
 export async function getListNum() {
   const res = await prisma.news.count({
     where: {

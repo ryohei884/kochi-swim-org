@@ -75,6 +75,26 @@ export async function getListAdmin(kind: number, year: number) {
   return res;
 }
 
+export async function getListAdminAll() {
+  const res = await prisma.meet.findMany({
+    orderBy: [
+      {
+        fromDate: "asc",
+      },
+      {
+        toDate: "asc",
+      },
+      {
+        createdAt: "asc",
+      },
+      {
+        revisedAt: "asc",
+      },
+    ],
+  });
+  return res;
+}
+
 /*
 export async function getListPageAdmin(id: string) {
   const meet = await getById({ id: id });

@@ -77,6 +77,26 @@ export async function getListAdmin(year?: number) {
   return res;
 }
 
+export async function getListAdminAll() {
+  const res = await prisma.seminar.findMany({
+    orderBy: [
+      {
+        fromDate: "asc",
+      },
+      {
+        toDate: "asc",
+      },
+      {
+        createdAt: "asc",
+      },
+      {
+        revisedAt: "asc",
+      },
+    ],
+  });
+  return res;
+}
+
 export async function create(prop: seminarCreateSchemaType) {
   const data = prop;
   const session = await auth();
