@@ -26,21 +26,21 @@ const faqs = [
   },
   */
   {
-    title: "2026年度の登録に関するマニュアルについて",
-    description: `登録に関するマニュアルは以下の通りです。
-- [初回登録用マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_new_2026-O1GOW031nL3L8F3wjgIk8aaWq4zG6H)
-- [年度更新マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_2026-ynYvPvM269iQ7cjB8V7mbvvqTelT5T)
-- [団体・競技者登録マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_newFY_2026-3dzUpLVx4YtXw6ztT2nElrZhJ3A2W4)`,
+    title: "登録マニュアルについて",
+    description: `2026年度の登録に関するマニュアルは以下の通りです。
+- [初回登録用マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Initial_Registration_Manual_2026.pdf)
+- [年度更新マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Annual_Update_Manual_2026.pdf)
+- [団体・競技者登録マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Team_and_Athlete_Registration_Manual_2026.pdf)`,
   },
   {
     title: "WebSWMSYSについて",
-    description: `選手登録・大会エントリーに使用するWebSWMSYSのURLは以下の通りです。ログインID等が不明な場合は、マニュアル内（団体・競技者登録マニュアル）の連絡先か、ページ下部の連絡フォームよりお問い合わせください。
+    description: `選手登録・大会エントリーに使用するWebSWMSYSのURLは以下の通りです。ログインID等が不明な場合は、マニュアル内（団体・競技者登録マニュアル）の連絡先か、下記お問い合わせフォームからご連絡ください。
 - [WebSWMSYS](https://webswmsys.swim.or.jp/login)`,
   },
   {
     title: "選手登録送付書",
-    description: `選手登録に関しては、以下のエクセルファイルをダウンロードし、マニュアル（団体・競技者登録マニュアル）内の提出先まで必ず提出してください。その際に、中学校・高校とＳＣでは記載するシートが違うため、間違わないようにご注意ください。
-- [選手登録送付書(学校用・SC用)](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_submit_2026-ebwifLYc2xe3KtLw6a93Nv5y6Kr8UQ)`,
+    description: `選手登録に関しては、以下のエクセルファイルをダウンロードし、マニュアル（団体・競技者登録マニュアル）内の提出先まで必ず提出してください。その際に、中学校・高校とSCでは記載するシートが違うため、間違わないようにご注意ください。
+- [選手登録送付書(学校用・SC用)](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Athlete_Registration_Form_2026.xlsx)`,
   },
   {
     title: "お問い合わせ",
@@ -93,7 +93,7 @@ WebSWIMSYSから    行ってください。
 export default function Registration() {
   const AnchorTag = ({ node, children, ...props }: any) => {
     try {
-      new URL(props.href ?? "");
+      props.href = URL.parse(props.href) ? props.href : "";
       props.target = "_blank";
       props.rel = "noopener noreferrer";
     } catch (e) {}
