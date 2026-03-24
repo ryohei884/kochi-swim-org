@@ -100,7 +100,11 @@ export default function Registration() {
   return (
     <dl className="mt-16 divide-y divide-gray-900/10 dark:divide-white/10">
       {faqs.map((faq) => (
-        <Collapsible key={faq.title} className="py-6 first:pt-0 last:pb-0">
+        <Collapsible
+          defaultOpen={true}
+          key={faq.title}
+          className="py-6 first:pt-0 last:pb-0"
+        >
           <div>
             <dt>
               <CollapsibleTrigger className="group flex w-full items-start justify-between text-left text-gray-900 dark:text-white">
