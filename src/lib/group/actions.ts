@@ -266,7 +266,6 @@ export async function update_permission(prop: permissionUpdateSchemaType) {
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
   } else {
-    console.log(data);
     const ml = await prisma.$transaction(async (prisma) => {
       await prisma.permission.deleteMany({
         where: {

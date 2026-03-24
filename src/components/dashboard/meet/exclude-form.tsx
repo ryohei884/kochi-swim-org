@@ -76,7 +76,6 @@ export default function MeetExcludeForm(props: Props) {
   const onSubmit: SubmitHandler<meetWithUserSchemaType> = async (
     data: meetExcludeSchemaType,
   ) => {
-    console.log("data", data);
     await exclude(data);
 
     toast("削除しました。", {});

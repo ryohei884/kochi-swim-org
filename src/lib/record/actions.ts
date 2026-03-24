@@ -156,7 +156,6 @@ export async function create(prop: recordCreateSchemaType) {
     throw new Error("Not authenticated.");
   } else {
     // ここに同種目でより早い記録がないかどうか調べる。
-    console.log(data);
     const res = await prisma.record.create({
       include: { createdUser: true, revisedUser: true, approvedUser: true },
       data: {

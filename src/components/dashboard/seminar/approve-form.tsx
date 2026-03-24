@@ -73,7 +73,6 @@ export default function SeminarApproveForm(props: Props) {
   const onSubmit: SubmitHandler<seminarWithUserSchemaType> = async (
     data: seminarApproveSchemaType,
   ) => {
-    console.log("data", data);
     await approve(data);
 
     toast("承認しました。", {});

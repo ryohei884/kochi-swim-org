@@ -71,7 +71,6 @@ export default function PermissionForm(props: Props) {
   const onSubmit: SubmitHandler<
     z.infer<typeof permissionUpdateSchema>
   > = async (data: permissionUpdateSchemaType) => {
-    console.log(data);
     update_permission(data);
 
     toast("更新しました。", {});

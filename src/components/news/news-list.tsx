@@ -55,7 +55,6 @@ export default function NewsList(props: Props) {
         setDataNum(newsList.length);
         setNewsNum(NumTop);
         setIsReady(true);
-        console.log(newsList);
       } catch (error) {
         const newsList = await getList(page);
         if (newsList !== null) {
@@ -186,7 +185,7 @@ export default function NewsList(props: Props) {
                           height={(384 / 3) * 2}
                           priority={true}
                           src={post.image ? `${post.image}` : "/logo3-2.svg"}
-                          className="min-w-full lg:min-w-sm rounded-2xl bg-gray-100 object-cover aspect-3/2 dark:bg-gray-800"
+                          className="min-w-full lg:min-w-sm rounded-2xl bg-gray-100  object-cover object-center aspect-3/2 dark:bg-gray-800"
                         />
                         <div className="absolute inset-0 aspect-3/2 min-w-full lg:min-w-sm lg:shrink-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
                       </div>

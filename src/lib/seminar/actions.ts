@@ -100,7 +100,6 @@ export async function create(prop: seminarCreateSchemaType) {
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
   } else {
-    console.log(data);
     const res = await prisma.seminar.create({
       include: { createdUser: true, revisedUser: true, approvedUser: true },
       data: {
@@ -176,7 +175,6 @@ export async function update(prop: seminarUpdateSchemaType) {
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
   } else {
-    console.log(data);
     const res = await prisma.seminar.update({
       where: {
         id: data.id,

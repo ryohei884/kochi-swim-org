@@ -6,7 +6,12 @@ import { init } from "@paralleldrive/cuid2";
 import type { PutBlobResult } from "@vercel/blob";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { CalendarIcon, ExternalLink, PencilLine } from "lucide-react";
+import {
+  CalendarIcon,
+  CalendarOff,
+  ExternalLink,
+  PencilLine,
+} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
@@ -74,7 +79,7 @@ interface Props {
 
 export default function NewsUpdateForm(props: Props) {
   const { id, fetchListData, approver } = props;
-  const [preview, setPreview] = useState("");
+  // const [preview, setPreview] = useState("");
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [openFromDate, setOpenFromDate] = useState(false);
@@ -120,7 +125,7 @@ export default function NewsUpdateForm(props: Props) {
 
     toast("更新しました。", {});
     fetchListData(res.id);
-    setPreview("");
+    // setPreview("");
     setDialogOpen(false);
     form.reset();
   };
@@ -360,48 +365,62 @@ export default function NewsUpdateForm(props: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>掲載終了日</FormLabel>
-                    <Popover open={openToDate}>
-                      <PopoverTrigger asChild>
-                        <FormControl hidden={!isReady}>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground",
-                            )}
-                            onClick={(date) => {
+                    <div className="inline-flex  mb-0">
+                      <Popover open={openToDate}>
+                        <PopoverTrigger asChild>
+                          <FormControl hidden={!isReady}>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "pl-3 text-left font-normal flex-1",
+                                !field.value && "text-muted-foreground",
+                              )}
+                              onClick={(date) => {
+                                field.onChange(date);
+                                setOpenToDate(true);
+                              }}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP", { locale: ja })
+                              ) : (
+                                <span>日付を選択してください。</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? field.value : undefined}
+                            startMonth={minDT}
+                            endMonth={maxDT}
+                            disabled={(date) => date >= maxDT || date <= minDT}
+                            onSelect={(date) => {
                               field.onChange(date);
-                              setOpenToDate(true);
+                              setOpenToDate(false);
                             }}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP", { locale: ja })
-                            ) : (
-                              <span>日付を選択してください。</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value ? field.value : undefined}
-                          startMonth={minDT}
-                          endMonth={maxDT}
-                          disabled={(date) => date >= maxDT || date <= minDT}
-                          onSelect={(date) => {
-                            field.onChange(date);
-                            setOpenToDate(false);
-                          }}
-                          captionLayout="dropdown"
+                            captionLayout="dropdown"
+                          />
+                        </PopoverContent>
+                        <Skeleton
+                          hidden={isReady}
+                          className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
                         />
-                      </PopoverContent>
-                      <Skeleton
-                        hidden={isReady}
-                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                      />
-                    </Popover>
+                      </Popover>
+                      <Button
+                        className="ml-2"
+                        size="icon"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          field.onChange(null);
+                          setOpenToDate(false);
+                        }}
+                      >
+                        <CalendarOff />
+                      </Button>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}

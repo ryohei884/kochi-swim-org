@@ -65,7 +65,6 @@ export async function create(prop: liveCreateSchemaType) {
   if (!session?.user?.id) {
     throw new Error("Not authenticated.");
   } else {
-    console.log(data);
     const res = await prisma.live.create({
       include: { createdUser: true, meet: true },
       data: {

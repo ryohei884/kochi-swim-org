@@ -209,7 +209,6 @@ export default function Detail() {
                   <DialogTrigger
                     aria-describedby={item.id}
                     onClick={() => {
-                      console.log(item.id);
                       setFeatured(item.id);
                     }}
                     asChild

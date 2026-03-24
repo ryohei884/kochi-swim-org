@@ -13,15 +13,6 @@ export function GET() {
 
 export async function POST(request: Request) {
   const req = await request.json();
-  console.log(req);
-  // const plansTyped: { label: string; value: string }[] = plans;
-  // const submitTyped: { label: string; value: string }[] = submit;
-  // const advertisementSize = plansTyped.find(
-  //   (v) => v.value === req.data.advertisementSize,
-  // )?.label;
-  // const howtoSendYourManuscript: string | undefined = submitTyped.find(
-  //   (v) => v.value === req.data.howtoSendYourManuscript,
-  // )?.label;
 
   try {
     await Promise.all([

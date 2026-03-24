@@ -41,13 +41,20 @@ const CropperButton = ({
   ...props
 }: Props & React.ComponentProps<"input">) => {
   const [imageSrc, setImageSrc] = useState<string | null>(
-    defaultValue !== undefined ? defaultValue : "/logo.png",
+    defaultValue !== undefined ? defaultValue : "/logo3-2.svg",
   );
   const cropperRef: RefObject<ReactCropperElement | null> =
     useRef<ReactCropperElement>(null);
   const [preview, setPreview] = useState<string | null>(
-    defaultValue !== undefined ? defaultValue : "/logo.png",
+    defaultValue !== undefined ? defaultValue : "/logo3-2.svg",
   );
+
+  React.useEffect(() => {
+    if (defaultValue !== undefined) {
+      imageSrc === "/logo3-2.svg" && setImageSrc(defaultValue);
+      preview === "/logo3-2.svg" && setPreview(defaultValue);
+    }
+  }, [defaultValue, imageSrc, preview]);
 
   const handleCrop = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -99,7 +106,7 @@ const CropperButton = ({
         }}
       />
       <input id="image" type="file" accept="image/*" hidden {...props} />
-      {imageSrc && (
+      {imageSrc !== "/logo3-2.svg" && imageSrc && (
         <div className="col-md-6 col-12 mx-auto">
           <Cropper
             src={imageSrc}
@@ -121,7 +128,7 @@ const CropperButton = ({
             </Button>
           </div>
 
-          <div className="max-w-140 mt-4">
+          <div className="w-full mt-4">
             <FormLabel className="pb-2">プレビュー</FormLabel>
             {preview ? (
               <Image
@@ -129,7 +136,7 @@ const CropperButton = ({
                 alt="プレビュー"
                 height={229}
                 width={344}
-                className="w-full aspect-3/2 border-2 rounded-2xl object-contain object-center"
+                className="w-full aspect-3/2 border-2 rounded-2xl object-cover object-center"
               />
             ) : (
               <Skeleton className="w-full  aspect-3/2 border-2 rounded-2xl bg-accent  flex justify-center items-center" />

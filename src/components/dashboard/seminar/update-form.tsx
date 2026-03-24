@@ -123,8 +123,6 @@ export default function SeminarUpdateForm(props: Props) {
   const onSubmit: SubmitHandler<seminarUpdateOnSubmitSchemaType> = async (
     data: seminarUpdateOnSubmitSchemaType,
   ) => {
-    console.log(data);
-
     const detailBlob = await uploadFile(data.detail);
     const attachmentBlob = await uploadFile(data.attachment);
 

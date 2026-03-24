@@ -16,7 +16,6 @@ export function GET() {
 
 export async function POST(request: Request) {
   const req = await request.json();
-  console.log(req);
 
   try {
     const admins = await getList();

@@ -220,21 +220,12 @@ export default function NewsApproveForm(props: Props) {
                 render={({ field: { value } }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>イメージ画像</FormLabel>
-                    {/* <div className="flex-none  w-full border border-input px-3 py-2 max-w-full rounded-md bg-accent text-sm">
-                      <Image
-                        src={value ? `${value}` : "/logo.png"}
-                        alt=""
-                        height={80}
-                        width={80}
-                        className="w-full h-full object-contain object-center"
-                      />
-                    </div> */}
                     <Image
-                      src={value ? `${value}` : "/logo.png"}
+                      src={value ? `${value}` : "/logo3-2.svg"}
                       alt="プレビュー"
                       height={229}
                       width={344}
-                      className="w-full aspect-3/2 border-2 rounded-2xl object-contain object-center"
+                      className="w-full aspect-3/2 border-2 rounded-2xl object-cover object-center"
                     />
                     <FormMessage />
                   </FormItem>

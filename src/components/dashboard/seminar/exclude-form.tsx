@@ -73,7 +73,6 @@ export default function SeminarExcludeForm(props: Props) {
   const onSubmit: SubmitHandler<seminarWithUserSchemaType> = async (
     data: seminarExcludeSchemaType,
   ) => {
-    console.log("data", data);
     await exclude(data);
 
     toast("削除しました。", {});

@@ -117,7 +117,7 @@ export default function News() {
                         height={336}
                         priority={true}
                         src={post.image ? `${post.image}` : "/logo3-2.svg"}
-                        className="rounded-2xl bg-gray-100 object-cover aspect-3/2 dark:bg-gray-800"
+                        className="rounded-2xl bg-gray-100 object-cover object-center aspect-3/2 dark:bg-gray-800"
                       />
                       <div className="absolute inset-0 rounded-2xl inset-ring inset-ring-gray-900/10 dark:inset-ring-white/10" />
                     </div>

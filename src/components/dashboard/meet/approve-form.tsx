@@ -76,7 +76,6 @@ export default function MeetApproveForm(props: Props) {
   const onSubmit: SubmitHandler<meetWithUserSchemaType> = async (
     data: meetApproveSchemaType,
   ) => {
-    console.log("data", data);
     await approve(data);
 
     toast("承認しました。", {});

@@ -51,7 +51,6 @@ export default function Account() {
   const onSubmit: SubmitHandler<userSchemaType> = async (
     data: userSchemaType,
   ) => {
-    console.log(data);
     const res = await update(data);
 
     toast("更新しました。", {});
