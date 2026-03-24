@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { getAllList } from "@/lib/record/actions";
 import type { recordSchemaType } from "@/lib/record/verification";
 import {
+  getFY,
   intToTime,
   pdfCategory,
   pdfPoolsize,
@@ -240,10 +241,7 @@ const RecordPDF = () => {
                           : 99;
 
                       const now = new Date();
-                      const year =
-                        now.getMonth() <= 3 && now.getDate() <= 31
-                          ? now.getFullYear() - 1
-                          : now.getFullYear();
+                      const year = getFY(now);
                       const nextYear = year + 1;
 
                       const newRecord =

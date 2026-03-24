@@ -11,15 +11,12 @@ import type {
   seminarGetByIdSchemaType,
   seminarUpdateSchemaType,
 } from "@/lib/seminar/verification";
+import { getFY } from "@/lib/utils";
 import { prisma } from "@/prisma";
 
 export async function getList(year?: number) {
   const now = new Date();
-  const thisYear = year
-    ? Number(year)
-    : now.getMonth() <= 3 && now.getDate() <= 31
-      ? now.getFullYear() - 1
-      : now.getFullYear();
+  const thisYear = year ? Number(year) : getFY(now);
   const nextYear = thisYear + 1;
   const res = await prisma.seminar.findMany({
     where: {
@@ -200,10 +197,7 @@ export async function update(prop: seminarUpdateSchemaType) {
       },
     });
     const now = new Date(res.fromDate);
-    const year =
-      now.getMonth() <= 3 && now.getDate() <= 31
-        ? now.getFullYear() - 1
-        : now.getFullYear();
+    const year = getFY(now);
     await blobUpdate(year);
     return res;
   }
@@ -228,10 +222,7 @@ export async function exclude(prop: seminarExcludeSchemaType) {
         },
       });
       const now = new Date(res.fromDate);
-      const year =
-        now.getMonth() <= 3 && now.getDate() <= 31
-          ? now.getFullYear() - 1
-          : now.getFullYear();
+      const year = getFY(now);
       await blobUpdate(year);
     }
   }
@@ -261,10 +252,7 @@ export async function approve(prop: seminarApproveSchemaType) {
         },
       });
       const now = new Date(res.fromDate);
-      const year =
-        now.getMonth() <= 3 && now.getDate() <= 31
-          ? now.getFullYear() - 1
-          : now.getFullYear();
+      const year = getFY(now);
       await blobUpdate(year);
     }
   }

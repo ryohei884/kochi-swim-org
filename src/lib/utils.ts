@@ -15,7 +15,7 @@ export const forRange = (a: number, z: number) => {
 
 export const getFY = (date: Date) => {
   const year =
-    date.getMonth() <= 3 && date.getDate() <= 31
+    date.getMonth() <= 2 && date.getDate() <= 31
       ? date.getFullYear() - 1
       : date.getFullYear();
   return year;

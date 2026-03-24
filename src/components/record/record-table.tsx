@@ -23,6 +23,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getList } from "@/lib/record/actions";
 import type { recordSchemaType } from "@/lib/record/verification";
 import {
+  getFY,
   intToTime,
   recordCategory,
   recordDistance,
@@ -55,10 +56,7 @@ export default function RecordList(props: Props) {
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   const now = new Date();
-  const year =
-    now.getMonth() <= 3 && now.getDate() <= 31
-      ? now.getFullYear() - 1
-      : now.getFullYear();
+  const year = getFY(now);
   const nextYear = year + 1;
 
   const getRecord = async (category: string, poolsize: string, sex: string) => {

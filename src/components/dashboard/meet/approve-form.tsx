@@ -46,7 +46,7 @@ import { meetKind, poolSize } from "@/lib/utils";
 
 interface Props {
   id: string;
-  fetchListData: () => Promise<void>;
+  fetchListData: (id?: string) => Promise<void>;
 }
 
 export default function MeetApproveForm(props: Props) {
@@ -80,7 +80,7 @@ export default function MeetApproveForm(props: Props) {
     await approve(data);
 
     toast("承認しました。", {});
-    fetchListData();
+    fetchListData(data.id);
     setDialogOpen(false);
   };
 

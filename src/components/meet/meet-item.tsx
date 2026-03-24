@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { getById } from "@/lib/meet/actions";
 import type { meetSchemaType } from "@/lib/meet/verification";
-import { meetKind, poolSize } from "@/lib/utils";
+import { getFY, meetKind, poolSize } from "@/lib/utils";
 
 interface Props {
   // kind: "swimming" | "diving" | "waterpolo" | "as" | "ow";
@@ -37,11 +37,7 @@ export default function MeetItem(props: Props) {
       const res = await getById({ id: id });
       if (res !== null) {
         setMeet(res);
-        setYear(
-          res.fromDate.getMonth() <= 3 && res.fromDate.getDay() <= 31
-            ? res.fromDate.getFullYear() - 1
-            : res.fromDate.getFullYear(),
-        );
+        setYear(getFY(res.fromDate));
         setKind(meetKind.find((v) => v.id === res.kind)?.href);
       }
     } catch (error) {

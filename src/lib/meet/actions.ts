@@ -11,6 +11,7 @@ import type {
   meetGetByIdSchemaType,
   meetUpdateSchemaType,
 } from "@/lib/meet/verification";
+import { getFY } from "@/lib/utils";
 import { prisma } from "@/prisma";
 
 export async function getList(kind: number, year: number) {
@@ -95,46 +96,6 @@ export async function getListAdminAll() {
   return res;
 }
 
-/*
-export async function getListPageAdmin(id: string) {
-  const meet = await getById({ id: id });
-
-  if (meet !== null) {
-    const fromDate =
-      meet.fromDate.getMonth() <= 3 && meet.fromDate.getDate() <= 31
-        ? meet.fromDate.getFullYear() - 1
-        : meet.fromDate.getFullYear();
-
-    const res = await prisma.meet.count({
-      where: {
-        fromDate: {
-          gte: new Date(`${fromDate}/4/1`),
-          lte: meet.fromDate,
-        },
-        kind: meet.kind,
-      },
-      orderBy: [
-        {
-          fromDate: "asc",
-        },
-        {
-          toDate: "asc",
-        },
-        {
-          createdAt: "asc",
-        },
-        {
-          revisedAt: "asc",
-        },
-      ],
-    });
-    return res;
-  } else {
-    return 0;
-  }
-}
-*/
-
 export async function create(prop: meetCreateSchemaType) {
   const data = prop;
   const session = await auth();
@@ -164,25 +125,6 @@ export async function create(prop: meetCreateSchemaType) {
     return res;
   }
 }
-
-/*
-export async function getListNum(kind: number, year: number) {
-  const nextYear: number = Number(year) + 1;
-  const res = await prisma.meet.count({
-    where: {
-      fromDate: year
-        ? {
-            gte: new Date(`${year}/4/1`),
-            lte: new Date(`${nextYear}/3/31`),
-          }
-        : undefined,
-      kind: kind ? kind : undefined,
-      approved: true,
-    },
-  });
-  return res;
-}
-  */
 
 export async function getListNumAdmin(kind: number, year: number) {
   const nextYear: number = Number(year) + 1;
@@ -278,16 +220,10 @@ export async function update(prop: meetUpdateSchemaType) {
         },
       });
       const now = new Date(res.fromDate);
-      const year =
-        now.getMonth() <= 3 && now.getDate() <= 31
-          ? now.getFullYear() - 1
-          : now.getFullYear();
+      const year = getFY(now);
 
-      const contesNnow = new Date(contest.fromDate);
-      const contestYear =
-        contesNnow.getMonth() <= 3 && contesNnow.getDate() <= 31
-          ? contesNnow.getFullYear() - 1
-          : contesNnow.getFullYear();
+      const contestNow = new Date(contest.fromDate);
+      const contestYear = getFY(contestNow);
       await blobUpdate(res.kind, year);
       if (res.kind !== contest.kind || year !== contestYear) {
         await blobUpdate(contest.kind, contestYear);
@@ -317,10 +253,7 @@ export async function exclude(prop: meetExcludeSchemaType) {
         },
       });
       const now = new Date(updated.fromDate);
-      const year =
-        now.getMonth() <= 3 && now.getDate() <= 31
-          ? now.getFullYear() - 1
-          : now.getFullYear();
+      const year = getFY(now);
       await blobUpdate(updated.kind, year);
     }
   }
@@ -350,10 +283,7 @@ export async function approve(prop: meetApproveSchemaType) {
         },
       });
       const now = new Date(updated.fromDate);
-      const year =
-        now.getMonth() <= 3 && now.getDate() <= 31
-          ? now.getFullYear() - 1
-          : now.getFullYear();
+      const year = getFY(now);
       await blobUpdate(updated.kind, year);
     }
   }

@@ -1,5 +1,6 @@
 "use server";
 
+// import { del, list } from "@vercel/blob";
 import { list } from "@vercel/blob";
 import { getAll } from "@vercel/edge-config";
 
@@ -276,6 +277,43 @@ export async function blobImageDelete() {
   await Promise.all(results);
   console.log(
     `Deleted ${deleteList.length} files out of ${blobFiles.length} files from images/`,
+    deleteList,
+  );
+}
+
+export async function getAllData() {
+  // blob上のファイル
+  const { folders, blobs } = await list({
+    mode: "folded",
+    prefix: "data/",
+  });
+
+  // Edge config files
+  const configItems = await getAll();
+  const configList = JSON.parse(JSON.stringify(configItems));
+  const edgeConfigList = getURL([], configList);
+
+  const blobUrl = [blobs.map((b) => b.url)].flat(Infinity).filter((s) => s);
+  const result = blobUrl.filter((s) => {
+    return edgeConfigList.find((e) => e.toString() == s) ? false : true;
+  });
+  const deleteList = Array.from(new Set(result));
+  const blobFiles = Array.from(new Set(blobUrl));
+  return { deleteList, blobFiles };
+}
+
+export async function blobDataDelete() {
+  const { deleteList, blobFiles } = await getAllData();
+
+  const results = [];
+  for (const url of deleteList) {
+    // url && results.push(del(`${url}`));
+    results.push(console.log(`${url}`));
+  }
+
+  await Promise.all(results);
+  console.log(
+    `Deleted ${deleteList.length} files out of ${blobFiles.length} files from data/`,
     deleteList,
   );
 }

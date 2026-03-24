@@ -1,6 +1,10 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { blobFileDelete, blobImageDelete } from "@/lib/file-management/actions";
+import {
+  blobDataDelete,
+  blobFileDelete,
+  blobImageDelete,
+} from "@/lib/file-management/actions";
 export default function Delete() {
   const handleClickImages = async () => {
     await blobImageDelete();
@@ -10,6 +14,10 @@ export default function Delete() {
     await blobFileDelete();
   };
 
+  const handleClickData = async () => {
+    await blobDataDelete();
+  };
+
   return (
     <>
       <p>
@@ -17,6 +25,7 @@ export default function Delete() {
       </p>
       <Button onClick={handleClickImages}>画像を整理する</Button>
       <Button onClick={handleClickFiles}>ファイルを整理する</Button>
+      <Button onClick={handleClickData}>データを整理する</Button>
     </>
   );
 }

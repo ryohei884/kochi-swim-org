@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import MeetList from "@/components/dashboard/meet/list";
 import { getApproverList, getPermissionList } from "@/lib/permission/actions";
+import { getFY } from "@/lib/utils";
 
 type Permission = {
   categoryId: string;
@@ -32,10 +33,7 @@ export default async function Page() {
   const approver: Approver = await getApproverList({ categoryLink: "meet" });
 
   const dt = new Date();
-  const thisYear =
-    dt.getMonth() <= 3 && dt.getDate() <= 15
-      ? dt.getFullYear() - 1
-      : dt.getFullYear();
+  const thisYear = getFY(dt);
 
   return (
     <MeetList

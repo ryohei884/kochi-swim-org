@@ -1,7 +1,7 @@
 import MeetList from "@/components/meet/meet-list";
 import Footer from "@/components/top/footer";
 import Header from "@/components/top/header";
-import { meetKind } from "@/lib/utils";
+import { getFY, meetKind } from "@/lib/utils";
 
 export async function generateStaticParams() {
   const result = meetKind
@@ -23,10 +23,8 @@ export default async function Page({
 }) {
   const { kind } = await params;
   const dt = new Date();
-  const thisYear =
-    dt.getMonth() <= 3 && dt.getDate() <= 15
-      ? dt.getFullYear() - 1
-      : dt.getFullYear();
+  const thisYear = getFY(dt);
+
   return (
     <>
       <Header />
