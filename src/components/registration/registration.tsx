@@ -12,7 +12,12 @@ import {
 
 const faqs = [
   {
-    title: "2026年度(令和8年度)競技者登録について",
+    title: "2026年度 翌年度登録の手順",
+    description: `[2026年度 翌年度登録の手順](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_2026-ynYvPvM269iQ7cjB8V7mbvvqTelT5T)`,
+  },
+  /*
+  {
+    title: "２０２６年度 翌年度登録の手順",
     description: `令和8年度の競技者登録は、
 WebSWIMSYSから    行ってください。    
 - [WebSWIMSYS](https://webswmsys.swim.or.jp/login)
@@ -50,9 +55,10 @@ WebSWIMSYSから    行ってください。
     title: "WebSWIMSYSの利用マニュアル",
     description: `[WebSWIMSYSの利用マニュアル]()`,
   },
+  */
 ];
 
-export default function Announcement() {
+export default function Registration() {
   const AnchorTag = ({ node, children, ...props }: any) => {
     try {
       new URL(props.href ?? "");

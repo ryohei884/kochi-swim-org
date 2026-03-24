@@ -1,4 +1,4 @@
-import Announcement from "@/components/announcement/announcement";
+import Registration from "@/components/registration/registration";
 import Footer from "@/components/top/footer";
 import Header from "@/components/top/header";
 
@@ -12,7 +12,7 @@ export default function Live() {
             <h2 className="text-4xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-5xl dark:text-white">
               競技者登録のご案内
             </h2>
-            <Announcement />
+            <Registration />
           </div>
         </div>
       </div>

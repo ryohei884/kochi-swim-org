@@ -14,6 +14,7 @@ const navigation = {
     //     { name: "競技役員募集", href: "#" },
     //     { name: "指導者募集", href: "#" },
     { name: "直営クラブ", href: "/club" },
+    { name: "競技者登録のご案内", href: "/registration" },
   ],
   association: [
     { name: "ご挨拶", href: "/greetings" },
