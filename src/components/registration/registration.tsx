@@ -14,11 +14,11 @@ const faqs = [
   {
     title: "2026年度 翌年度登録の手順",
     description: `2026年度の競技者登録は、WebSWMSYSから行ってください。  
-- [2026年度 翌年度登録の手順](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_2026-ynYvPvM269iQ7cjB8V7mbvvqTelT5T)  
 - [WebSWMSYS](https://webswmsys.swim.or.jp/login)
-- [初回登録用マニュアル]()
-- [団体・競技者登録用手順]()
-- [選手登録送付書(学校用・SC用)]()
+- [初回登録用マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_new_2026-O1GOW031nL3L8F3wjgIk8aaWq4zG6H)
+- [年度更新マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_2026-ynYvPvM269iQ7cjB8V7mbvvqTelT5T)
+- [団体・競技者登録マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_newFY_2026-3dzUpLVx4YtXw6ztT2nElrZhJ3A2W4)
+- [選手登録送付書(学校用・SC用)](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_submit_2026-ebwifLYc2xe3KtLw6a93Nv5y6Kr8UQ)
 スイミングクラブで登録されている選手が高校や中学校で新規に登録する場合は、登録の際に7桁の選手登録番号が必要になりますので、事前にご準備ください。
 ご不明な点がありましたら、（一社）高知県水泳連盟にご連絡ください。
 * [お問い合わせ](https://swim-kochi.org/contact)`,
