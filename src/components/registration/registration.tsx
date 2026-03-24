@@ -30,8 +30,7 @@ const faqs = [
     description: `登録に関するマニュアルは以下の通りです。
 - [初回登録用マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_new_2026-O1GOW031nL3L8F3wjgIk8aaWq4zG6H)
 - [年度更新マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_2026-ynYvPvM269iQ7cjB8V7mbvvqTelT5T)
-- [団体・競技者登録マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_newFY_2026-3dzUpLVx4YtXw6ztT2nElrZhJ3A2W4)
-ご不明な点がありましたら、マニュアル内（団体・競技者登録マニュアル）の連絡先か、本ページ下部の連絡フォームよりご連絡ください。`,
+- [団体・競技者登録マニュアル](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_newFY_2026-3dzUpLVx4YtXw6ztT2nElrZhJ3A2W4)`,
   },
   {
     title: "WebSWMSYSについて",
@@ -41,7 +40,12 @@ const faqs = [
   {
     title: "選手登録送付書",
     description: `選手登録に関しては、以下のエクセルファイルをダウンロードし、マニュアル（団体・競技者登録マニュアル）内の提出先まで必ず提出してください。その際に、中学校・高校とＳＣでは記載するシートが違うため、間違わないようにご注意ください。
- - [選手登録送付書(学校用・SC用)](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_submit_2026-ebwifLYc2xe3KtLw6a93Nv5y6Kr8UQ)`,
+- [選手登録送付書(学校用・SC用)](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Registration_submit_2026-ebwifLYc2xe3KtLw6a93Nv5y6Kr8UQ)`,
+  },
+  {
+    title: "お問い合わせ",
+    description: `ご不明な点がありましたら、マニュアル内（団体・競技者登録マニュアル）の連絡先か、下記お問い合わせフォームからご連絡ください。
+- [お問い合わせ](https://swim-kochi.org/contact)`,
   },
   /*
   {
