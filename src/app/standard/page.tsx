@@ -10,7 +10,7 @@ export default function Live() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:max-w-5xl">
             <h2 className="text-4xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-5xl dark:text-white">
-              資格級・標準記録等
+              資格級・標準記録
             </h2>
             <Standard />
           </div>

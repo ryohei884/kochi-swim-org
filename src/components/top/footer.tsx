@@ -14,6 +14,9 @@ const navigation = {
     //     { name: "競技役員募集", href: "#" },
     //     { name: "指導者募集", href: "#" },
     { name: "直営クラブ", href: "/club" },
+  ],
+  information: [
+    { name: "資格級・標準記録", href: "/standard" },
     { name: "競技者登録のご案内", href: "/registration" },
   ],
   association: [
@@ -137,6 +140,23 @@ export default function Footer() {
             </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
+                <h3 className="text-sm/6 font-semibold text-gray-900 dark:text-white">
+                  ご案内と資料
+                </h3>
+                <ul role="list" className="mt-6 space-y-4">
+                  {navigation.information.map((item) => (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        className="text-sm/6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                      >
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-10 md:mt-0">
                 <h3 className="text-sm/6 font-semibold text-gray-900 dark:text-white">
                   連盟情報
                 </h3>

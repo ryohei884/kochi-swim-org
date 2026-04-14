@@ -40,6 +40,8 @@ export const newsLinkCategory = [
   { id: 14, name: "アンチ・ドーピング", href: "anti_doping" },
   { id: 15, name: "ハラスメント防止", href: "harassment_prevention" },
   { id: 16, name: "お問い合わせ", href: "contact" },
+  { id: 17, name: "資格級・標準記録", href: "standard" },
+  { id: 18, name: "競技者登録のご案内", href: "registration" },
 ];
 
 export const meetKind = [
