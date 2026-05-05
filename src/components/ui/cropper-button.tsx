@@ -62,7 +62,12 @@ const CropperButton = ({
     event.preventDefault();
     if (cropperRef.current) {
       const cropper = cropperRef.current.cropper;
-      const croppedImage = cropper.getCroppedCanvas().toDataURL("image/png");
+      const croppedImage = cropper
+        .getCroppedCanvas({
+          width: 672,
+          height: 448,
+        })
+        .toDataURL("image/png");
 
       const csvFile = new File([croppedImage], "cropped_image.png", {
         type: "image/png",
