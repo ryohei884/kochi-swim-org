@@ -81,6 +81,20 @@ export default function NewsList(props: Props) {
   // const [session, setSsn] = useState<Session | null>(null);
   const pms: Permission = permission.filter((v) => v.categoryLink === "news");
 
+  const fetchData = async () => {
+    const res = await getListAdmin(page);
+    if (res !== null) {
+      // setData(res);
+      const newsNum = await getListNumAdmin();
+      // setDataNum(newsNum);
+      const orders = res.map((value) => value.order);
+      // setMaxOrder(Math.max(...orders) + 1);
+      return { res, DataNum: newsNum, MaxOrder: Math.max(...orders) + 1 };
+    } else {
+      return { res, DataNum: 0, MaxOrder: 1 };
+    }
+  };
+
   const fetchListData = async (id?: string) => {
     data && setCallbackData(id);
     const res = await getListAdmin(page);
@@ -90,18 +104,27 @@ export default function NewsList(props: Props) {
       setDataNum(newsNum);
       const orders = res.map((value) => value.order);
       setMaxOrder(Math.max(...orders) + 1);
-      setIsReady(true);
-    } else {
-      setData(res);
-      setDataNum(0);
-      setMaxOrder(1);
-      setIsReady(true);
+      // return { res, DataNum: newsNum, MaxOrder: Math.max(...orders) + 1 };
     }
   };
 
   useEffect(() => {
-    setIsReady(false);
-    fetchListData();
+    let fetched = false;
+
+    async function startFetching() {
+      const res = await fetchData();
+      if (!fetched && res) {
+        setData(res.res);
+        setDataNum(res.DataNum);
+        setMaxOrder(res.MaxOrder);
+        setIsReady(true);
+      }
+    }
+    startFetching();
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

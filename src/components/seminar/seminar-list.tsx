@@ -50,15 +50,13 @@ export default function SeminarList(props: Props) {
       const seminarListWithOpen = seminarList.map((v: seminarSchemaType) => {
         return { ...v, open: false };
       });
-      setSeminar(seminarListWithOpen);
-      setIsReady(true);
+      return { seminarListWithOpen };
     } catch (error) {
       const seminarList = await getList(year);
       const seminarListWithOpen = seminarList.map((v) => {
         return { ...v, open: false };
       });
-      setSeminar(seminarListWithOpen);
-      setIsReady(true);
+      return { seminarListWithOpen };
     }
   };
 
@@ -75,11 +73,23 @@ export default function SeminarList(props: Props) {
 
   const handleChange = (e: string) => {
     router.push(`/seminar/${e}`);
-    setIsReady(false);
   };
 
   useEffect(() => {
-    getSeminar(year);
+    let fetched = false;
+
+    async function startFetching() {
+      const res = await getSeminar(year);
+      if (!fetched && res) {
+        setSeminar(res.seminarListWithOpen);
+        setIsReady(true);
+      }
+    }
+    startFetching();
+
+    return () => {
+      fetched = true;
+    };
   }, [year]);
 
   return (

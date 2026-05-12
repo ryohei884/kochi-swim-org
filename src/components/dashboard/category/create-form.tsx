@@ -54,7 +54,6 @@ interface Props {
 export default function CategoryCreateForm(props: Props) {
   const { fetchListData, maxOrder } = props;
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [isReady, setIsReady] = useState<boolean>(false);
 
   const form = useForm<categoryCreateSchemaType>({
     resolver: zodResolver(categoryCreateSchema),
@@ -63,7 +62,6 @@ export default function CategoryCreateForm(props: Props) {
 
   useEffect(() => {
     form.setValue("order", maxOrder);
-    setIsReady(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maxOrder]);
 
@@ -182,8 +180,8 @@ export default function CategoryCreateForm(props: Props) {
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady}>
-                  作成
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "送信中..." : "作成"}
                 </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>

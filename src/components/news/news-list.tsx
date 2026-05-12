@@ -2,7 +2,6 @@
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -20,7 +19,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { getList, getListNum } from "@/lib/news/actions";
 import type { newsSchemaType } from "@/lib/news/verification";
-import { newsLinkCategory } from "@/lib/utils";
+import { AnchorTag, newsLinkCategory } from "@/lib/utils";
 
 interface Props {
   page: number;
@@ -51,50 +50,41 @@ export default function NewsList(props: Props) {
         }
 
         const newsList = await response_top.json();
-        setNews(newsList);
-        setDataNum(newsList.length);
-        setNewsNum(NumTop);
-        setIsReady(true);
+        return { newsList, NumTop };
       } catch (error) {
         const newsList = await getList(page);
         if (newsList !== null) {
-          setNews(newsList);
-          setDataNum(newsList.length);
           const newsListNum = await getListNum();
-          setNewsNum(newsListNum);
-          setIsReady(true);
+          return { newsList, newsListNum };
         }
       }
     } else {
       const newsList = await getList(page);
       if (newsList !== null) {
-        setNews(newsList);
-        setDataNum(newsList.length);
         const newsListNum = await getListNum();
-        setNewsNum(newsListNum);
-        setIsReady(true);
+        return { newsList, newsListNum };
       }
     }
   };
 
   useEffect(() => {
-    setIsReady(false);
-    getNews(Number(page));
-  }, [page]);
+    let fetched = false;
 
-  const AnchorTag = ({ node, children, ...props }: any) => {
-    try {
-      new URL(props.href ?? "");
-      props.target = "_blank";
-      props.rel = "noopener noreferrer";
-    } catch (e) {}
-    return (
-      <Link {...props} className="flex items-center underline">
-        {children}
-        <ExternalLink className="h-4 ml-1" />
-      </Link>
-    );
-  };
+    async function startFetching() {
+      const res = await getNews(Number(page));
+      if (!fetched && res) {
+        setNews(res.newsList);
+        setDataNum(res.newsList.length);
+        setNewsNum(res.NumTop ?? res.newsListNum);
+        setIsReady(true);
+      }
+    }
+    startFetching();
+
+    return () => {
+      fetched = true;
+    };
+  }, [page]);
 
   const UListTag = ({ node, children, ...props }: any) => {
     return (

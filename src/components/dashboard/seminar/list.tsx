@@ -82,9 +82,7 @@ export default function SeminarList(props: Props) {
 
     if (res !== null) {
       const seminarNum = await getListNumAdmin(year);
-      setData(res);
-      setDataNum(seminarNum);
-      setIsReady(true);
+      return { res, seminarNum };
     }
   };
 
@@ -106,12 +104,24 @@ export default function SeminarList(props: Props) {
 
   const handleChange = (e: string) => {
     router.push(`/dashboard/seminar/${e}`);
-    setIsReady(false);
   };
 
   useEffect(() => {
-    setIsReady(false);
-    fetchData(year);
+    let fetched = false;
+
+    async function startFetching() {
+      const res = await fetchData(year);
+      if (!fetched && res) {
+        setData(res.res);
+        setDataNum(res.seminarNum);
+        setIsReady(true);
+      }
+    }
+    startFetching();
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [year]);
 

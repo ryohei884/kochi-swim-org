@@ -49,12 +49,12 @@ const CropperButton = ({
     defaultValue !== undefined ? defaultValue : "/logo3-2.svg",
   );
 
-  React.useEffect(() => {
-    if (defaultValue !== undefined) {
-      imageSrc === "/logo3-2.svg" && setImageSrc(defaultValue);
-      preview === "/logo3-2.svg" && setPreview(defaultValue);
-    }
-  }, [defaultValue, imageSrc, preview]);
+  // React.useEffect(() => {
+  //   if (defaultValue !== undefined) {
+  //     imageSrc === "/logo3-2.svg" && setImageSrc(defaultValue);
+  //     preview === "/logo3-2.svg" && setPreview(defaultValue);
+  //   }
+  // }, [defaultValue, imageSrc, preview]);
 
   const handleCrop = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,

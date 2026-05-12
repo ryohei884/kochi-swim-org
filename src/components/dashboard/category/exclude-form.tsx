@@ -55,19 +55,32 @@ export default function CategoryExcludeForm(props: Props) {
     defaultValues: categoryWithUserSchemaDV,
   });
 
-  const fetchData = async (id: string) => {
-    setIsReady(false);
-    const res = await getById({ id: id });
-    if (res !== null) {
-      form.reset(res);
-      setIsReady(true);
-    }
-  };
+  // const fetchData = async (id: string) => {
+  //   setIsReady(false);
+  //   const res = await getById({ id: id });
+  //   if (res !== null) {
+  //     form.reset(res);
+  //     setIsReady(true);
+  //   }
+  // };
 
   useEffect(() => {
-    dialogOpen && fetchData(id);
+    let fetched = false;
+
+    async function startFetching(id: string) {
+      const res = await getById({ id: id });
+      if (!fetched && res) {
+        form.reset(res);
+        setIsReady(true);
+      }
+    }
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
+  }, [dialogOpen, id]);
 
   const onSubmit: SubmitHandler<categoryWithUserSchemaType> = async (
     data: categoryExcludeSchemaType,
@@ -320,8 +333,11 @@ export default function CategoryExcludeForm(props: Props) {
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady}>
-                  削除
+                <Button
+                  type="submit"
+                  disabled={!isReady || form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? "送信中..." : "削除"}
                 </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>

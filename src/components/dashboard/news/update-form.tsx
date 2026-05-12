@@ -6,13 +6,7 @@ import { init } from "@paralleldrive/cuid2";
 import type { PutBlobResult } from "@vercel/blob";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import {
-  CalendarIcon,
-  CalendarOff,
-  ExternalLink,
-  PencilLine,
-} from "lucide-react";
-import Link from "next/link";
+import { CalendarIcon, CalendarOff, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
@@ -63,7 +57,7 @@ import {
   newsUpdateOnSubmitSchema,
   newsUpdateOnSubmitSchemaDV,
 } from "@/lib/news/verification";
-import { cn, newsLinkCategory } from "@/lib/utils";
+import { AnchorTag, cn, newsLinkCategory } from "@/lib/utils";
 
 type Approver = {
   userId: string;
@@ -92,22 +86,35 @@ export default function NewsUpdateForm(props: Props) {
     defaultValues: newsUpdateOnSubmitSchemaDV,
   });
 
-  const fetchData = async (id: string) => {
-    setIsReady(false);
+  // const fetchData = async (id: string) => {
+  //   setIsReady(false);
 
-    const res = await getByIdAdmin({ id: id });
-    if (res !== null) {
-      form.reset({ ...res, linkCategory: String(res.linkCategory) });
-      setIsReady(true);
-    }
+  //   const res = await getByIdAdmin({ id: id });
+  //   if (res !== null) {
+  //     form.reset({ ...res, linkCategory: String(res.linkCategory) });
+  //     setIsReady(true);
+  //   }
 
-    setIsReady(true);
-  };
+  //   setIsReady(true);
+  // };
 
   useEffect(() => {
-    dialogOpen && fetchData(id);
+    let fetched = false;
+
+    async function startFetching(id: string) {
+      const res = await getByIdAdmin({ id: id });
+      if (!fetched && res) {
+        form.reset({ ...res, linkCategory: String(res.linkCategory) });
+        setIsReady(true);
+      }
+    }
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
+  }, [dialogOpen, id]);
 
   const onSubmit: SubmitHandler<newsUpdateOnSubmitSchemaType> = async (
     data: newsUpdateOnSubmitSchemaType,
@@ -178,20 +185,6 @@ export default function NewsUpdateForm(props: Props) {
   const dt = new Date();
   const minDT = new Date(dt.setFullYear(dt.getFullYear() - 2));
   const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 4));
-
-  const AnchorTag = ({ node, children, ...props }: any) => {
-    try {
-      new URL(props.href ?? "");
-      props.target = "_blank";
-      props.rel = "noopener noreferrer";
-    } catch (e) {}
-    return (
-      <Link {...props} className="flex items-center underline">
-        {children}
-        <ExternalLink className="h-4 ml-1" />
-      </Link>
-    );
-  };
 
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -529,8 +522,11 @@ export default function NewsUpdateForm(props: Props) {
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady}>
-                  更新
+                <Button
+                  type="submit"
+                  disabled={!isReady || form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? "送信中..." : "更新"}
                 </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>

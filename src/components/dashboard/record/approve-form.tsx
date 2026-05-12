@@ -61,19 +61,23 @@ export default function RecordApproveForm(props: Props) {
     defaultValues: recordWithUserSchemaDV,
   });
 
-  const fetchData = async (id: string) => {
-    setIsReady(false);
-    const res = await getByIdAdmin(id);
-    if (res !== null) {
-      form.reset(res);
-      setIsReady(true);
-    }
-  };
-
   useEffect(() => {
-    dialogOpen && fetchData(id);
+    let fetched = false;
+
+    async function startFetching(id: string) {
+      const res = await getByIdAdmin(id);
+      if (!fetched && res) {
+        form.reset(res);
+        setIsReady(true);
+      }
+    }
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
+  }, [dialogOpen, id]);
 
   const onSubmit: SubmitHandler<recordWithUserSchemaType> = async (
     data: recordWithUserSchemaType,
@@ -529,8 +533,12 @@ export default function RecordApproveForm(props: Props) {
                 )}
               />
               <SheetFooter className="p-0">
-                <Button variant="destructive" type="submit" disabled={!isReady}>
-                  承認
+                <Button
+                  variant="destructive"
+                  type="submit"
+                  disabled={!isReady || form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? "送信中..." : "送信"}
                 </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>

@@ -2,7 +2,6 @@
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -13,7 +12,7 @@ import remarkGfm from "remark-gfm";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getById } from "@/lib/news/actions";
 import type { newsSchemaType } from "@/lib/news/verification";
-import { newsLinkCategory } from "@/lib/utils";
+import { AnchorTag, newsLinkCategory } from "@/lib/utils";
 
 interface Props {
   id: string;
@@ -38,20 +37,6 @@ export default function NewsItem(props: Props) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     getNews(id);
   }, [id]);
-
-  const AnchorTag = ({ node, children, ...props }: any) => {
-    try {
-      new URL(props.href ?? "");
-      props.target = "_blank";
-      props.rel = "noopener noreferrer";
-    } catch (e) {}
-    return (
-      <Link {...props} className="flex items-center underline">
-        {children}
-        <ExternalLink className="h-4 ml-1" />
-      </Link>
-    );
-  };
 
   const UListTag = ({ node, children, ...props }: any) => {
     return (

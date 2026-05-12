@@ -86,7 +86,6 @@ export default function MemberForm(props: Props) {
   //   const sleep = (ms:number) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const fetchData = async (id: string) => {
-    setIsReady(false);
     // await sleep(2000);
     const res = await get_member({ id: id });
     if (res !== null) {
@@ -106,17 +105,37 @@ export default function MemberForm(props: Props) {
             id: user.id,
           };
         });
-      setUserList(users);
-      setDataNum(users.length);
-      form.reset({ users: res.member_list });
-      setIsReady(true);
+      // setUserList(users);
+      // setDataNum(users.length);
+      // form.reset({ users: res.member_list });
+      return {
+        users: users,
+        dataNum: users.length,
+        memberList: res.member_list,
+      };
     }
   };
 
   useEffect(() => {
     dialogOpen && fetchData(id);
+    let fetched = false;
+
+    async function startFetching(id: string) {
+      const res = await fetchData(id);
+      if (!fetched && res) {
+        setUserList(res.users);
+        setDataNum(res.dataNum);
+        form.reset({ users: res.memberList });
+        setIsReady(true);
+      }
+    }
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
+  }, [dialogOpen, id]);
 
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -203,8 +222,11 @@ export default function MemberForm(props: Props) {
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady}>
-                  更新
+                <Button
+                  type="submit"
+                  disabled={!isReady || form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? "送信中..." : "更新"}
                 </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>

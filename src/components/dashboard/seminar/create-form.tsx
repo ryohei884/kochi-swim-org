@@ -548,7 +548,7 @@ export default function SeminarCreateForm(props: Props) {
                   type="submit"
                   disabled={!isReady || form.formState.isSubmitting}
                 >
-                  {form.formState.isSubmitting ? "送信中" : "作成"}
+                  {form.formState.isSubmitting ? "送信中..." : "作成"}
                 </Button>
                 <SheetClose asChild>
                   <Button

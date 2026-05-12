@@ -667,8 +667,11 @@ export default function RecordCreateForm(props: Props) {
                 )}
               </div>
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady}>
-                  作成
+                <Button
+                  type="submit"
+                  disabled={!isReady || form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? "送信中..." : "作成"}
                 </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>

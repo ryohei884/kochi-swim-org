@@ -99,7 +99,6 @@ export default function PermissionForm(props: Props) {
     let data: permissionUpdateSchemaType = { data: [] };
 
     if (res !== null) {
-      setCategoryList(res);
       const d = res.map((c) => {
         let view = false;
         let submit = false;
@@ -128,19 +127,36 @@ export default function PermissionForm(props: Props) {
             .concat([]),
         };
       });
-      data = { data: d };
+      // data = { data: d };
 
-      setDataNum(res.length);
-      form.reset(data);
+      //       setCategoryList(res);
+      // setDataNum(res.length);
+      // form.reset(data);
 
-      setIsReady(true);
+      // setIsReady(true);
+      return { data: d, categoryList: res, dataNum: res.length };
     }
   };
 
   useEffect(() => {
-    dialogOpen && fetchData(id);
+    let fetched = false;
+
+    async function startFetching(id: string) {
+      const res = await fetchData(id);
+      if (!fetched && res) {
+        setCategoryList(res.categoryList);
+        setDataNum(res.dataNum);
+        form.reset({ data: res.data });
+        setIsReady(true);
+      }
+    }
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
+  }, [dialogOpen, id]);
 
   const p_cat = ["view", "submit", "revise", "exclude", "approve"];
 
@@ -278,8 +294,11 @@ export default function PermissionForm(props: Props) {
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady}>
-                  更新
+                <Button
+                  type="submit"
+                  disabled={!isReady || form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? "送信中..." : "更新"}
                 </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>

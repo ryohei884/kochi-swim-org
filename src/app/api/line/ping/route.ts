@@ -1,14 +1,18 @@
 // PING
-import type { ClientConfig } from "@line/bot-sdk";
-import { messagingApi } from "@line/bot-sdk";
+// import type { ClientConfig } from "@line/bot-sdk";
+// import { messagingApi } from "@line/bot-sdk";
+import { LineBotClient } from "@line/bot-sdk";
 import { NextResponse } from "next/server";
 
-const clientConfig: ClientConfig = {
-  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || "",
-  channelSecret: process.env.CHANNEL_SECRET || "",
-};
+// const clientConfig: ClientConfig = {
+//   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || "",
+//   channelSecret: process.env.CHANNEL_SECRET || "",
+// };
 
-const client = new messagingApi.MessagingApiClient(clientConfig);
+// const client = new messagingApi.MessagingApiClient(clientConfig);
+const client = LineBotClient.fromChannelAccessToken({
+  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || "",
+});
 
 export function GET() {
   return NextResponse.json({ method: "GET" });

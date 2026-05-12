@@ -108,11 +108,6 @@ export default function SeminarUpdateForm(props: Props) {
     name: "attachment",
   });
 
-  useEffect(() => {
-    dialogOpen && fetchData(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
-
   const fetchData = async (id: string) => {
     setIsReady(false);
     const res = await getByIdAdmin({ id: id });
@@ -123,9 +118,27 @@ export default function SeminarUpdateForm(props: Props) {
         attachment:
           res.attachment !== null ? JSON.parse(String(res.attachment)) : [],
       });
-      setIsReady(true);
     }
+    return res;
   };
+
+  useEffect(() => {
+    let fetched = false;
+
+    async function startFetching(id: string) {
+      const res = await fetchData(id);
+      if (!fetched && res) {
+        setIsReady(true);
+      }
+    }
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<seminarUpdateOnSubmitSchemaType> = async (
     data: seminarUpdateOnSubmitSchemaType,
@@ -642,7 +655,7 @@ export default function SeminarUpdateForm(props: Props) {
                   type="submit"
                   disabled={!isReady || form.formState.isSubmitting}
                 >
-                  {form.formState.isSubmitting ? "送信中" : "更新"}
+                  {form.formState.isSubmitting ? "送信中..." : "更新"}
                 </Button>
                 <SheetClose asChild>
                   <Button

@@ -54,28 +54,35 @@ export default function LiveList(props: Props) {
         }
 
         const liveList = await response.json();
-        setLive(liveList);
-        setLiveNum(NumTop);
-        setIsReady(true);
+        return { liveList, NumTop };
       } catch (error) {
         const liveList = await getList(page);
-        setLive(liveList);
         const liveListNum = await getListNum();
-        setLiveNum(liveListNum);
-        setIsReady(true);
+        return { liveList, liveListNum };
       }
     } else {
       const liveList = await getList(page);
-      setLive(liveList);
       const liveListNum = await getListNum();
-      setLiveNum(liveListNum);
-      setIsReady(true);
+      return { liveList, liveListNum };
     }
   };
 
   useEffect(() => {
-    setIsReady(false);
-    getLive(Number(page));
+    let fetched = false;
+
+    async function startFetching() {
+      const res = await getLive(Number(page));
+      if (!fetched && res) {
+        setLive(res.liveList);
+        setLiveNum(res.NumTop ?? res.liveListNum);
+        setIsReady(true);
+      }
+    }
+    startFetching();
+
+    return () => {
+      fetched = true;
+    };
   }, [page]);
 
   return (

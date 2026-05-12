@@ -53,20 +53,18 @@ export default function MeetList(props: Props) {
       const meetListWithOpen = meetList.map((v: meetSchemaType) => {
         return { ...v, open: false };
       });
-      setMeet(meetListWithOpen);
+      return { meetListWithOpen };
     } catch (error) {
       const meetList = await getList(kindNum, year);
       const meetListWithOpen = meetList.map((v) => {
         return { ...v, open: false };
       });
-      setMeet(meetListWithOpen);
+      return { meetListWithOpen };
     }
-    setIsReady(true);
   };
 
   const handleChange = (e: string) => {
     router.push(`/meet/${e}`);
-    setIsReady(false);
   };
 
   const handleOpen = (id: string) => {
@@ -81,8 +79,20 @@ export default function MeetList(props: Props) {
   };
 
   useEffect(() => {
-    setIsReady(false);
-    getMeet(kind, year);
+    let fetched = false;
+
+    async function startFetching() {
+      const res = await getMeet(kind, year);
+      if (!fetched && res) {
+        setMeet(res.meetListWithOpen);
+        setIsReady(true);
+      }
+    }
+    startFetching();
+
+    return () => {
+      fetched = true;
+    };
   }, [kind, year]);
 
   return (

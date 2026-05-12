@@ -2,7 +2,6 @@
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -12,7 +11,7 @@ import remarkGfm from "remark-gfm";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getList3 } from "@/lib/news/actions";
 import type { newsSchemaType } from "@/lib/news/verification";
-import { newsLinkCategory } from "@/lib/utils";
+import { AnchorTag, newsLinkCategory } from "@/lib/utils";
 
 export default function News() {
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -30,32 +29,31 @@ export default function News() {
       }
 
       const newsList = await response.json();
-      setNews(newsList);
+      // setNews(newsList);
+      return { newsList };
     } catch (error) {
       const newsList = await getList3();
-      setNews(newsList);
+      // setNews(newsList);
+      return { newsList };
     }
-    setIsReady(true);
   };
 
   useEffect(() => {
-    setIsReady(false);
-    getNews();
-  }, []);
+    let fetched = false;
 
-  const AnchorTag = ({ node, children, ...props }: any) => {
-    try {
-      new URL(props.href ?? "");
-      props.target = "_blank";
-      props.rel = "noopener noreferrer";
-    } catch (e) {}
-    return (
-      <Link {...props} className="flex items-center underline">
-        {children}
-        <ExternalLink className="h-4 ml-1" />
-      </Link>
-    );
-  };
+    async function startFetching() {
+      const res = await getNews();
+      if (!fetched && res) {
+        setNews(res.newsList);
+        setIsReady(true);
+      }
+    }
+    startFetching();
+
+    return () => {
+      fetched = true;
+    };
+  }, []);
 
   return (
     <div className="bg-white py-24 sm:py-32 dark:bg-gray-900">
@@ -107,7 +105,7 @@ export default function News() {
               index < 3 && (
                 <article
                   key={post.id}
-                  className="flex flex-col items-center justify-between"
+                  className="flex flex-col items-left justify-stretch"
                 >
                   <Link href={`/news/id/${post.id}`}>
                     <div className="relative w-full">

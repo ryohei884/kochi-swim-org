@@ -1,5 +1,4 @@
-import { ExternalLink, MinusIcon, PlusIcon } from "lucide-react";
-import Link from "next/link";
+import { MinusIcon, PlusIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
@@ -9,6 +8,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { AnchorTag } from "@/lib/utils";
 
 const faqs = [
   {
@@ -31,20 +31,6 @@ const faqs = [
 ];
 
 export default function Standard() {
-  const AnchorTag = ({ node, children, ...props }: any) => {
-    try {
-      props.href = URL.parse(props.href) ? props.href : "";
-      props.target = "_blank";
-      props.rel = "noopener noreferrer";
-    } catch (e) {}
-    return (
-      <Link {...props} className="flex items-center underline">
-        {children}
-        <ExternalLink className="h-4 ml-1" />
-      </Link>
-    );
-  };
-
   const UListTag = ({ node, children, ...props }: any) => {
     return (
       <ul {...props} className="list-disc list-outside pl-[1em] mb-[1em]">

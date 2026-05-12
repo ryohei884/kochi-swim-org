@@ -60,18 +60,31 @@ export default function MeetApproveForm(props: Props) {
   });
 
   useEffect(() => {
-    dialogOpen && fetchData(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
+    let fetched = false;
 
-  const fetchData = async (id: string) => {
-    setIsReady(false);
-    const res = await getByIdAdmin({ id: id });
-    if (res !== null) {
-      form.reset(res);
-      setIsReady(true);
+    async function startFetching(id: string) {
+      const res = await getByIdAdmin({ id: id });
+      if (!fetched && res) {
+        form.reset(res);
+        setIsReady(true);
+      }
     }
-  };
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogOpen, id]);
+
+  // const fetchData = async (id: string) => {
+  //   setIsReady(false);
+  //   const res = await getByIdAdmin({ id: id });
+  //   if (res !== null) {
+  //     form.reset(res);
+  //     setIsReady(true);
+  //   }
+  // };
 
   const onSubmit: SubmitHandler<meetWithUserSchemaType> = async (
     data: meetApproveSchemaType,
@@ -427,7 +440,7 @@ export default function MeetApproveForm(props: Props) {
                   disabled={!isReady || form.formState.isSubmitting}
                   variant="destructive"
                 >
-                  {form.formState.isSubmitting ? "送信中" : "承認"}
+                  {form.formState.isSubmitting ? "送信中..." : "承認"}
                 </Button>
                 <SheetClose asChild>
                   <Button

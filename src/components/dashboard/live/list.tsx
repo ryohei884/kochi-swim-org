@@ -51,14 +51,7 @@ export default function LiveList(props: Props) {
   const [dataNum, setDataNum] = useState<number>(3);
   const [maxOrder, setMaxOrder] = useState<number>(0);
 
-  useEffect(() => {
-    fetchListData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const fetchListData = async (id?: string) => {
-    setIsReady(false);
-
     data && setCallbackData(id);
     const res = await getListAdmin(Number(page));
     if (res !== null) {
@@ -71,14 +64,60 @@ export default function LiveList(props: Props) {
         setPreviousPage(Number(page) - 1);
         setNextPage(Number(page) + 1);
       }
-      setIsReady(true);
+      // return { res, dataNum: listNum, page: Number(page) };
     } else {
       setData(res);
       setDataNum(0);
       setMaxOrder(1);
       setIsReady(true);
+      // return { res, dataNum: 0, page: Number(page) };
     }
   };
+
+  const fetchData = async (id?: string) => {
+    data && setCallbackData(id);
+    const res = await getListAdmin(Number(page));
+    if (res !== null) {
+      // setData(res);
+      const listNum = await getListAdminNum();
+      // setDataNum(listNum);
+      // const orders = res.map((value) => value.order);
+      // setMaxOrder(listNum + 1);
+      // if (page !== undefined) {
+      //   setPreviousPage(Number(page) - 1);
+      //   setNextPage(Number(page) + 1);
+      // }
+      return { res, dataNum: listNum, page: Number(page) };
+    } else {
+      // setData(res);
+      // setDataNum(0);
+      // setMaxOrder(1);
+      // setIsReady(true);
+      return { res, dataNum: 0, page: Number(page) };
+    }
+  };
+
+  useEffect(() => {
+    let fetched = false;
+
+    async function startFetching() {
+      const res = await fetchData();
+      if (!fetched && res) {
+        setData(res.res);
+        setDataNum(res.dataNum);
+        setMaxOrder(res.dataNum + 1);
+        setPreviousPage(res.page - 1);
+        setNextPage(res.page + 1);
+        setIsReady(true);
+      }
+    }
+    startFetching();
+
+    return () => {
+      fetched = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const copyToClipboard = async (meetId: string) => {
     await global.navigator.clipboard.writeText(meetId);

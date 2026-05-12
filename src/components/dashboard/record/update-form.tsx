@@ -10,7 +10,7 @@ import { CalendarIcon, PencilLine } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
-import { useForm } from "react-hook-form";
+import { Control, useForm, UseFormRegister, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -78,6 +78,226 @@ interface Props {
   fetchListData: (id: string) => Promise<void>;
 }
 
+interface WatchedInputProps {
+  control: Control<recordUpdateSchemaType>;
+  register: UseFormRegister<recordUpdateSchemaType>;
+  isReady: boolean;
+}
+
+const WatchDistanceStyle = ({
+  control,
+  register,
+  isReady,
+}: WatchedInputProps) => {
+  const distance = useWatch({
+    control,
+    name: "distance",
+    defaultValue: recordUpdateSchemaDV.distance,
+  });
+
+  if (distance <= 6) {
+    return (
+      <FormField
+        control={control}
+        name="style"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>種目</FormLabel>
+            <FormControl>
+              <Select
+                onValueChange={field.onChange}
+                value={String(field.value)}
+              >
+                <SelectTrigger className="w-full" hidden={!isReady}>
+                  <SelectValue placeholder="種目" {...field} />
+                </SelectTrigger>
+                <SelectContent>
+                  {recordStyle.map(
+                    (value, index) =>
+                      value.id < 6 && (
+                        <SelectItem key={index} value={String(value.id)}>
+                          {value.label}
+                        </SelectItem>
+                      ),
+                  )}
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <Skeleton
+              hidden={isReady}
+              className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+            />
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  } else {
+    return (
+      <FormField
+        control={control}
+        name="style"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>種目</FormLabel>
+            <FormControl>
+              <Select
+                onValueChange={field.onChange}
+                value={String(field.value)}
+              >
+                <SelectTrigger className="w-full" hidden={!isReady}>
+                  <SelectValue placeholder="種目" {...field} />
+                </SelectTrigger>
+                <SelectContent>
+                  {recordStyle.map(
+                    (value, index) =>
+                      value.id >= 6 && (
+                        <SelectItem key={index} value={String(value.id)}>
+                          {value.label}
+                        </SelectItem>
+                      ),
+                  )}
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <Skeleton
+              hidden={isReady}
+              className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+            />
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+};
+const WatchDistanceSwimmer = ({
+  control,
+  register,
+  isReady,
+}: WatchedInputProps) => {
+  const distance = useWatch({
+    control,
+    name: "distance",
+    defaultValue: recordUpdateSchemaDV.distance,
+  });
+
+  if (distance <= 6) {
+    return (
+      <FormField
+        control={control}
+        name="swimmer1"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>選手名</FormLabel>
+            <FormControl hidden={!isReady}>
+              <Input
+                type="text"
+                placeholder="選手名"
+                {...register("swimmer1")}
+              />
+            </FormControl>
+            <Skeleton
+              hidden={isReady}
+              className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+            />
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  } else {
+    return (
+      <>
+        <FormField
+          control={control}
+          name="swimmer1"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>第1泳者</FormLabel>
+              <FormControl hidden={!isReady}>
+                <Input
+                  type="text"
+                  placeholder="第1泳者"
+                  {...register("swimmer1")}
+                />
+              </FormControl>
+              <Skeleton
+                hidden={isReady}
+                className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+              />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="swimmer2"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>第2泳者</FormLabel>
+              <FormControl hidden={!isReady}>
+                <Input
+                  type="text"
+                  placeholder="第2泳者"
+                  {...register("swimmer2")}
+                />
+              </FormControl>
+              <Skeleton
+                hidden={isReady}
+                className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+              />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="swimmer3"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>第3泳者</FormLabel>
+              <FormControl hidden={!isReady}>
+                <Input
+                  type="text"
+                  placeholder="第3泳者"
+                  {...register("swimmer3")}
+                />
+              </FormControl>
+              <Skeleton
+                hidden={isReady}
+                className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+              />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="swimmer4"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>第4泳者</FormLabel>
+              <FormControl hidden={!isReady}>
+                <Input
+                  type="text"
+                  placeholder="第4泳者"
+                  {...register("swimmer4")}
+                />
+              </FormControl>
+              <Skeleton
+                hidden={isReady}
+                className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
+              />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </>
+    );
+  }
+};
+
 export default function RecordUpdateForm(props: Props) {
   const { id, fetchListData } = props;
   const [preview, setPreview] = useState("");
@@ -96,24 +316,40 @@ export default function RecordUpdateForm(props: Props) {
     },
   });
 
-  const { watch, register, ...others } = form;
+  const { register, ...others } = form;
 
-  const fetchData = async (id: string) => {
-    setIsReady(false);
-    const res = await getByIdAdmin(id);
-    if (res !== null) {
-      form.reset({
-        ...res,
-        time: Number(intToTime(res.time).replace(".", "").replace(":", "")),
-      });
-      setIsReady(true);
-    }
-  };
+  // const fetchData = async (id: string) => {
+  //   setIsReady(false);
+  //   const res = await getByIdAdmin(id);
+  //   if (res !== null) {
+  //     form.reset({
+  //       ...res,
+  //       time: Number(intToTime(res.time).replace(".", "").replace(":", "")),
+  //     });
+  //     setIsReady(true);
+  //   }
+  // };
 
   useEffect(() => {
-    dialogOpen && fetchData(id);
+    let fetched = false;
+
+    async function startFetching(id: string) {
+      const res = await getByIdAdmin(id);
+      if (!fetched && res) {
+        form.reset({
+          ...res,
+          time: Number(intToTime(res.time).replace(".", "").replace(":", "")),
+        });
+        setIsReady(true);
+      }
+    }
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
+  }, [dialogOpen, id]);
 
   const onSubmit: SubmitHandler<recordUpdateSchemaType> = async (
     data: recordUpdateSchemaType,
@@ -194,8 +430,6 @@ export default function RecordUpdateForm(props: Props) {
   const dt = new Date();
   const minDT = new Date(dt.setFullYear(dt.getFullYear() - 102));
   const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 104));
-
-  const watchDistance = watch("distance");
 
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -378,84 +612,11 @@ export default function RecordUpdateForm(props: Props) {
                   </FormItem>
                 )}
               />
-              {watchDistance <= 6 && (
-                <FormField
-                  control={form.control}
-                  name="style"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>種目</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={String(field.value)}
-                        >
-                          <SelectTrigger className="w-full" hidden={!isReady}>
-                            <SelectValue placeholder="種目" {...field} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {recordStyle.map(
-                              (value, index) =>
-                                value.id < 6 && (
-                                  <SelectItem
-                                    key={index}
-                                    value={String(value.id)}
-                                  >
-                                    {value.label}
-                                  </SelectItem>
-                                ),
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <Skeleton
-                        hidden={isReady}
-                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-              {watchDistance > 6 && (
-                <FormField
-                  control={form.control}
-                  name="style"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>種目</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={String(field.value)}
-                        >
-                          <SelectTrigger className="w-full" hidden={!isReady}>
-                            <SelectValue placeholder="種目" {...field} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {recordStyle.map(
-                              (value, index) =>
-                                value.id >= 6 && (
-                                  <SelectItem
-                                    key={index}
-                                    value={String(value.id)}
-                                  >
-                                    {value.label}
-                                  </SelectItem>
-                                ),
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <Skeleton
-                        hidden={isReady}
-                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+              <WatchDistanceStyle
+                control={form.control}
+                register={register}
+                isReady={isReady}
+              />
               <FormField
                 control={form.control}
                 name="time"
@@ -504,133 +665,10 @@ export default function RecordUpdateForm(props: Props) {
                   </FormItem>
                 )}
               />
-
-              {watchDistance <= 6 ? (
-                <FormField
-                  control={form.control}
-                  name="swimmer1"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>選手名</FormLabel>
-                      <FormControl hidden={!isReady}>
-                        <Input
-                          type="text"
-                          placeholder="選手名"
-                          {...register("swimmer1")}
-                        />
-                      </FormControl>
-                      <Skeleton
-                        hidden={isReady}
-                        className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="swimmer1"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>第1泳者</FormLabel>
-                        <FormControl hidden={!isReady}>
-                          <Input
-                            type="text"
-                            placeholder="第1泳者"
-                            {...register("swimmer1")}
-                          />
-                        </FormControl>
-                        <Skeleton
-                          hidden={isReady}
-                          className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="swimmer2"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>第2泳者</FormLabel>
-                        <FormControl hidden={!isReady}>
-                          <Input
-                            type="text"
-                            placeholder="第2泳者"
-                            {...register("swimmer2")}
-                          />
-                        </FormControl>
-                        <Skeleton
-                          hidden={isReady}
-                          className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="swimmer3"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>第3泳者</FormLabel>
-                        <FormControl hidden={!isReady}>
-                          <Input
-                            type="text"
-                            placeholder="第3泳者"
-                            {...register("swimmer3")}
-                          />
-                        </FormControl>
-                        <Skeleton
-                          hidden={isReady}
-                          className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="swimmer4"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>第4泳者</FormLabel>
-                        <FormControl hidden={!isReady}>
-                          <Input
-                            type="text"
-                            placeholder="第4泳者"
-                            {...register("swimmer4")}
-                          />
-                        </FormControl>
-                        <Skeleton
-                          hidden={isReady}
-                          className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
-              )}
-              <FormField
+              <WatchDistanceSwimmer
                 control={form.control}
-                name="team"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>チーム名</FormLabel>
-                    <FormControl hidden={!isReady}>
-                      <Input type="text" placeholder="チーム名" {...field} />
-                    </FormControl>
-                    <Skeleton
-                      hidden={isReady}
-                      className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
+                register={register}
+                isReady={isReady}
               />
               <FormField
                 control={form.control}
@@ -792,8 +830,11 @@ export default function RecordUpdateForm(props: Props) {
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady}>
-                  更新
+                <Button
+                  type="submit"
+                  disabled={!isReady || form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? "送信中..." : "更新"}
                 </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>

@@ -111,26 +111,46 @@ export default function MeetUpdateForm(props: Props) {
   });
 
   useEffect(() => {
-    dialogOpen && fetchData(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
+    let fetched = false;
 
-  const fetchData = async (id: string) => {
-    setIsReady(false);
-
-    const res = await getByIdAdmin({ id: id });
-    if (res !== null) {
-      reset({
-        ...res,
-        poolsize: String(res.poolsize),
-        kind: String(res.kind),
-        detail: res.detail !== null ? JSON.parse(String(res.detail)) : [],
-        attachment:
-          res.attachment !== null ? JSON.parse(String(res.attachment)) : [],
-      });
-      setIsReady(true);
+    async function startFetching(id: string) {
+      const res = await getByIdAdmin({ id: id });
+      if (!fetched && res) {
+        form.reset({
+          ...res,
+          poolsize: String(res.poolsize),
+          kind: String(res.kind),
+          detail: res.detail !== null ? JSON.parse(String(res.detail)) : [],
+          attachment:
+            res.attachment !== null ? JSON.parse(String(res.attachment)) : [],
+        });
+        setIsReady(true);
+      }
     }
-  };
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogOpen, id]);
+
+  // const fetchData = async (id: string) => {
+  //   setIsReady(false);
+
+  //   const res = await getByIdAdmin({ id: id });
+  //   if (res !== null) {
+  //     reset({
+  //       ...res,
+  //       poolsize: String(res.poolsize),
+  //       kind: String(res.kind),
+  //       detail: res.detail !== null ? JSON.parse(String(res.detail)) : [],
+  //       attachment:
+  //         res.attachment !== null ? JSON.parse(String(res.attachment)) : [],
+  //     });
+  //     setIsReady(true);
+  //   }
+  // };
 
   const onSubmit: SubmitHandler<meetUpdateOnSubmitSchemaType> = async (
     data: meetUpdateOnSubmitSchemaType,
@@ -764,7 +784,7 @@ export default function MeetUpdateForm(props: Props) {
                   type="submit"
                   disabled={!isReady || form.formState.isSubmitting}
                 >
-                  {form.formState.isSubmitting ? "送信中" : "更新"}
+                  {form.formState.isSubmitting ? "送信中..." : "更新"}
                 </Button>
                 <SheetClose asChild>
                   <Button

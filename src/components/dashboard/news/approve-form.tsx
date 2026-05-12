@@ -4,9 +4,8 @@ import type { DefaultSession } from "@auth/core/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { ExternalLink, Stamp } from "lucide-react";
+import { Stamp } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
@@ -45,7 +44,7 @@ import {
   newsWithUserSchemaDV,
 } from "@/lib/news/verification";
 import { getApproverList } from "@/lib/permission/actions";
-import { newsLinkCategory } from "@/lib/utils";
+import { AnchorTag, newsLinkCategory } from "@/lib/utils";
 
 interface Session {
   user: {
@@ -76,25 +75,38 @@ export default function NewsApproveForm(props: Props) {
   });
 
   const fetchData = async (id: string) => {
-    setIsReady(false);
     const resAvr = await getApproverList({ categoryLink: "news" });
-    if (resAvr !== null) {
-      setApprover(resAvr);
-    } else {
-      setApprover([]);
-    }
+    // if (resAvr !== null) {
+    //   setApprover(resAvr);
+    // } else {
+    //   setApprover([]);
+    // }
 
     const res = await getByIdAdmin({ id: id });
-    if (res !== null) {
-      form.reset(res);
-      setIsReady(true);
-    }
+    // if (res !== null) {
+    //   form.reset(res);
+    // }
+    return { resAvr, res };
   };
 
   useEffect(() => {
-    dialogOpen && fetchData(id);
+    let fetched = false;
+
+    async function startFetching(id: string) {
+      const res = await fetchData(id);
+      if (!fetched && res) {
+        form.reset(res.res ?? newsWithUserSchemaDV);
+        setApprover(res.resAvr ?? []);
+        setIsReady(true);
+      }
+    }
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
+  }, [dialogOpen, id]);
 
   const onSubmit: SubmitHandler<newsWithUserSchemaType> = async (
     data: newsApproveSchemaType,
@@ -114,20 +126,6 @@ export default function NewsApproveForm(props: Props) {
         onClick: () => console.log(errors),
       },
     });
-  };
-
-  const AnchorTag = ({ node, children, ...props }: any) => {
-    try {
-      new URL(props.href ?? "");
-      props.target = "_blank";
-      props.rel = "noopener noreferrer";
-    } catch (e) {}
-    return (
-      <Link {...props} className="flex items-center underline">
-        {children}
-        <ExternalLink className="h-4 ml-1" />
-      </Link>
-    );
   };
 
   return (
@@ -331,7 +329,7 @@ export default function NewsApproveForm(props: Props) {
                   disabled={!isReady || form.formState.isSubmitting}
                   variant="destructive"
                 >
-                  {form.formState.isSubmitting ? "送信中" : "承認"}
+                  {form.formState.isSubmitting ? "送信中..." : "承認"}
                 </Button>
                 <SheetClose asChild>
                   <Button

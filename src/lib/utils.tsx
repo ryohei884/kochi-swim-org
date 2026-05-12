@@ -1,4 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
+import { ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -150,3 +152,19 @@ export const pdfSex = [
   { id: 1, label: "男子", href: "men" },
   { id: 2, label: "女子", href: "women" },
 ];
+
+export const AnchorTag = ({ node, children, ...props }: any) => {
+  try {
+    new URL(props.href ?? "");
+    props.target = "_blank";
+    props.rel = "noopener noreferrer";
+  } catch (e) {}
+  return (
+    <object>
+      <Link {...props} className="flex items-center underline">
+        {children}
+        <ExternalLink className="h-4 ml-1" />
+      </Link>
+    </object>
+  );
+};

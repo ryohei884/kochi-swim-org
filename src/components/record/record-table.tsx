@@ -82,10 +82,11 @@ export default function RecordList(props: Props) {
       const lastUpdateDate = recordList.reduce(
         (a: recordSchemaType, b: recordSchemaType) => (a.date > b.date ? a : b),
       );
-      setRecord(recordList);
-      setDataNum(recordNum);
-      setLastUpdated(lastUpdateDate.date);
-      setIsReady(true);
+      // setRecord(recordList);
+      // setDataNum(recordNum);
+      // setLastUpdated(lastUpdateDate.date);
+      // setIsReady(true);
+      return { recordList, recordNum, lastUpdateDate };
     } catch (error) {
       const recordList = await getList(categoryNum, poolsizeNum, sexNum);
 
@@ -95,22 +96,36 @@ export default function RecordList(props: Props) {
           (a: recordSchemaType, b: recordSchemaType) =>
             a.date > b.date ? a : b,
         );
-        setRecord(recordList);
-        setDataNum(recordNum);
-        setLastUpdated(lastUpdateDate.date);
-        setIsReady(true);
+        // setRecord(recordList);
+        // setDataNum(recordNum);
+        // setLastUpdated(lastUpdateDate.date);
+        // setIsReady(true);
+        return { recordList, recordNum, lastUpdateDate };
       }
     }
   };
 
   useEffect(() => {
-    setIsReady(false);
-    getRecord(category, poolsize, sex);
+    let fetched = false;
+
+    async function startFetching() {
+      const res = await getRecord(category, poolsize, sex);
+      if (!fetched && res) {
+        setRecord(res.recordList);
+        setDataNum(res.recordNum);
+        setLastUpdated(res.lastUpdateDate.date);
+        setIsReady(true);
+      }
+    }
+    startFetching();
+
+    return () => {
+      fetched = true;
+    };
   }, [category, poolsize, sex]);
 
   const handleChange = (e: string) => {
     router.push(`/record/${e}`);
-    setIsReady(false);
   };
 
   return (

@@ -105,7 +105,9 @@ export default function GroupCreateForm(props: Props) {
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit">作成</Button>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "送信中..." : "作成"}
+                </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>
                 </SheetClose>

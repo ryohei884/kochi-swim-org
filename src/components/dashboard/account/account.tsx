@@ -43,8 +43,20 @@ export default function Account() {
   };
 
   useEffect(() => {
-    fetchData();
-    setIsReady(true);
+    let fetched = false;
+
+    async function startFetching() {
+      const res = await getUser();
+      if (!fetched && res) {
+        form.reset(res);
+        setIsReady(true);
+      }
+    }
+    startFetching();
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -90,6 +102,7 @@ export default function Account() {
                 height={120}
                 width={120}
                 hidden={!isReady}
+                loading="eager"
               />
             )}
             <Skeleton
@@ -232,8 +245,12 @@ export default function Account() {
             <Button variant="outline" className="flex-1">
               キャンセル
             </Button>
-            <Button type="submit" disabled={!isReady} className="flex-1">
-              変更
+            <Button
+              type="submit"
+              disabled={!isReady || form.formState.isSubmitting}
+              className="flex-1"
+            >
+              {form.formState.isSubmitting ? "送信中..." : "変更"}
             </Button>
           </div>
         </form>

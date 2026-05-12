@@ -82,9 +82,7 @@ export default function RecordList(props: Props) {
 
     if (res !== null) {
       const recordNum = res.length;
-      setData(res);
-      setDataNum(recordNum);
-      setIsReady(true);
+      return { res, recordNum };
     }
   };
 
@@ -144,8 +142,26 @@ export default function RecordList(props: Props) {
   };
 
   useEffect(() => {
-    setIsReady(false);
-    fetchData(category, poolsize, sex, undefined);
+    let fetched = false;
+
+    async function startFetching(
+      category: string,
+      poolsize: string,
+      sex: string,
+      id?: string | undefined,
+    ) {
+      const res = await fetchData(category, poolsize, sex, id);
+      if (!fetched && res) {
+        setData(res.res);
+        setDataNum(res.recordNum);
+        setIsReady(true);
+      }
+    }
+    startFetching(category, poolsize, sex, undefined);
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, poolsize, sex]);
 

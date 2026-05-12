@@ -5,8 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { init } from "@paralleldrive/cuid2";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { CalendarIcon, CalendarOff, ExternalLink, Plus } from "lucide-react";
-import Link from "next/link";
+import { CalendarIcon, CalendarOff, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
@@ -49,7 +48,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { create } from "@/lib/news/actions";
 import type { newsCreateOnSubmitSchemaType } from "@/lib/news/verification";
@@ -57,7 +55,7 @@ import {
   newsCreateOnSubmitSchema,
   newsCreateOnSubmitSchemaDV,
 } from "@/lib/news/verification";
-import { cn, newsLinkCategory } from "@/lib/utils";
+import { AnchorTag, cn, newsLinkCategory } from "@/lib/utils";
 
 type Approver = {
   userId: string;
@@ -74,8 +72,6 @@ interface Props {
 export default function NewsCreateForm(props: Props) {
   const { fetchListData, maxOrder, approver } = props;
 
-  const [isReady, setIsReady] = useState<boolean>(false);
-
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [openFromDate, setOpenFromDate] = useState(false);
   const [openToDate, setOpenToDate] = useState(false);
@@ -87,9 +83,7 @@ export default function NewsCreateForm(props: Props) {
   });
 
   useEffect(() => {
-    setIsReady(false);
     form.setValue("order", maxOrder);
-    setIsReady(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maxOrder]);
 
@@ -147,20 +141,6 @@ export default function NewsCreateForm(props: Props) {
   const dt = new Date();
   const minDT = new Date(dt.setFullYear(dt.getFullYear() - 2));
   const maxDT = new Date(dt.setFullYear(dt.getFullYear() + 4));
-
-  const AnchorTag = ({ node, children, ...props }: any) => {
-    try {
-      new URL(props.href ?? "");
-      props.target = "_blank";
-      props.rel = "noopener noreferrer";
-    } catch (e) {}
-    return (
-      <Link {...props} className="flex items-center underline">
-        {children}
-        <ExternalLink className="h-4 ml-1" />
-      </Link>
-    );
-  };
 
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -421,7 +401,7 @@ export default function NewsCreateForm(props: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>承認者</FormLabel>
-                    <FormControl hidden={!isReady}>
+                    <FormControl>
                       <Select onValueChange={field.onChange}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="承認者" {...field} />
@@ -440,17 +420,17 @@ export default function NewsCreateForm(props: Props) {
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <Skeleton
+                    {/* <Skeleton
                       hidden={isReady}
                       className="flex h-9 w-full border border-input px-3 py-2 file:border-0 max-w-full"
-                    />
+                    /> */}
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady}>
-                  作成
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "送信中..." : "作成"}
                 </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>

@@ -3,9 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { ExternalLink, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
@@ -43,7 +42,7 @@ import {
   newsWithUserSchema,
   newsWithUserSchemaDV,
 } from "@/lib/news/verification";
-import { newsLinkCategory } from "@/lib/utils";
+import { AnchorTag, newsLinkCategory } from "@/lib/utils";
 
 interface Props {
   id: string;
@@ -59,19 +58,23 @@ export default function NewsExcludeForm(props: Props) {
     defaultValues: newsWithUserSchemaDV,
   });
 
-  const fetchData = async (id: string) => {
-    setIsReady(false);
-    const res = await getByIdAdmin({ id: id });
-    if (res !== null) {
-      form.reset(res);
-      setIsReady(true);
-    }
-  };
-
   useEffect(() => {
-    dialogOpen && fetchData(id);
+    let fetched = false;
+
+    async function startFetching(id: string) {
+      const res = await getByIdAdmin({ id: id });
+      if (!fetched && res) {
+        form.reset(res);
+        setIsReady(true);
+      }
+    }
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
+  }, [dialogOpen, id]);
 
   const onSubmit: SubmitHandler<newsWithUserSchemaType> = async (
     data: newsExcludeSchemaType,
@@ -91,20 +94,6 @@ export default function NewsExcludeForm(props: Props) {
         onClick: () => console.log(errors),
       },
     });
-  };
-
-  const AnchorTag = ({ node, children, ...props }: any) => {
-    try {
-      new URL(props.href ?? "");
-      props.target = "_blank";
-      props.rel = "noopener noreferrer";
-    } catch (e) {}
-    return (
-      <Link {...props} className="flex items-center underline">
-        {children}
-        <ExternalLink className="h-4 ml-1" />
-      </Link>
-    );
   };
 
   return (
@@ -303,8 +292,11 @@ export default function NewsExcludeForm(props: Props) {
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady}>
-                  削除
+                <Button
+                  type="submit"
+                  disabled={!isReady || form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? "送信中..." : "削除"}
                 </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>

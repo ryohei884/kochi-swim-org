@@ -89,7 +89,7 @@ export default function MeetList(props: Props) {
       const meetNum = await getListNumAdmin(kindNum, year);
       setData(res);
       setDataNum(meetNum);
-      setIsReady(true);
+      return { res, meetNum };
     }
   };
 
@@ -113,7 +113,6 @@ export default function MeetList(props: Props) {
           // setDataNum(meetNum);
           setCallbackData(id);
           router.push(`/dashboard/meet/${kindHref}/${getFY(resMeet.fromDate)}`);
-          setIsReady(true);
         }
       }
     } else {
@@ -132,12 +131,28 @@ export default function MeetList(props: Props) {
 
   const handleChange = (e: string) => {
     router.push(`/dashboard/meet/${e}`);
-    setIsReady(false);
   };
 
   useEffect(() => {
-    setIsReady(false);
-    fetchData(kind, year, undefined);
+    let fetched = false;
+
+    async function startFetching(
+      kind: string,
+      year: number,
+      id?: string | undefined,
+    ) {
+      const res = await fetchData(kind, year, undefined);
+      if (!fetched && res) {
+        setData(res.res);
+        setDataNum(res.meetNum);
+        setIsReady(true);
+      }
+    }
+    startFetching(kind, year, undefined);
+
+    return () => {
+      fetched = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kind, year]);
 

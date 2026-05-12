@@ -183,10 +183,11 @@ const RecordPDF = () => {
           (a: recordSchemaType, b: recordSchemaType) =>
             a.date > b.date ? a : b,
         );
-        setRecord(recordList);
-        setDataNum(recordNum);
-        setLastUpdated(lastUpdateDate.date);
-        setIsReady(true);
+        // setRecord(recordList);
+        // setDataNum(recordNum);
+        // setLastUpdated(lastUpdateDate.date);
+        // setIsReady(true);
+        return { recordList, recordNum, lastUpdateDate };
       }
     } catch (error) {
       console.log(error);
@@ -194,8 +195,22 @@ const RecordPDF = () => {
   };
 
   useEffect(() => {
-    setIsReady(false);
-    getRecord();
+    let fetched = false;
+
+    async function startFetching() {
+      const res = await getRecord();
+      if (!fetched && res) {
+        setRecord(res.recordList);
+        setDataNum(res.recordNum);
+        setLastUpdated(res.lastUpdateDate.date);
+        setIsReady(true);
+      }
+    }
+    startFetching();
+
+    return () => {
+      fetched = true;
+    };
   }, []);
 
   return isReady ? (

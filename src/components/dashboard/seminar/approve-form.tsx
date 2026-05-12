@@ -56,11 +56,6 @@ export default function SeminarApproveForm(props: Props) {
     defaultValues: seminarWithUserSchemaDV,
   });
 
-  useEffect(() => {
-    dialogOpen && fetchData(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
-
   const fetchData = async (id: string) => {
     setIsReady(false);
     const res = await getByIdAdmin({ id: id });
@@ -68,7 +63,25 @@ export default function SeminarApproveForm(props: Props) {
       form.reset(res);
       setIsReady(true);
     }
+    return res;
   };
+
+  useEffect(() => {
+    let fetched = false;
+
+    async function startFetching(id: string) {
+      const res = await fetchData(id);
+      if (!fetched && res) {
+        setIsReady(true);
+      }
+    }
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogOpen]);
 
   const onSubmit: SubmitHandler<seminarWithUserSchemaType> = async (
     data: seminarApproveSchemaType,
@@ -362,7 +375,7 @@ export default function SeminarApproveForm(props: Props) {
                   disabled={!isReady || form.formState.isSubmitting}
                   variant="destructive"
                 >
-                  {form.formState.isSubmitting ? "送信中" : "承認"}
+                  {form.formState.isSubmitting ? "送信中..." : "承認"}
                 </Button>
                 <SheetClose asChild>
                   <Button

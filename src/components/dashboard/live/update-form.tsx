@@ -61,18 +61,31 @@ export default function LiveUpdateForm(props: Props) {
   });
 
   useEffect(() => {
-    dialogOpen && fetchData(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogOpen]);
+    let fetched = false;
 
-  const fetchData = async (id: string) => {
-    setIsReady(false);
-    const res = await getById({ id: id });
-    if (res !== null) {
-      form.reset(res);
-      setIsReady(true);
+    async function startFetching(id: string) {
+      const res = await getById({ id: id });
+      if (!fetched && res) {
+        form.reset(res);
+        setIsReady(true);
+      }
     }
-  };
+    dialogOpen && startFetching(id);
+
+    return () => {
+      fetched = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogOpen, id]);
+
+  // const fetchData = async (id: string) => {
+  //   setIsReady(false);
+  //   const res = await getById({ id: id });
+  //   if (res !== null) {
+  //     form.reset(res);
+  //     setIsReady(true);
+  //   }
+  // };
 
   const onSubmit: SubmitHandler<liveUpdateSchemaType> = async (
     data: liveUpdateSchemaType,
@@ -296,8 +309,11 @@ export default function LiveUpdateForm(props: Props) {
                 )}
               />
               <SheetFooter className="p-0">
-                <Button type="submit" disabled={!isReady}>
-                  作成
+                <Button
+                  type="submit"
+                  disabled={!isReady || form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? "送信中..." : "作成"}
                 </Button>
                 <SheetClose asChild>
                   <Button variant="outline">キャンセル</Button>
