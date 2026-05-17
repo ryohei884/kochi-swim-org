@@ -117,7 +117,7 @@ export default function MeetList(props: Props) {
             <FileText className="h-4" />
           </Link>
           <Link
-            href={`https://result.swim.or.jp/`}
+            href="https://result.swim.or.jp/tournament/list?member_group_code=39&game_status=&year=2026&memberGroup=%E9%AB%98%E7%9F%A5&name=&official_code=1"
             rel="noopener noreferrer"
             target="_blank"
             className="mt-4 flex items-center"
