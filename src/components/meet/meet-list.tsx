@@ -2,7 +2,14 @@
 
 import { format } from "date-fns";
 import { ja } from "date-fns/locale/ja";
-import { Check, ChevronsDownUp, ChevronsUpDown, FileText } from "lucide-react";
+import {
+  CheckIcon,
+  ChevronsDownUp,
+  ChevronsUpDown,
+  ExternalLinkIcon,
+  FileText,
+  LinkIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
@@ -108,6 +115,15 @@ export default function MeetList(props: Props) {
           <Link href="/meet-pdf" className="mt-16 flex items-center">
             2026年度競技会日程表（PDF/2026年3月9日更新）
             <FileText className="h-4" />
+          </Link>
+          <Link
+            href={`https://result.swim.or.jp/`}
+            rel="noopener noreferrer"
+            target="_blank"
+            className="mt-4 flex items-center"
+          >
+            Result of Japan Swimming
+            <ExternalLinkIcon className="h-4" />
           </Link>
           <div className="mt-16 lg:mt-20">
             <Tabs
@@ -228,18 +244,28 @@ export default function MeetList(props: Props) {
                                 {kind === "swimming" && (
                                   <TableCell>
                                     {m.result ? (
-                                      <Button variant="ghost">
+                                      <Button variant="ghost" asChild>
                                         {m.code !== null ? (
                                           <Link
                                             href={`https://result.swim.or.jp/tournament/${m.code}`}
                                             rel="noopener noreferrer"
                                             target="_blank"
                                           >
-                                            <Check />
+                                            <ExternalLinkIcon />
                                           </Link>
                                         ) : (
-                                          <Check />
+                                          <CheckIcon />
                                         )}
+                                      </Button>
+                                    ) : m.code !== null ? (
+                                      <Button variant="ghost" asChild>
+                                        <Link
+                                          href={`https://result.swim.or.jp/tournament/${m.code}`}
+                                          rel="noopener noreferrer"
+                                          target="_blank"
+                                        >
+                                          <LinkIcon />
+                                        </Link>
                                       </Button>
                                     ) : (
                                       ""
