@@ -39,45 +39,51 @@ const link = [
   },
   {
     categoryId: 2,
-    title: "一般社団法人 日本マスターズ水泳協会",
-    href: "https://www.masters-swim.or.jp/",
-    order: 5,
-  },
-  {
-    categoryId: 2,
     title: "一般社団法人 日本スイミングクラブ協会 四国支部",
     href: "https://sc-shikoku.net/",
     order: 3,
-  },
-  {
-    categoryId: 3,
-    title: "Results of Japan Swimming",
-    href: "https://result.swim.or.jp/",
-    order: 9,
-  },
-  {
-    categoryId: 1,
-    title: "一般社団法人 香川県水泳協会",
-    href: "https://kagawa-swim.com/",
-    order: 6,
-  },
-  {
-    categoryId: 1,
-    title: "一般社団法人 愛媛県水泳連盟",
-    href: "http://www.esr-jp.com/",
-    order: 7,
-  },
-  {
-    categoryId: 1,
-    title: "一般社団法人 徳島県水泳連盟",
-    href: "https://tokushima-swim.jp/",
-    order: 8,
   },
   {
     categoryId: 2,
     title: "一般社団法人 高知県スイミングクラブ協会",
     href: "https://sc-shikoku.net/kochi/",
     order: 4,
+  },
+  {
+    categoryId: 2,
+    title: "一般社団法人 日本マスターズ水泳協会",
+    href: "https://www.masters-swim.or.jp/",
+    order: 5,
+  },
+  {
+    categoryId: 2,
+    title: "高知県マスターズ水泳協会",
+    href: "https://sites.google.com/view/kochimasters/",
+    order: 6,
+  },
+  {
+    categoryId: 1,
+    title: "一般社団法人 香川県水泳協会",
+    href: "https://kagawa-swim.com/",
+    order: 7,
+  },
+  {
+    categoryId: 1,
+    title: "一般社団法人 愛媛県水泳連盟",
+    href: "http://www.esr-jp.com/",
+    order: 8,
+  },
+  {
+    categoryId: 1,
+    title: "一般社団法人 徳島県水泳連盟",
+    href: "https://tokushima-swim.jp/",
+    order: 9,
+  },
+  {
+    categoryId: 3,
+    title: "Results of Japan Swimming",
+    href: "https://result.swim.or.jp/",
+    order: 10,
   },
 ];
 
