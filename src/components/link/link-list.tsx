@@ -45,7 +45,7 @@ const link = [
   },
   {
     categoryId: 2,
-    title: "一般社団法人 高知県スイミングクラブ協会",
+    title: "高知県スイミングクラブ協会",
     href: "https://sc-shikoku.net/kochi/",
     order: 4,
   },
