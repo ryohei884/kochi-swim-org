@@ -12,6 +12,11 @@ import { AnchorTag } from "@/lib/utils";
 
 const faqs = [
   {
+    title: "宣伝・広告の媒体について",
+    description: `
+- [大切なことですから、本欄を読んで必ず守ってください](https://nzprheefai1ubld0.public.blob.vercel-storage.com/regulation/regulation3-W0qqYZCuPJCGlSX6BbVUM5WtIERT5R.pdf)`,
+  },
+  {
     title: "ロゴマーク等の取扱規程",
     description: `
 - [競技会において着用又は携行することができる水泳用品、用具のロゴマーク等についての取扱規程](https://nzprheefai1ubld0.public.blob.vercel-storage.com/regulation/regulation2-wek1Qvw4md5DDaYn0kBSix3mLlPKbO.pdf)`,
@@ -21,13 +26,6 @@ const faqs = [
     description: `
 - [（公財） 日本水泳連盟 競技者のマーケティング活動ガイドライン](https://nzprheefai1ubld0.public.blob.vercel-storage.com/regulation/regulation1-OmlsDuUmsO9pDWJLuKjT2ufeb7PdXJ.pdf)`,
   },
-  /*
-    {
-    title: "2026年度泳力検定合格基準",
-    description: `2026年度の年齢・性別資格級は以下のとおりです。
-- [2026年度水泳資格表](https://nzprheefai1ubld0.public.blob.vercel-storage.com/registration/Initial_Registration_Manual_2026.pdf)`,
-  },
-  */
 ];
 
 export default function Regulation() {
