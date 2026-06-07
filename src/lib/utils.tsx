@@ -44,6 +44,7 @@ export const newsLinkCategory = [
   { id: 16, name: "お問い合わせ", href: "contact" },
   { id: 17, name: "資格級・標準記録", href: "standard" },
   { id: 18, name: "競技者登録のご案内", href: "registration" },
+  { id: 19, name: "(公財)日水連規程等", href: "regulation" },
 ];
 
 export const meetKind = [
