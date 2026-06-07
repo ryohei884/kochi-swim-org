@@ -18,6 +18,7 @@ const navigation = {
   information: [
     { name: "資格級・標準記録", href: "/standard" },
     { name: "競技者登録のご案内", href: "/registration" },
+    { name: "規程等", href: "regulation" },
   ],
   association: [
     { name: "ご挨拶", href: "/greetings" },

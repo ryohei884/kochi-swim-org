@@ -191,7 +191,7 @@ export default function NewsExcludeForm(props: Props) {
                       alt="プレビュー"
                       height={229}
                       width={344}
-                      className="w-full aspect-3/2 border-2 rounded-2xl object-cover object-center"
+                      className="w-full h-auto aspect-3/2 border-2 rounded-2xl object-cover object-center"
                     />
                     <FormMessage />
                   </FormItem>
