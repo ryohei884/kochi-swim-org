@@ -12,18 +12,10 @@ import { AnchorTag } from "@/lib/utils";
 
 const faqs = [
   {
-    title: "宣伝・広告の媒体について",
+    title: "マーケティング活動について",
     description: `
-- [大切なことですから、本欄を読んで必ず守ってください](https://nzprheefai1ubld0.public.blob.vercel-storage.com/regulation/regulation3-W0qqYZCuPJCGlSX6BbVUM5WtIERT5R.pdf)`,
-  },
-  {
-    title: "ロゴマーク等の取扱規程",
-    description: `
-- [競技会において着用又は携行することができる水泳用品、用具のロゴマーク等についての取扱規程](https://nzprheefai1ubld0.public.blob.vercel-storage.com/regulation/regulation2-wek1Qvw4md5DDaYn0kBSix3mLlPKbO.pdf)`,
-  },
-  {
-    title: "マーケティング活動ガイドライン",
-    description: `
+- [大切なことですから、本欄を読んで必ず守ってください](https://nzprheefai1ubld0.public.blob.vercel-storage.com/regulation/regulation3-W0qqYZCuPJCGlSX6BbVUM5WtIERT5R.pdf)
+- [競技会において着用又は携行することができる水泳用品、用具のロゴマーク等についての取扱規程](https://nzprheefai1ubld0.public.blob.vercel-storage.com/regulation/regulation2-wek1Qvw4md5DDaYn0kBSix3mLlPKbO.pdf)
 - [（公財） 日本水泳連盟 競技者のマーケティング活動ガイドライン](https://nzprheefai1ubld0.public.blob.vercel-storage.com/regulation/regulation1-OmlsDuUmsO9pDWJLuKjT2ufeb7PdXJ.pdf)`,
   },
 ];
