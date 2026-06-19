@@ -113,7 +113,7 @@ export default function MeetList(props: Props) {
             詳細は各リンク先からご覧ください。
           </p>
           <Link href="/meet-pdf" className="mt-16 flex items-center">
-            2026年度競技会日程表（PDF/2026年3月9日更新）
+            2026年度競技会日程表（PDF/2026年6月19日更新）
             <FileText className="h-4" />
           </Link>
           <Link
